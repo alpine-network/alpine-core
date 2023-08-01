@@ -1,0 +1,11 @@
+main: ${group}.${pluginName}
+name: ${pluginName}
+version: ${pluginVersion}
+description: ${pluginDescription}
+author: tomwmth
+website: ${pluginWebsite}
+api-version: 1.13
+
+softdepend:
+  - Vault
+  - ViaVersion
