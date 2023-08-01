@@ -51,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'co.crystaldev:alpine-core:0.1.0'
+    compileOnly 'co.crystaldev:alpinecore:0.1.0'
 }
 ```
 
