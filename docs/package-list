@@ -1,0 +1,12 @@
+co.crystaldev.alpinecore
+co.crystaldev.alpinecore.framework
+co.crystaldev.alpinecore.framework.command
+co.crystaldev.alpinecore.framework.config
+co.crystaldev.alpinecore.framework.config.object
+co.crystaldev.alpinecore.framework.engine
+co.crystaldev.alpinecore.framework.event
+co.crystaldev.alpinecore.framework.integration
+co.crystaldev.alpinecore.framework.storage
+co.crystaldev.alpinecore.framework.storage.driver
+co.crystaldev.alpinecore.integration
+co.crystaldev.alpinecore.util
