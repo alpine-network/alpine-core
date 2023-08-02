@@ -7,7 +7,9 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -41,6 +43,18 @@ public final class Components {
      */
     public static void send(@NotNull Collection<CommandSender> senders, @NotNull Component... components) {
         senders.forEach(sender -> send(sender, components));
+    }
+
+    /**
+     * Send a variable number of components to all online
+     * players.
+     *
+     * @param components The components to be sent
+     * @since 0.1.1
+     */
+    public static void broadcast(@NotNull Component... components) {
+        Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
+        players.forEach(player -> send(player, components));
     }
 
     /**
