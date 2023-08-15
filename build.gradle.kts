@@ -145,6 +145,18 @@ publishing {
                 artifactId = project.properties["maven_artifact"] as String
                 version = compileVersion()
                 packaging = "jar"
+
+                withXml {
+                    val dependenciesNode = asNode().appendNode("dependencies")
+
+                    project.configurations["api"].allDependencies.forEach { dependency ->
+                        val dependencyNode = dependenciesNode.appendNode("dependency")
+                        dependencyNode.appendNode("groupId", dependency.group)
+                        dependencyNode.appendNode("artifactId", dependency.name)
+                        dependencyNode.appendNode("version", dependency.version)
+                        dependencyNode.appendNode("scope", "compile")
+                    }
+                }
             }
         }
     }
