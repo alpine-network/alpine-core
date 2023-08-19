@@ -25,6 +25,8 @@ public final class CollectionUtils {
      *
      * @param items the objects to add to the list
      * @return the list
+     *
+     * @see java.util.ArrayList
      */
     @SafeVarargs @NotNull @Contract("null -> fail")
     public static <T> List<T> list(@NotNull T... items) {
@@ -40,6 +42,8 @@ public final class CollectionUtils {
      *
      * @param items the objects to add to the list
      * @return the list
+     *
+     * @see java.util.LinkedList
      */
     @SafeVarargs @NotNull @Contract("null -> fail")
     public static <T> LinkedList<T> linkedList(@NotNull T... items) {
@@ -58,6 +62,8 @@ public final class CollectionUtils {
      *
      * @param items the objects to add to the set
      * @return the set
+     *
+     * @see java.util.HashSet
      */
     @SafeVarargs @NotNull @Contract("null -> fail")
     public static <T> Set<T> set(@NotNull T... items) {
@@ -73,6 +79,8 @@ public final class CollectionUtils {
      *
      * @param items the objects to add to the set
      * @return the set
+     *
+     * @see java.util.LinkedHashSet
      */
     @SafeVarargs @NotNull @Contract("null -> fail")
     public static <T> LinkedHashSet<T> linkedSet(@NotNull T... items) {
@@ -90,13 +98,15 @@ public final class CollectionUtils {
      * Varargs should be specified by alternating keys and values.
      * <p>
      * If the number of varargs is odd, the method will quietly
-     * ignore the varargs.
+     * ignore them.
      *
      * @param <K> the type of the keys in the map
      * @param <V> the type of the values in the map
      *
      * @param items the keys and values to add to the map
      * @return the map
+     *
+     * @see java.util.HashMap
      */
     @NotNull
     public static <K, V> Map<K, V> map(@NotNull K firstKey, @NotNull V firstValue, @NotNull Object... items) {
@@ -122,13 +132,15 @@ public final class CollectionUtils {
      * Varargs should be specified by alternating keys and values.
      * <p>
      * If the number of varargs is odd, the method will quietly
-     * ignore the varargs.
+     * ignore them.
      *
      * @param <K> the type of the keys in the map
      * @param <V> the type of the values in the map
      *
      * @param items the keys and values to add to the map
      * @return the map
+     *
+     * @see java.util.LinkedHashMap
      */
     @NotNull
     public static <K, V> LinkedHashMap<K, V> linkedMap(@NotNull K firstKey, @NotNull V firstValue, @NotNull Object... items) {
