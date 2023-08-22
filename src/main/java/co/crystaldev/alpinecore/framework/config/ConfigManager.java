@@ -41,7 +41,7 @@ public final class ConfigManager {
             File configFile = new File(this.rootDirectory, config.getFileName());
             if (configFile.exists()) {
                 AlpineConfig existingConfig = YamlConfigurations.load(configFile.toPath(), clazz, PROPERTIES);
-                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, config, PROPERTIES);
+                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, existingConfig, PROPERTIES);
                 this.registeredConfigurations.put(clazz, existingConfig);
             }
             else {
