@@ -1,5 +1,5 @@
 # Alpine Core
-> Current version: 0.1.0
+> Current version: 0.1.1
 
 A lightweight library for creating modern yet widely compatible Minecraft server plugins.
 
@@ -51,13 +51,15 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'co.crystaldev:alpine-core:0.1.0'
+    compileOnly 'co.crystaldev:alpinecore:0.1.1'
 }
 ```
 
 All classes and methods that are part of the API should have Javadocs. If one does not, open an issue. There is also a very basic example plugin located in this repository.
 
 Keep in mind that using this library will require it to be added as a plugin on any server using your plugin. **DO NOT** shade it into your own plugin.
+
+**WARNING:** It is recommended that projects using this library as a dependency use Gradle 8.2+. Lower versions are known to occasionally exhibit odd transitive dependency issues.
 
 ### For Server Admins
 Any plugin built using this library will require you to add it as a plugin to your server. On its own it does nothing.

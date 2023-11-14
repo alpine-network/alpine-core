@@ -38,16 +38,17 @@ configurations {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+    testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
+    testImplementation("commons-lang:commons-lang:2.6")
 
     shade(this, "org.jetbrains:annotations:24.0.1")
     shade(this, "co.aikar:acf-paper:0.5.1-SNAPSHOT")
     shade(this, "de.exlll:configlib-spigot:4.2.0")
-
     shade(this, "net.kyori:adventure-platform-bukkit:4.3.0")
     shade(this, "net.kyori:adventure-api:4.14.0")
     shade(this, "net.kyori:adventure-text-minimessage:4.14.0")
 
-    val lombok = "org.projectlombok:lombok:1.18.28"
+    val lombok = "org.projectlombok:lombok:1.18.30"
     compileOnly(lombok)
     annotationProcessor(lombok)
 }
@@ -110,7 +111,7 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-tasks.processResources {
+tasks.withType<ProcessResources> {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     inputs.properties(properties)
@@ -123,6 +124,10 @@ tasks.processResources {
         include("LICENSE")
         into("META-INF/")
     }
+}
+
+tasks.withType<Test> {
+    useTestNG()
 }
 
 publishing {
@@ -145,6 +150,18 @@ publishing {
                 artifactId = project.properties["maven_artifact"] as String
                 version = compileVersion()
                 packaging = "jar"
+
+                withXml {
+                    val dependenciesNode = asNode().appendNode("dependencies")
+
+                    project.configurations["api"].allDependencies.forEach { dependency ->
+                        val dependencyNode = dependenciesNode.appendNode("dependency")
+                        dependencyNode.appendNode("groupId", dependency.group)
+                        dependencyNode.appendNode("artifactId", dependency.name)
+                        dependencyNode.appendNode("version", dependency.version)
+                        dependencyNode.appendNode("scope", "compile")
+                    }
+                }
             }
         }
     }

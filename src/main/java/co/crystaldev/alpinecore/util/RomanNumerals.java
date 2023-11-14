@@ -47,6 +47,7 @@ public final class RomanNumerals {
      */
     @NotNull
     public static String convertTo(int number) {
+        Validate.isTrue(number > 0 && number < 4000, "number has no roman numeral equivalent");
         int l = toNumeral.floorKey(number);
         if (number == l) {
             return toNumeral.get(number);
@@ -90,6 +91,7 @@ public final class RomanNumerals {
             }
         }
 
+        Validate.isTrue(result > 0 && result < 4000, "number has no roman numeral equivalent");
         return result;
     }
 

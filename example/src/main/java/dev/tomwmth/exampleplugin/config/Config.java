@@ -2,8 +2,6 @@ package dev.tomwmth.exampleplugin.config;
 
 import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
-import co.crystaldev.alpinecore.framework.config.object.ConfigRewardPool;
-import com.google.common.collect.Lists;
 
 /**
  * @author Thomas Wearmouth <tomwmth@pm.me>
