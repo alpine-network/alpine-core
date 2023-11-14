@@ -26,6 +26,7 @@ repositories {
     maven("https://jitpack.io/")
     maven("https://lib.alpn.cloud/alpine-public/")
     maven("https://repo.aikar.co/content/groups/aikar/")
+    maven("https://repo.codemc.io/repository/maven-public/")
 }
 
 configurations {
@@ -47,6 +48,7 @@ dependencies {
     shade(this, "net.kyori:adventure-platform-bukkit:4.3.0")
     shade(this, "net.kyori:adventure-api:4.14.0")
     shade(this, "net.kyori:adventure-text-minimessage:4.14.0")
+    shade(this, "de.tr7zw:item-nbt-api:2.12.1")
 
     val lombok = "org.projectlombok:lombok:1.18.30"
     compileOnly(lombok)
@@ -98,6 +100,10 @@ tasks.getByName<Jar>("sourcesJar") {
 tasks.withType<ShadowJar> {
     dependsOn("jar")
     outputs.upToDateWhen { false }
+
+    // Relocate certain shaded dependencies
+    val root = "${project.properties["maven_group"]}.dependencies"
+    relocate("de.tr7zw.changeme.nbtapi", "$root.de.tr7zw.nbtapi")
 
     // Add shaded dependencies
     configurations.clear()
