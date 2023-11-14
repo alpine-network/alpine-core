@@ -19,7 +19,7 @@ public final class CollectionUtils {
      * Creates a new list with the specified objects.
      * <p>
      * This method makes no assertion as to the ordering of
-     * the list. For an ordered list, use {@link CollectionUtils#linkedList(T[])}.
+     * the list. For an ordered list, use {@link CollectionUtils#linkedList(Object[])}.
      *
      * @param <T> the type of the elements in the list
      *
@@ -56,7 +56,7 @@ public final class CollectionUtils {
      * Creates a new set with the specified objects.
      * <p>
      * This method makes no assertion as to the ordering of
-     * the list. For an ordered list, use {@link CollectionUtils#linkedSet(T[])}.
+     * the list. For an ordered list, use {@link CollectionUtils#linkedSet(Object[])}.
      *
      * @param <T> the type of the elements in the set
      *
@@ -93,7 +93,7 @@ public final class CollectionUtils {
      * Creates a new map with the specified objects.
      * <p>
      * This method makes no assertion as to the ordering of
-     * the map. For an ordered map, use {@link CollectionUtils#linkedMap(K, V, Object...)}.
+     * the map. For an ordered map, use {@link CollectionUtils#linkedMap(Object, Object, Object...)}.
      * <p>
      * Varargs should be specified by alternating keys and values.
      * <p>
