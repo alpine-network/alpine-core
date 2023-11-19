@@ -125,7 +125,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @param throwable The error or exception
      */
     public final void log(@NotNull String message, @NotNull Throwable throwable) {
-        this.getLogger().log(Level.SEVERE, ChatColor.translateToAnsi(message, true), throwable);
+        this.getLogger().log(Level.SEVERE, ChatColor.translateToAnsi(message + "&r", true), throwable);
     }
 
     /**
@@ -135,7 +135,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @param message The message to log
      */
     public final void log(@NotNull Level level, @NotNull String message) {
-        this.getLogger().log(level, ChatColor.translateToAnsi(message, true));
+        this.getLogger().log(level, ChatColor.translateToAnsi(message + "&r", true));
     }
 
     /**
