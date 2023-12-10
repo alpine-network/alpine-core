@@ -3,8 +3,8 @@ package dev.tomwmth.exampleplugin;
 import co.crystaldev.alpinecore.AlpinePlugin;
 
 /**
- * @author Thomas Wearmouth <tomwmth@pm.me>
- * Created on 24/07/2023
+ * @author Thomas Wearmouth
+ * @since 0.1.0
  */
 public class ExamplePlugin extends AlpinePlugin {
     @Override

@@ -235,11 +235,8 @@ public abstract class AlpineStore<K, D> implements Activatable {
     }
 
     private void persistCache() {
-        for (Map.Entry<K, D> entry : this.writeCache.entrySet()) {
-            boolean success = this.driver.persistEntry(entry.getKey(), entry.getValue());
-            if (!success) {
-                this.plugin.log(Level.SEVERE, String.format("&cError persisting key \"%s\" in %s", entry.getKey(), this.getClass().getSimpleName()));
-            }
+        if (!this.driver.persistEntries(this.writeCache)) {
+            this.plugin.log(Level.SEVERE, String.format("&cError persisting value in %s", this.getClass().getSimpleName()));
         }
         this.writeCache.clear();
     }

@@ -10,18 +10,16 @@ import dev.tomwmth.exampleplugin.config.Config;
 import dev.tomwmth.exampleplugin.storage.Statistics;
 import dev.tomwmth.exampleplugin.storage.StatisticsStore;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
- * @author Thomas Wearmouth <tomwmth@pm.me>
- * Created on 25/07/2023
+ * @author Thomas Wearmouth
+ * @since 0.1.0
  */
 @CommandAlias("example")
 @Description("This is an example command!")

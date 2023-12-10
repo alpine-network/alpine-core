@@ -3,8 +3,8 @@ package dev.tomwmth.exampleplugin.storage;
 import lombok.NoArgsConstructor;
 
 /**
- * @author Thomas Wearmouth <tomwmth@pm.me>
- * Created on 27/07/2023
+ * @author Thomas Wearmouth
+ * @since 0.1.0
  */
 @NoArgsConstructor
 public class Statistics {

@@ -11,8 +11,8 @@ import java.util.Map;
 /**
  * Central registry for managing serializers in the application.
  *
- * @author BestBearr <crumbygames12@gmail.com>
- * @since 12/09/2023
+ * @author BestBearr
+ * @since 0.1.1
  */
 @Getter
 public final class SerializerRegistry {

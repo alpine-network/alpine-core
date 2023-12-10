@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Thomas Wearmouth <tomwmth@pm.me>
- * Created on 26/07/2023
+ * @author Thomas Wearmouth
+ * @since 0.1.0
  */
 public class ViaIntegration extends AlpineIntegration {
     protected ViaIntegration(AlpinePlugin plugin) {

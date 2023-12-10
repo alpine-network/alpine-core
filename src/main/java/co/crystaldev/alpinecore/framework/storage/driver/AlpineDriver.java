@@ -5,6 +5,7 @@ import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Responsible for saving key-data pairs to a
@@ -31,6 +32,26 @@ public abstract class AlpineDriver<K, D> {
      * @return Whether the operation was successful
      */
     public abstract boolean persistEntry(@NotNull K key, @NotNull D data);
+
+    /**
+     * Save multiple data entries under their respective keys.
+     * <p>
+     * This method allows you to save multiple data entries at once by providing a
+     * map of key-value pairs. It iterates through the map and calls the
+     * {@link #persistEntry(Object, Object)} method for each entry. Any exceptions
+     * generated during the saving process are swallowed for individual entries.
+     *
+     * @param entries A map containing key-value pairs to be saved.
+     */
+    public boolean persistEntries(@NotNull Map<K, D> entries) {
+        boolean success = true;
+        for (Map.Entry<K, D> entry : entries.entrySet()) {
+            if (!this.persistEntry(entry.getKey(), entry.getValue())) {
+                success = false;
+            }
+        }
+        return success;
+    }
 
     /**
      * Delete data under a given key.
