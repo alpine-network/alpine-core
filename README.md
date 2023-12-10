@@ -1,5 +1,5 @@
 # Alpine Core
-> Current version: 0.1.1
+> Current version: 0.1.2
 
 A lightweight library for creating modern yet widely compatible Minecraft server plugins.
 
