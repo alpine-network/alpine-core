@@ -12,7 +12,7 @@ import java.util.Map;
  * Central registry for managing serializers in the application.
  *
  * @author BestBearr
- * @since 0.1.1
+ * @since 0.1.2
  */
 @Getter
 public final class SerializerRegistry {

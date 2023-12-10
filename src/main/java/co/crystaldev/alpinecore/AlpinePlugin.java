@@ -5,6 +5,8 @@ import co.crystaldev.alpinecore.framework.Activatable;
 import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.ConfigManager;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
+import co.crystaldev.alpinecore.framework.engine.AlpineEngine;
+import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.util.ChatColor;
@@ -22,9 +24,11 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -195,9 +199,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      */
     private void activateAll() {
         String packageName = this.getClass().getPackage().getName();
-        Set<Class<?>> clazzes = ImmutableSet.of();
+        Set<Class<?>> classes = ImmutableSet.of();
         try {
-            clazzes = ClassPath.from(this.getClassLoader()).getAllClasses().stream()
+            classes = ClassPath.from(this.getClassLoader()).getAllClasses().stream()
                     .filter(clazz -> clazz.getPackageName().contains(packageName))
                     .map(ClassPath.ClassInfo::load)
                     .collect(Collectors.toSet());
@@ -205,35 +209,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         catch (Exception ex) {
             this.log("&cError scanning classpath", ex);
         }
-        for (Class<?> clazz : clazzes) {
-            if (Activatable.class.isAssignableFrom(clazz)) {
-                if (!Modifier.isAbstract(clazz.getModifiers())) {
-                    try {
-                        if (AlpineConfig.class.isAssignableFrom(clazz)) {
-                            // Configs need a no-args constructor due to a limitation imposed by ConfigLib
-                            Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor();
-                            constructor.setAccessible(true);
-                            Activatable activatable = constructor.newInstance();
-                            activatable.activate(this);
-                            this.activatables.add(activatable);
-                        }
-                        else {
-                            Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor(AlpinePlugin.class);
-                            constructor.setAccessible(true);
-                            Activatable activatable = constructor.newInstance(this);
-                            activatable.activate(this);
-                            this.activatables.add(activatable);
-                        }
-                    }
-                    catch (Exception ex) {
-                        this.log(String.format("&cError activating &d%s", clazz.getSimpleName()), ex);
-                    }
-                }
-                else {
-                    this.log(Level.FINE, String.format("&eSkipping activation of &d%s", clazz.getSimpleName()));
-                }
-            }
-        }
+
+        this.activate(classes, AlpineConfig.class::isAssignableFrom);
+        this.activate(classes, AlpineIntegration.class::isAssignableFrom);
+        this.activate(classes, AlpineEngine.class::isAssignableFrom);
+        this.activate(classes, v -> true);
     }
 
     /**
@@ -249,6 +229,39 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             }
         }
         this.activatables.clear();
+    }
+
+    private void activate(@NotNull Set<Class<?>> classes, @NotNull Predicate<Class<?>> classPredicate) {
+        for (Class<?> clazz : new HashSet<>(classes)) {
+            if (!Activatable.class.isAssignableFrom(clazz) || Modifier.isAbstract(clazz.getModifiers()))
+                continue;
+
+            if (!classPredicate.test(clazz))
+                continue;
+
+            try {
+                if (AlpineConfig.class.isAssignableFrom(clazz)) {
+                    // Configs need a no-args constructor due to a limitation imposed by ConfigLib
+                    Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor();
+                    constructor.setAccessible(true);
+                    Activatable activatable = constructor.newInstance();
+                    activatable.activate(this);
+                    this.activatables.add(activatable);
+                }
+                else {
+                    Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor(AlpinePlugin.class);
+                    constructor.setAccessible(true);
+                    Activatable activatable = constructor.newInstance(this);
+                    activatable.activate(this);
+                    this.activatables.add(activatable);
+                }
+            }
+            catch (Exception ex) {
+                this.log(String.format("&cError activating &d%s", clazz.getSimpleName()), ex);
+            }
+
+            classes.remove(clazz);
+        }
     }
 
     private void setupAcfLocale() {

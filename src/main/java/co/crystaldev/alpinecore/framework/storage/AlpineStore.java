@@ -210,9 +210,53 @@ public abstract class AlpineStore<K, D> implements Activatable {
         this.readCache.refresh(key);
     }
 
+    /**
+     * Persists cached data entries to the underlying data storage.
+     * <p>
+     * This method is responsible for persisting data entries that have been cached
+     * but not yet saved to the underlying data storage. It attempts to persist the
+     * entries and clears the cache.
+     *
+     * @return whether the operation was successful
+     */
+    public boolean flush() {
+        boolean success = true;
+        if (!this.driver.persistEntries(this.writeCache)) {
+            this.plugin.log(Level.SEVERE, String.format("&cError persisting value in %s", this.getClass().getSimpleName()));
+            success = false;
+        }
+        this.writeCache.clear();
+        return success;
+    }
+
+    /**
+     * Persists a cached data entry associated with the given key to the underlying data storage.
+     * <p>
+     * This method is responsible for persisting a specific data entry that has been cached
+     * but not yet saved to the underlying data storage. It attempts to persist the entry and
+     * returns whether the operation was successful. If the persistence operation fails, it logs
+     * an error message.
+     *
+     * @param key The key associated with the data entry to be persisted.
+     * @return Whether the persistence operation was successful.
+     */
+    public boolean flush(@NotNull K key) {
+        D value = this.writeCache.remove(key);
+        if (value == null) {
+            return false;
+        }
+
+        boolean success = true;
+        if (!this.driver.persistEntry(key, value)) {
+            this.plugin.log(Level.SEVERE, String.format("&cError persisting value \"%s\" in %s", key, this.getClass().getSimpleName()));
+            success = false;
+        }
+        return success;
+    }
+
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
-        this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, this::persistCache, 1L, PERSIST_TASK_PERIOD);
+        this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, this::flush, 1L, PERSIST_TASK_PERIOD);
 
         if (this.taskId != -1)
             this.plugin.log(String.format("&aStore activated &d%s", this.getClass().getSimpleName()));
@@ -223,7 +267,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
     @Override
     public final void deactivate(@NotNull AlpinePlugin context) {
         Bukkit.getScheduler().cancelTask(this.taskId);
-        this.persistCache();
+        this.flush();
         this.readCache.invalidateAll();
         this.taskId = -1;
         this.plugin.log(String.format("&cStore deactivated &d%s", this.getClass().getSimpleName()));
@@ -232,12 +276,5 @@ public abstract class AlpineStore<K, D> implements Activatable {
     @Override
     public final boolean isActive() {
         return this.taskId != -1;
-    }
-
-    private void persistCache() {
-        if (!this.driver.persistEntries(this.writeCache)) {
-            this.plugin.log(Level.SEVERE, String.format("&cError persisting value in %s", this.getClass().getSimpleName()));
-        }
-        this.writeCache.clear();
     }
 }

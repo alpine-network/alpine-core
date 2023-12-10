@@ -149,9 +149,6 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
         private Gson gson = Reference.GSON_PRETTY;
         private Class<D> dataType;
 
-        /**
-         * @see FlatfileDriver#directory
-         */
         @NotNull @Contract("_ -> this")
         public Builder<K, D> directory(@NotNull File directory) {
             if (!directory.exists()) {
@@ -162,27 +159,18 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
             return this;
         }
 
-        /**
-         * @see FlatfileDriver#gson
-         */
         @NotNull @Contract("_ -> this")
         public Builder<K, D> gson(@NotNull Gson gson) {
             this.gson = gson;
             return this;
         }
 
-        /**
-         * @see FlatfileDriver#dataType
-         */
         @NotNull @Contract("_ -> this")
         public Builder<K, D> dataType(@NotNull Class<D> dataType) {
             this.dataType = dataType;
             return this;
         }
 
-        /**
-         * @return The newly constructed {@link FlatfileDriver}.
-         */
         @NotNull
         public FlatfileDriver<K, D> build() {
             Validate.notNull(this.directory, "Directory must not be null");

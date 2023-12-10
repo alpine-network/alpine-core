@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
  * @since 0.1.0
  */
 @NoArgsConstructor
-public class Statistics {
+public final class Statistics {
     public int blocksBroken;
 }
