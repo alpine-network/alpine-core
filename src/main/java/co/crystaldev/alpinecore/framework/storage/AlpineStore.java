@@ -11,8 +11,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -127,6 +129,44 @@ public abstract class AlpineStore<K, D> implements Activatable {
             // How???
             throw new IllegalStateException();
         }
+    }
+
+    /**
+     * Get data stored at a given key, or create
+     * an entry if there is none.
+     *
+     * @param key the key
+     * @param defaultDataSupplier the data to create a new entry with
+     * @return the data
+     */
+    @NotNull
+    public final D getOrCreate(@NotNull K key, @NotNull Supplier<D> defaultDataSupplier) {
+        if (!this.has(key)) {
+            this.put(key, defaultDataSupplier.get());
+        }
+        D data = this.get(key);
+        if (data != null) {
+            return data;
+        }
+        else {
+            // How???
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Retrieve all stored data entries from the underlying data storage.
+     * <p>
+     * It may be a blocking task, and the time it takes to
+     * complete depends on the size of the data storage.
+     *
+     * @see AlpineDriver#getAllEntries()
+     * @return A collection containing all stored data entries.
+     * @throws Exception If an exception occurs while retrieving the data entries.
+     */
+    @NotNull
+    public final Collection<D> loadAllEntries() throws Exception {
+        return this.driver.getAllEntries();
     }
 
     /**

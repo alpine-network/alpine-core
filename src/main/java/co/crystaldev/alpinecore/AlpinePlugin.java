@@ -4,11 +4,15 @@ import co.aikar.commands.PaperCommandManager;
 import co.crystaldev.alpinecore.framework.Activatable;
 import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.ConfigManager;
+import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
+import co.crystaldev.alpinecore.framework.storage.KeySerializer;
+import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.util.ChatColor;
 import co.crystaldev.alpinecore.util.SimpleTimer;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import lombok.Getter;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -44,6 +49,10 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     @Getter
     private final Set<Activatable> activatables = new CopyOnWriteArraySet<>();
 
+    /** Registry of config and key serializers for the plugin */
+    @Getter
+    private final SerializerRegistry serializerRegistry = new SerializerRegistry();
+
     // region Abstract methods
     /**
      * Called when the plugin is enabling.
@@ -58,6 +67,25 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     public void onStop() {
         // NO-OP
     }
+
+    /**
+     * Registers custom serializers with the provided {@code SerializerRegistry}.
+     * <br>
+     * This method allows developers to register custom serializers for specific data types
+     * with a central {@code SerializerRegistry} instance.
+     *
+     * @param serializerRegistry The {@code SerializerRegistry} where custom serializers should be registered.
+     */
+    public void registerSerializers(@NotNull SerializerRegistry serializerRegistry) {
+        // key serializers
+        serializerRegistry.putKeySerializer(Number.class, new KeySerializer.NumberKey());
+        serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
+        serializerRegistry.putKeySerializer(UUID.class, new KeySerializer.UuidKey());
+        serializerRegistry.putKeySerializer(OfflinePlayer.class, new KeySerializer.PlayerKey());
+
+        // config serializers
+        serializerRegistry.putConfigSerializer(ConfigMessage.class, new ConfigMessage.Serializer());
+    }
     // endregion
 
     // region Override methods
@@ -68,8 +96,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         SimpleTimer timer = new SimpleTimer();
         timer.start();
 
+        // Setup and register custom data serializers
+        this.registerSerializers(this.serializerRegistry);
+
         // Initialize the managers
-        this.configManager = new ConfigManager(this);
+        this.configManager = new ConfigManager(this, this.serializerRegistry);
         this.commandManager = new PaperCommandManager(this);
 
         // Setup ACF message config

@@ -2,12 +2,14 @@ package co.crystaldev.alpinecore.framework.storage.driver;
 
 import co.crystaldev.alpinecore.Reference;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.*;
 
 /**
  * Implements a simple flatfile storage system where
@@ -20,10 +22,12 @@ import java.io.*;
 public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
     /** The directory the JSON files are stored in */
     private final File directory;
+
     /** The Gson instance responsible for serializing the data */
     private final Gson gson;
+
     /**
-     * The data type of the data.
+     * The data type of the value.
      * <p>
      * We need to feed this to Gson due to limitations on
      * its serialization of generics.
@@ -87,19 +91,42 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
     public @NotNull D retrieveEntry(@NotNull K key) throws Exception {
         File file = this.getFileForKey(key);
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        return Reference.GSON_PRETTY.fromJson(reader, dataType);
+        return Reference.GSON_PRETTY.fromJson(reader, this.dataType);
+    }
+
+    @Override
+    public @NotNull Collection<D> getAllEntries() throws Exception {
+        File[] files = this.directory.listFiles();
+        if (files == null || files.length == 0) {
+            return Collections.emptyList();
+        }
+
+        // discover and deserialize values
+        List<D> values = new ArrayList<>();
+        for (File file : files) {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            values.add(Reference.GSON_PRETTY.fromJson(reader, this.dataType));
+        }
+
+        // value should be immutable
+        return ImmutableList.copyOf(values);
     }
 
     private File getFileForKey(K key) {
         KeySerializer<K, ?> serializer = null;
-        for (Class<?> clazz : SERIALIZERS.keySet()) {
+        for (Class<?> clazz : SERIALIZER_REGISTRY.getKeySerializers().keySet()) {
             if (clazz.isAssignableFrom(key.getClass())) {
-                serializer = (KeySerializer<K, ?>) SERIALIZERS.get(clazz);
+                serializer = (KeySerializer<K, ?>) SERIALIZER_REGISTRY.getKeySerializer(clazz);
             }
         }
+
+        if (serializer == null) {
+            throw new NullPointerException(String.format("No key serializer registered for type \"%s\"", key.getClass().getName()));
+        }
+
         Object serializedKey = serializer.serialize(key);
         String fileName = serializedKey.toString() + ".json";
-        return new File(directory, fileName);
+        return new File(this.directory, fileName);
     }
 
     /**
@@ -118,17 +145,8 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
      * @see co.crystaldev.alpinecore.framework.storage.AlpineStore
      */
     public static final class Builder<K, D> {
-        /**
-         * @see FlatfileDriver#directory
-         */
         private File directory;
-        /**
-         * @see FlatfileDriver#gson
-         */
         private Gson gson = Reference.GSON_PRETTY;
-        /**
-         * @see FlatfileDriver#dataType
-         */
         private Class<D> dataType;
 
         /**
