@@ -121,7 +121,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
                 conn.rollback();
             }
             catch (SQLException ignored) {
-                // NO OP
+                // NO-OP
             }
             ex.printStackTrace();
             return false;
@@ -131,7 +131,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
                 conn.setAutoCommit(true);
             }
             catch (SQLException ignored) {
-                // NO OP
+                // NO-OP
             }
         }
     }
