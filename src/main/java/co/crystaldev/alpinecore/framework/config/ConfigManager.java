@@ -77,6 +77,10 @@ public final class ConfigManager {
         return this.registeredConfigurations.containsKey(clazz);
     }
 
+    public <T extends AlpineConfig> boolean isRegistered(@NotNull Class<T> clazz) {
+        return this.registeredConfigurations.containsKey(clazz);
+    }
+
     @NotNull
     public <T extends AlpineConfig> T getConfig(@NotNull Class<T> clazz) {
         AlpineConfig config = this.registeredConfigurations.get(clazz);

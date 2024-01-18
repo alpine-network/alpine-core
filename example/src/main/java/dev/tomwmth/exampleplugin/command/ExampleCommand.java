@@ -24,7 +24,9 @@ import dev.tomwmth.exampleplugin.storage.Statistics;
 import dev.tomwmth.exampleplugin.storage.StatisticsStore;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -56,10 +58,39 @@ public class ExampleCommand extends AlpineCommand {
                 "amount", stats.blocksBroken));
     }
 
+    @Execute(name = "subcommand")
+    public void execute(@Context Player sender, @Arg("action") ExampleAction action) {
+        Config config = this.plugin.getConfigManager().getConfig(Config.class);
+        World world = sender.getWorld();
+        String message;
+        switch (action) {
+            case SPAWN_COW:
+                message = "Spawn Cow";
+                world.spawnEntity(sender.getLocation(), EntityType.COW);
+                break;
+            case SPAWN_PIG:
+                message = "Spawn Pig";
+                world.spawnEntity(sender.getLocation(), EntityType.PIG);
+                break;
+            default:
+                message = "Boom!";
+                world.createExplosion(sender.getLocation(), 4.0F);
+        }
+
+        Component prefix = config.prefix.build();
+        Components.send(sender, prefix, config.actionMessage.build("action", message));
+    }
+
     @Override
     public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
         // Register the `lookingAtPlayer` argument here
         builder.argument(Player.class, ArgumentKey.of("lookingAtPlayer"), new LookingAtPlayersArgument());
+    }
+
+    private enum ExampleAction {
+        SPAWN_PIG,
+        SPAWN_COW,
+        EXPLODE
     }
 
     private static final class LookingAtPlayersArgument extends ArgumentResolver<CommandSender, Player> {

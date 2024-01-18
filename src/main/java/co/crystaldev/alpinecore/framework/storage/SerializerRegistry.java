@@ -28,7 +28,7 @@ public final class SerializerRegistry {
 
     // MiniMessage serializer
     @Getter @Setter
-    private MiniMessage miniMessage = Reference.MINI_MESSAGE;
+    private MiniMessage miniMessage;
 
     /**
      * Registers a custom key serializer for a specific data type.

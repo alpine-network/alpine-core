@@ -1,5 +1,6 @@
 package co.crystaldev.alpinecore.config;
 
+import co.crystaldev.alpinecore.framework.Initializable;
 import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
 
@@ -9,7 +10,7 @@ import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
  * @author BestBearr
  * @since 0.2.0
  */
-public final class LiteCommandsConfig extends AlpineConfig {
+public final class LiteCommandsConfig extends AlpineConfig implements Initializable {
 
     public ConfigMessage missingPermissions = new ConfigMessage("<red>You don't have the <hover:show_text:'%permission%'>" +
             "required permission</hover> to execute this command");
@@ -32,5 +33,10 @@ public final class LiteCommandsConfig extends AlpineConfig {
     @Override
     public String getFileName() {
         return "litecommands.yml";
+    }
+
+    @Override
+    public boolean init() {
+        return false;
     }
 }

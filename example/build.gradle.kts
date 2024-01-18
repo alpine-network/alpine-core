@@ -26,7 +26,7 @@ dependencies {
 
 tasks.withType<Jar> {
     // Rename jar
-    archiveFileName.set("ExamplePlugin-$version.jar")
+//    archiveFileName.set("ExamplePlugin-$version.jar")
 
     // Add exclusions
     exclude("META-INF/versions/")

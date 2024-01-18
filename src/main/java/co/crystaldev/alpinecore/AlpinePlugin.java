@@ -127,6 +127,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         timer.start();
 
         // Setup and register custom data serializers
+        this.serializerRegistry.setMiniMessage(Reference.MINI_MESSAGE);
         this.registerSerializers(this.serializerRegistry);
 
         // Initialize the config manager
@@ -134,6 +135,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
         // Activate all activatables
         this.activateAll();
+
+        // Register command config
+        if (!this.configManager.isRegistered(LiteCommandsConfig.class)) {
+            this.configManager.registerConfig(new LiteCommandsConfig());
+        }
 
         // Initialize the command manager
         this.setupCommandManager();
@@ -281,7 +287,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                         .serializer(this.serializerRegistry.getMiniMessage()))
 
                 // Feed in our commands
-                .commands(commands)
+                .commands((Object[]) commands)
 
                 // Input our configurable messages
                 .message(LiteMessages.MISSING_PERMISSIONS, permission -> messages.missingPermissions.buildString("permission", permission))
