@@ -25,7 +25,9 @@ repositories {
     mavenCentral()
     maven("https://jitpack.io/")
     maven("https://lib.alpn.cloud/alpine-public/")
-    maven("https://repo.aikar.co/content/groups/aikar/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://repo.panda-lang.org/releases")
 }
 
 configurations {
@@ -38,15 +40,22 @@ configurations {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+    compileOnly("com.google.guava:guava:33.0.0-jre")
+    compileOnly("com.google.code.gson:gson:2.10.1")
     testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
     testImplementation("commons-lang:commons-lang:2.6")
 
     shade(this, "org.jetbrains:annotations:24.0.1")
-    shade(this, "co.aikar:acf-paper:0.5.1-SNAPSHOT")
     shade(this, "de.exlll:configlib-spigot:4.2.0")
+
+    val liteCommands = "3.2.2"
+    shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
+    shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
+
+    val adventure = "4.14.0"
     shade(this, "net.kyori:adventure-platform-bukkit:4.3.0")
-    shade(this, "net.kyori:adventure-api:4.14.0")
-    shade(this, "net.kyori:adventure-text-minimessage:4.14.0")
+    shade(this, "net.kyori:adventure-api:$adventure")
+    shade(this, "net.kyori:adventure-text-minimessage:$adventure")
 
     val lombok = "org.projectlombok:lombok:1.18.30"
     compileOnly(lombok)

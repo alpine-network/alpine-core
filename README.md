@@ -7,7 +7,7 @@ Inspired by [MassiveCore](https://gitlab.massivecraft.team/massivecraft/MassiveC
 - Reduce boilerplate
 - Integrate modern technologies
   - [Adventure](https://github.com/KyoriPowered/adventure) 
-  - [Annotation Command Framework](https://github.com/aikar/commands)
+  - [LiteCommands](https://github.com/Rollczi/LiteCommands)
   - [ConfigLib](https://github.com/tomwmth/ConfigLib)
 - Maintain high compatibility
   - Java 8 minimum
@@ -34,7 +34,7 @@ The project consists of the following core systems:
   - Extended from `AlpineCommand`
   - A server command that is automatically registered
     - Includes a more convenient API for registering completions and conditions
-  - Utilizes [Aikar's ACF](https://github.com/aikar/commands) to enable the efficient creation of complex command structures
+  - Utilizes [LiteCommands](https://github.com/Rollczi/LiteCommands) to enable the efficient creation of complex command structures
 - Events
   - Extended from `AlpineEvent`
   - A generic Bukkit event, minus the boilerplate
@@ -51,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'co.crystaldev:alpinecore:0.1.1'
+    compileOnly 'co.crystaldev:alpinecore:0.1.2'
 }
 ```
 
@@ -64,7 +64,7 @@ Keep in mind that using this library will require it to be added as a plugin on 
 ### For Server Admins
 Any plugin built using this library will require you to add it as a plugin to your server. On its own it does nothing.
 
-The plugin has been explicitly verified to work on server versions `1.8.8`, `1.19.4` and `1.20.1`, however all versions in between should work.
+The plugin has been explicitly verified to work on server versions `1.8.8`, `1.19.4`, `1.20.1`, and `1.20.2`, however all versions in between should work.
 
 ### License
 This library is licensed under the Mozilla Public License v2.0. For information regarding your requirements in the use of this library, please see [Mozilla's FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/).

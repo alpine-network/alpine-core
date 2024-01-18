@@ -30,6 +30,8 @@ public final class Reference {
     public static final BukkitAudiences AUDIENCES = BukkitAudiences.create(AlpineCore.getInstance());
     /** An Adventure MiniMessage serializer */
     public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    /** A Strict Adventure MiniMessage serializer */
+    public static final MiniMessage STRICT_MINI_MESSAGE = MiniMessage.builder().strict(true).build();
 
     private static GsonBuilder gsonBuilder() {
         return new GsonBuilder()
