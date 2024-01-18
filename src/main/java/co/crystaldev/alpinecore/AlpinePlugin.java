@@ -1,7 +1,9 @@
 package co.crystaldev.alpinecore;
 
-import co.aikar.commands.PaperCommandManager;
+import co.crystaldev.alpinecore.config.LiteCommandsConfig;
 import co.crystaldev.alpinecore.framework.Activatable;
+import co.crystaldev.alpinecore.framework.Initializable;
+import co.crystaldev.alpinecore.framework.command.AlpineCommand;
 import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.ConfigManager;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
@@ -13,17 +15,24 @@ import co.crystaldev.alpinecore.util.ChatColor;
 import co.crystaldev.alpinecore.util.SimpleTimer;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
+import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
+import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
+import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
+import dev.rollczi.litecommands.message.LiteMessages;
+import dev.rollczi.litecommands.schematic.SchematicFormat;
 import lombok.Getter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -47,7 +56,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
     /** Manages any {@link co.crystaldev.alpinecore.framework.command.AlpineCommand}s for the plugin */
     @Getter
-    protected PaperCommandManager commandManager;
+    protected LiteCommands<CommandSender> commandManager;
 
     /** All {@link co.crystaldev.alpinecore.framework.Activatable}s registered for the plugin */
     @Getter
@@ -73,6 +82,19 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     /**
+     * Internally invoked before loading an activatable object.
+     * Determines whether an activatable object should be initialized.
+     * By default, it allows all activatable objects to proceed with initialization.
+     *
+     * @param activatableClasspath The classpath of the activatable object.
+     * @return boolean True to initialize the activatable object, false otherwise.
+     */
+    public boolean onActivatablePreload(@NotNull String activatableClasspath) {
+        return true;
+    }
+
+
+    /**
      * Registers custom serializers with the provided {@code SerializerRegistry}.
      * <br>
      * This method allows developers to register custom serializers for specific data types
@@ -90,6 +112,10 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // config serializers
         serializerRegistry.putConfigSerializer(ConfigMessage.class, new ConfigMessage.Serializer());
     }
+
+    public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
+        // NO-OP
+    }
     // endregion
 
     // region Override methods
@@ -103,15 +129,14 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // Setup and register custom data serializers
         this.registerSerializers(this.serializerRegistry);
 
-        // Initialize the managers
+        // Initialize the config manager
         this.configManager = new ConfigManager(this, this.serializerRegistry);
-        this.commandManager = new PaperCommandManager(this);
-
-        // Setup ACF message config
-        this.setupAcfLocale();
 
         // Activate all activatables
         this.activateAll();
+
+        // Initialize the command manager
+        this.setupCommandManager();
 
         // Hand off to the plugin
         this.onStart();
@@ -189,7 +214,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @param activatable The activatable
      */
     public final void removeActivatable(Activatable activatable) {
-        activatable.deactivate(this);
+        if (activatable.canDeactivate()) {
+            activatable.deactivate(this);
+        }
         this.activatables.remove(activatable);
     }
 
@@ -203,6 +230,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         try {
             classes = ClassPath.from(this.getClassLoader()).getAllClasses().stream()
                     .filter(clazz -> clazz.getPackageName().contains(packageName))
+                    .filter(clazz -> this.onActivatablePreload(clazz.getName()))
                     .map(ClassPath.ClassInfo::load)
                     .collect(Collectors.toSet());
         }
@@ -222,13 +250,59 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     private void deactivateAll() {
         for (Activatable activatable : this.activatables) {
             try {
-                activatable.deactivate(this);
+                if (activatable.canDeactivate()) {
+                    activatable.deactivate(this);
+                }
             }
             catch (Exception ex) {
                 this.log(String.format("&cError deactivating &d%s", activatable.getClass().getSimpleName()), ex);
             }
         }
         this.activatables.clear();
+    }
+
+    private void setupCommandManager() {
+        LiteCommandsConfig messages = this.getConfigManager().getConfig(LiteCommandsConfig.class);
+        AlpineCommand[] commands = this.activatables.stream()
+                .filter(v -> v instanceof AlpineCommand)
+                .filter(Activatable::isActive)
+                .toArray(AlpineCommand[]::new);
+
+        // Set up the LiteCommands builder
+        LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder = LiteCommandsBukkit.builder(this.getName())
+                // <Required Arguments> [Optional Arguments]
+                .schematicGenerator(SchematicFormat.angleBrackets())
+
+                // Enable Adventure support
+                .extension(new LiteAdventurePlatformExtension<>(BukkitAudiences.create(this)), config -> config
+                        .miniMessage(true)
+                        .legacyColor(true)
+                        .colorizeArgument(true)
+                        .serializer(this.serializerRegistry.getMiniMessage()))
+
+                // Feed in our commands
+                .commands(commands)
+
+                // Input our configurable messages
+                .message(LiteMessages.MISSING_PERMISSIONS, permission -> messages.missingPermissions.buildString("permission", permission))
+                .message(LiteMessages.INVALID_NUMBER, input -> messages.invalidNumber.buildString("input", input))
+                .message(LiteMessages.INVALID_USAGE, input -> messages.invalidUsage.buildString("input", input))
+                .message(LiteMessages.INSTANT_INVALID_FORMAT, input -> messages.invalidInstant.buildString("input", input))
+                .message(LiteBukkitMessages.WORLD_NOT_EXIST, input -> messages.invalidWorld.buildString("input", input))
+                .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> messages.invalidLocation.buildString("input", input))
+                .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> messages.playerNotFound.buildString("player", input))
+                .message(LiteBukkitMessages.PLAYER_ONLY, input -> messages.playerOnly.buildString());
+
+        // Let the plugin mutate the command manager
+        this.setupCommandManager(builder);
+
+        // Let individual plugin commands mutate the command manager
+        for (AlpineCommand command : commands) {
+            command.setupCommandManager(builder);
+        }
+
+        // Build the command manager
+        this.commandManager = builder.build();
     }
 
     private void activate(@NotNull Set<Class<?>> classes, @NotNull Predicate<Class<?>> classPredicate) {
@@ -240,18 +314,30 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                 continue;
 
             try {
+                Activatable activatable;
+
                 if (AlpineConfig.class.isAssignableFrom(clazz)) {
                     // Configs need a no-args constructor due to a limitation imposed by ConfigLib
                     Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor();
                     constructor.setAccessible(true);
-                    Activatable activatable = constructor.newInstance();
-                    activatable.activate(this);
-                    this.activatables.add(activatable);
+                    activatable = constructor.newInstance();
                 }
                 else {
                     Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor(AlpinePlugin.class);
                     constructor.setAccessible(true);
-                    Activatable activatable = constructor.newInstance(this);
+                    activatable = constructor.newInstance(this);
+                }
+
+                // Initialize the activatable
+                if (activatable instanceof Initializable) {
+                    Initializable initializable = (Initializable) activatable;
+                    if (initializable.init()) {
+                        // Successfully initialized, activate
+                        activatable.activate(this);
+                        this.activatables.add(activatable);
+                    }
+                }
+                else {
                     activatable.activate(this);
                     this.activatables.add(activatable);
                 }
@@ -261,28 +347,6 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             }
 
             classes.remove(clazz);
-        }
-    }
-
-    private void setupAcfLocale() {
-        try {
-            File acfConfig = new File(this.getDataFolder(), "acf_config.yml");
-            InputStream is;
-
-            // Save default to disk if not already there
-            if (!acfConfig.exists()) {
-                is = AlpineCore.getInstance().getResource("acf_config.yml");
-                YamlConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(is, StandardCharsets.UTF_8));
-                config.save(acfConfig);
-            }
-
-            // Load to command manager
-            this.commandManager.getLocales().loadYamlLanguageFile(acfConfig, this.commandManager.getLocales().getDefaultLocale());
-
-            this.log("&aLoaded ACF message config");
-        }
-        catch (Exception ex) {
-            this.log("&cError setting up ACF message config", ex);
         }
     }
     // endregion

@@ -26,8 +26,12 @@ import java.util.stream.Collectors;
 public class ConfigMessage {
     private String message;
 
-    public ConfigMessage(String message) {
+    public ConfigMessage(@NotNull String message) {
         this.message = message;
+    }
+
+    public ConfigMessage(@NotNull Component component) {
+        this.message = Reference.MINI_MESSAGE.serialize(component);
     }
 
     /**
@@ -64,6 +68,28 @@ public class ConfigMessage {
     public Component build(@NotNull Map<String, Object> placeholders) {
         String formatted = Formatting.formatPlaceholders(this.message, placeholders);
         return Reference.MINI_MESSAGE.deserialize(formatted);
+    }
+
+    /**
+     * Formats the text of this message with placeholders
+     *
+     * @param placeholders The placeholders for formatting the message
+     * @return The string
+     */
+    @NotNull
+    public String buildString(@NotNull Object... placeholders) {
+        return Formatting.formatPlaceholders(this.message, placeholders);
+    }
+
+    /**
+     * Formats the text of this message with placeholders
+     *
+     * @param placeholders The placeholders for formatting the message
+     * @return The string
+     */
+    @NotNull
+    public String buildString(@NotNull Map<String, Object> placeholders) {
+        return Formatting.formatPlaceholders(this.message, placeholders);
     }
 
     public static class Serializer implements de.exlll.configlib.Serializer<ConfigMessage, Object> {
