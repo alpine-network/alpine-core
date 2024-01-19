@@ -11,6 +11,7 @@ import co.crystaldev.alpinecore.framework.engine.AlpineEngine;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
+import co.crystaldev.alpinecore.handler.CommandInvalidUsageHandler;
 import co.crystaldev.alpinecore.util.ChatColor;
 import co.crystaldev.alpinecore.util.SimpleTimer;
 import com.google.common.collect.ImmutableSet;
@@ -293,9 +294,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                 .commands((Object[]) commands)
 
                 // Input our configurable messages
+                .invalidUsage(new CommandInvalidUsageHandler(this))
                 .message(LiteMessages.MISSING_PERMISSIONS, permission -> messages.missingPermissions.buildString("permission", permission))
                 .message(LiteMessages.INVALID_NUMBER, input -> messages.invalidNumber.buildString("input", input))
-                .message(LiteMessages.INVALID_USAGE, input -> messages.invalidUsage.buildString("input", input))
                 .message(LiteMessages.INSTANT_INVALID_FORMAT, input -> messages.invalidInstant.buildString("input", input))
                 .message(LiteBukkitMessages.WORLD_NOT_EXIST, input -> messages.invalidWorld.buildString("input", input))
                 .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> messages.invalidLocation.buildString("input", input))
