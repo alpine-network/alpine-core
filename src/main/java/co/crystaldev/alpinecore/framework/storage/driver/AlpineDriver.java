@@ -3,9 +3,11 @@ package co.crystaldev.alpinecore.framework.storage.driver;
 import co.crystaldev.alpinecore.AlpineCore;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Responsible for saving key-data pairs to a
@@ -104,4 +106,17 @@ public abstract class AlpineDriver<K, D> {
      */
     @NotNull
     public abstract Collection<D> getAllEntries() throws Exception;
+
+    /**
+     * Retrieve all stored values in the data storage.
+     * <p>
+     * This method retrieves all values stored in the data storage and returns them as a collection.
+     * It is a blocking task, and it may take some time to complete depending on the size of the data storage.
+     * If the data storage is empty, an empty collection is returned.
+     *
+     * @param exceptionConsumer A function for handling errors.
+     * @return A collection containing all stored values.
+     */
+    @NotNull
+    public abstract Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionConsumer);
 }

@@ -7,9 +7,11 @@ import com.google.gson.Gson;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Implements a simple flatfile storage system where
@@ -91,7 +93,7 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
     public @NotNull D retrieveEntry(@NotNull K key) throws Exception {
         File file = this.getFileForKey(key);
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        return Reference.GSON_PRETTY.fromJson(reader, this.dataType);
+        return this.gson.fromJson(reader, this.dataType);
     }
 
     @Override
@@ -105,7 +107,32 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
         List<D> values = new ArrayList<>();
         for (File file : files) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            values.add(Reference.GSON_PRETTY.fromJson(reader, this.dataType));
+            values.add(this.gson.fromJson(reader, this.dataType));
+        }
+
+        // value should be immutable
+        return ImmutableList.copyOf(values);
+    }
+
+    @Override
+    public @NotNull Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionConsumer) {
+        File[] files = this.directory.listFiles();
+        if (files == null || files.length == 0) {
+            return Collections.emptyList();
+        }
+
+        // discover and deserialize values
+        List<D> values = new ArrayList<>();
+        for (File file : files) {
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                values.add(this.gson.fromJson(reader, this.dataType));
+            }
+            catch (IOException ex) {
+                if (exceptionConsumer != null) {
+                    exceptionConsumer.accept(ex);
+                }
+            }
         }
 
         // value should be immutable

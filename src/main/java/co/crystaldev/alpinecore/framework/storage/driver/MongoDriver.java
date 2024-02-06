@@ -3,8 +3,10 @@ package co.crystaldev.alpinecore.framework.storage.driver;
 import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * @author Thomas Wearmouth
@@ -33,6 +35,11 @@ public class MongoDriver<K, D> extends AlpineDriver<K, D> {
 
     @Override
     public @NotNull Collection<D> getAllEntries() throws Exception {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public @NotNull Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionConsumer) {
         throw new NotImplementedException();
     }
 }

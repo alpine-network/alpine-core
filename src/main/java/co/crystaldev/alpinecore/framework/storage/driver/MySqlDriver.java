@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @author BestBearr
@@ -221,6 +222,39 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
             while (resultSet.next()) {
                 String data = resultSet.getString("storage");
                 entries.add(this.gson.fromJson(data, this.dataType));
+            }
+        }
+
+        return ImmutableList.copyOf(entries);
+    }
+
+    @Override
+    public @NotNull Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionConsumer) {
+        Connection conn = this.getConnection();
+
+        if (conn == null) {
+            throw new IllegalStateException("Database connection is not active");
+        }
+
+        String sql = "SELECT storage FROM " + this.table;
+        List<D> entries = new ArrayList<>();
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                try {
+                    String data = resultSet.getString("storage");
+                    entries.add(this.gson.fromJson(data, this.dataType));
+                }
+                catch (Exception ex) {
+                    if (exceptionConsumer != null) {
+                        exceptionConsumer.accept(ex);
+                    }
+                }
+            }
+        }
+        catch (SQLException ex) {
+            if (exceptionConsumer != null) {
+                exceptionConsumer.accept(ex);
             }
         }
 
