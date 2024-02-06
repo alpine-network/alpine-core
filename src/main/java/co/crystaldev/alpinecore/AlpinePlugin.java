@@ -1,6 +1,6 @@
 package co.crystaldev.alpinecore;
 
-import co.crystaldev.alpinecore.config.LiteCommandsConfig;
+import co.crystaldev.alpinecore.config.AlpineCoreConfig;
 import co.crystaldev.alpinecore.framework.Activatable;
 import co.crystaldev.alpinecore.framework.Initializable;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
@@ -138,8 +138,8 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.activateAll();
 
         // Register command config
-        if (!this.configManager.isRegistered(LiteCommandsConfig.class)) {
-            this.configManager.registerConfig(new LiteCommandsConfig());
+        if (!this.configManager.isRegistered(AlpineCoreConfig.class)) {
+            this.configManager.registerConfig(new AlpineCoreConfig());
         }
 
         // Initialize the command manager
@@ -272,7 +272,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     private void setupCommandManager() {
-        LiteCommandsConfig messages = this.getConfigManager().getConfig(LiteCommandsConfig.class);
+        AlpineCoreConfig messages = this.getConfigManager().getConfig(AlpineCoreConfig.class);
         AlpineCommand[] commands = this.activatables.stream()
                 .filter(v -> v instanceof AlpineCommand)
                 .filter(Activatable::isActive)

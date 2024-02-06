@@ -1,7 +1,7 @@
 package co.crystaldev.alpinecore.handler;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
-import co.crystaldev.alpinecore.config.LiteCommandsConfig;
+import co.crystaldev.alpinecore.config.AlpineCoreConfig;
 import co.crystaldev.alpinecore.util.Components;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
@@ -22,7 +22,7 @@ public final class CommandInvalidUsageHandler implements InvalidUsageHandler<Com
 
     @Override
     public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result, ResultHandlerChain<CommandSender> chain) {
-        LiteCommandsConfig config = plugin.getConfigManager().getConfig(LiteCommandsConfig.class);
+        AlpineCoreConfig config = plugin.getConfigManager().getConfig(AlpineCoreConfig.class);
         CommandSender sender = invocation.sender();
         Schematic command = result.getSchematic();
 
