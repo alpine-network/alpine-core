@@ -114,9 +114,9 @@ public abstract class AlpineDriver<K, D> {
      * It is a blocking task, and it may take some time to complete depending on the size of the data storage.
      * If the data storage is empty, an empty collection is returned.
      *
-     * @param exceptionConsumer A function for handling errors.
+     * @param exceptionHandler A function for handling errors.
      * @return A collection containing all stored values.
      */
     @NotNull
-    public abstract Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionConsumer);
+    public abstract Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionHandler);
 }

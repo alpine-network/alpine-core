@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -167,6 +168,21 @@ public abstract class AlpineStore<K, D> implements Activatable {
     @NotNull
     public final Collection<D> loadAllEntries() throws Exception {
         return this.driver.getAllEntries();
+    }
+
+    /**
+     * Retrieve all stored data entries from the underlying data storage.
+     * <p>
+     * It may be a blocking task, and the time it takes to
+     * complete depends on the size of the data storage.
+     *
+     * @see AlpineDriver#getAllEntries(Consumer)
+     * @param exceptionHandler A function for handling errors.
+     * @return A collection containing all stored data entries.
+     */
+    @NotNull
+    public final Collection<D> loadAllEntries(@Nullable Consumer<Exception> exceptionHandler) {
+        return this.driver.getAllEntries(exceptionHandler);
     }
 
     /**
