@@ -52,10 +52,11 @@ dependencies {
     shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
-    val adventure = "4.14.0"
+    val adventure = "4.15.0"
     shade(this, "net.kyori:adventure-platform-bukkit:4.3.0")
     shade(this, "net.kyori:adventure-api:$adventure")
     shade(this, "net.kyori:adventure-text-minimessage:$adventure")
+    shade(this, "net.kyori:adventure-text-serializer-plain:$adventure")
 
     val lombok = "org.projectlombok:lombok:1.18.30"
     compileOnly(lombok)
