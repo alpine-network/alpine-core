@@ -75,11 +75,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
     /** MiniMessage curated by this plugin. */
     @Getter
-    private MiniMessage miniMessage;
+    private MiniMessage miniMessage = MiniMessage.miniMessage();
 
     /** Strict MiniMessage curated by this plugin. */
     @Getter
-    private MiniMessage strictMiniMessage;
+    private MiniMessage strictMiniMessage = MiniMessage.builder().strict(true).build();
 
     // region Abstract methods
     /**
@@ -157,11 +157,6 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         SimpleTimer timer = new SimpleTimer();
         timer.start();
 
-        // Setup plugin MiniMessage instances
-        TagResolver resolver = TagResolver.resolver(TagResolver.standard(), new StyleTagResolver(this));
-        this.miniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver));
-        this.strictMiniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver).strict(true));
-
         // Setup and register custom data serializers
         this.serializerRegistry.putKeySerializer(Number.class, new KeySerializer.NumberKey());
         this.serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
@@ -180,6 +175,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         if (!this.configManager.isRegistered(AlpineCoreConfig.class)) {
             this.configManager.registerConfig(new AlpineCoreConfig());
         }
+
+        // Setup plugin MiniMessage instances
+        TagResolver resolver = TagResolver.resolver(TagResolver.standard(), new StyleTagResolver(this));
+        this.miniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver));
+        this.strictMiniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver).strict(true));
 
         // Initialize the command manager
         this.setupCommandManager();
@@ -376,16 +376,15 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             try {
                 Activatable activatable;
 
-                if (AlpineConfig.class.isAssignableFrom(clazz)) {
-                    // Configs need a no-args constructor due to a limitation imposed by ConfigLib
-                    Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor();
-                    constructor.setAccessible(true);
-                    activatable = constructor.newInstance();
-                }
-                else {
+                try {
                     Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor(AlpinePlugin.class);
                     constructor.setAccessible(true);
                     activatable = constructor.newInstance(this);
+                }
+                catch (NoSuchMethodException ex) {
+                    Constructor<? extends Activatable> constructor = ((Class<? extends Activatable>) clazz).getDeclaredConstructor();
+                    constructor.setAccessible(true);
+                    activatable = constructor.newInstance();
                 }
 
                 // Initialize the activatable
