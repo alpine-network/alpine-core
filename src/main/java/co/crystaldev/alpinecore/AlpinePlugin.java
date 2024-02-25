@@ -3,6 +3,7 @@ package co.crystaldev.alpinecore;
 import co.crystaldev.alpinecore.config.AlpineCoreConfig;
 import co.crystaldev.alpinecore.framework.Activatable;
 import co.crystaldev.alpinecore.framework.Initializable;
+import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
 import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.ConfigManager;
@@ -19,6 +20,7 @@ import com.google.common.reflect.ClassPath;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
@@ -49,8 +51,9 @@ import java.util.stream.Collectors;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings({"UnstableApiUsage", "unchecked", "rawtypes", "unused"})
 public abstract class AlpinePlugin extends JavaPlugin implements Listener {
+
     /** Manages any {@link co.crystaldev.alpinecore.framework.config.AlpineConfig}s for the plugin */
     @Getter
     protected ConfigManager configManager;
@@ -96,7 +99,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
 
     /**
-     * Registers custom serializers with the provided {@code SerializerRegistry}.
+     * Register custom serializers with the provided {@code SerializerRegistry}.
      * <br>
      * This method allows developers to register custom serializers for specific data types
      * with a central {@code SerializerRegistry} instance.
@@ -104,16 +107,19 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @param serializerRegistry The {@code SerializerRegistry} where custom serializers should be registered.
      */
     public void registerSerializers(@NotNull SerializerRegistry serializerRegistry) {
-        // key serializers
-        serializerRegistry.putKeySerializer(Number.class, new KeySerializer.NumberKey());
-        serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
-        serializerRegistry.putKeySerializer(UUID.class, new KeySerializer.UuidKey());
-        serializerRegistry.putKeySerializer(OfflinePlayer.class, new KeySerializer.PlayerKey());
-
-        // config serializers
-        serializerRegistry.putConfigSerializer(ConfigMessage.class, new ConfigMessage.Serializer());
+        // NO-OP
     }
 
+    /**
+     * Configures the command manager for the plugin with custom commands, settings, and message handlers.
+     * This method sets up the {@link LiteCommandsBuilder} with the necessary configurations for command parsing.
+     * It allows for further customization by invoking an overridable method that plugins can implement to modify
+     * the command manager settings or add additional commands.
+     *
+     * @param builder the pre-configured {@link LiteCommandsBuilder} ready for plugin-specific configurations.
+     * @see LiteCommandsBuilder
+     * @see LiteCommandsBukkit#builder(String)
+     */
     public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
         // NO-OP
     }
@@ -129,6 +135,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
         // Setup and register custom data serializers
         this.serializerRegistry.setMiniMessage(Reference.MINI_MESSAGE);
+        this.serializerRegistry.putKeySerializer(Number.class, new KeySerializer.NumberKey());
+        this.serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
+        this.serializerRegistry.putKeySerializer(UUID.class, new KeySerializer.UuidKey());
+        this.serializerRegistry.putKeySerializer(OfflinePlayer.class, new KeySerializer.PlayerKey());
+        this.serializerRegistry.putConfigSerializer(ConfigMessage.class, new ConfigMessage.Serializer());
         this.registerSerializers(this.serializerRegistry);
 
         // Initialize the config manager
@@ -251,6 +262,8 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.activate(classes, AlpineConfig.class::isAssignableFrom);
         this.activate(classes, AlpineIntegration.class::isAssignableFrom);
         this.activate(classes, AlpineEngine.class::isAssignableFrom);
+        this.activate(classes, AlpineCommand.class::isAssignableFrom);
+        this.activate(classes, AlpineArgumentResolver.class::isAssignableFrom);
         this.activate(classes, v -> true);
     }
 
@@ -305,6 +318,15 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
         // Let the plugin mutate the command manager
         this.setupCommandManager(builder);
+
+        // Register all activatable argument resolvers
+        for (Activatable activatable : this.activatables) {
+            if (!(activatable instanceof AlpineArgumentResolver<?>))
+                continue;
+
+            AlpineArgumentResolver resolver = (AlpineArgumentResolver) activatable;
+            builder.argument(resolver.getType(), ArgumentKey.of(resolver.getKey()), resolver);
+        }
 
         // Let individual plugin commands mutate the command manager
         for (AlpineCommand command : commands) {
