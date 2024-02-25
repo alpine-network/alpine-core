@@ -2,7 +2,7 @@ package dev.tomwmth.exampleplugin.command;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
-import co.crystaldev.alpinecore.util.Components;
+import co.crystaldev.alpinecore.util.Messaging;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.Key;
@@ -54,8 +54,7 @@ public class ExampleCommand extends AlpineCommand {
         Statistics stats = store.getOrCreate(target.getPlayer(), new Statistics());
 
         Component prefix = config.prefix.build();
-        Components.send(sender, prefix, config.commandMessage.build("player", target.getPlayer().getName(),
-                "amount", stats.blocksBroken));
+        Messaging.send(sender, prefix, config.commandMessage.build("player", target.getPlayer().getName(), "amount", stats.blocksBroken));
     }
 
     @Execute(name = "subcommand")
@@ -78,7 +77,7 @@ public class ExampleCommand extends AlpineCommand {
         }
 
         Component prefix = config.prefix.build();
-        Components.send(sender, prefix, config.actionMessage.build("action", message));
+        Messaging.send(sender, prefix, config.actionMessage.build("action", message));
     }
 
     @Override

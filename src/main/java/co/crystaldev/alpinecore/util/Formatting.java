@@ -1,11 +1,12 @@
 package co.crystaldev.alpinecore.util;
 
+import co.crystaldev.alpinecore.Reference;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 /**
@@ -16,6 +17,9 @@ import java.util.Map;
  */
 @UtilityClass
 public final class Formatting {
+
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
+
     /**
      * Formats text with placeholders.
      * <p>
@@ -26,21 +30,36 @@ public final class Formatting {
      * @return The formatted text
      */
     @NotNull
-    public String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
+    public static String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
         if (text == null)
             return "";
         if (placeholders.length == 0)
             return text;
 
         if (placeholders.length == 1) {
-            // Replace all placeholders with the given value
+            // Replace all placeholders with given value
             text = text.replaceAll("%\\w+%", placeholders[0].toString());
         }
         else {
             for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
-                String placeholder = "%" + placeholders[i] + "%";
-                String value = placeholders[i + 1].toString();
-                text = text.replace(placeholder, value);
+                String placeholder = (String) placeholders[i];
+                Object rawReplacer = placeholders[i + 1];
+                String formattedReplacer;
+
+                if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
+                    formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
+                }
+                else if (rawReplacer instanceof Boolean) {
+                    formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
+                }
+                else if (rawReplacer instanceof Component) {
+                    formattedReplacer = Reference.STRICT_MINI_MESSAGE.serialize(((Component) rawReplacer).append(Components.reset()));
+                }
+                else {
+                    formattedReplacer = rawReplacer.toString();
+                }
+
+                text = text.replaceAll("%" + placeholder + "%", formattedReplacer);
             }
         }
 
@@ -65,8 +84,23 @@ public final class Formatting {
 
         for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
             String placeholder = "%" + entry.getKey() + "%";
-            String value = entry.getValue().toString();
-            text = text.replace(placeholder, value);
+            Object rawReplacer = entry.getValue();
+            String formattedReplacer;
+
+            if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
+                formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
+            }
+            else if (rawReplacer instanceof Boolean) {
+                formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
+            }
+            else if (rawReplacer instanceof Component) {
+                formattedReplacer = Reference.STRICT_MINI_MESSAGE.serialize(((Component) rawReplacer).append(Components.reset()));
+            }
+            else {
+                formattedReplacer = rawReplacer.toString();
+            }
+
+            text = text.replace(placeholder, formattedReplacer);
         }
 
         return text;

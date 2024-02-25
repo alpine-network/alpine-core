@@ -24,6 +24,7 @@ import java.util.Collection;
  */
 @UtilityClass @SuppressWarnings("unused")
 public final class Components {
+
     /**
      * Send a variable number of components to a receiver.
      *
@@ -32,29 +33,6 @@ public final class Components {
      */
     public static void send(@NotNull CommandSender sender, @NotNull Component... components) {
         Reference.AUDIENCES.sender(sender).sendMessage(Components.joinSpaces(components));
-    }
-
-    /**
-     * Send a variable number of components to a variable
-     * number of receivers.
-     *
-     * @param senders    The receivers
-     * @param components The components to be sent
-     */
-    public static void send(@NotNull Collection<CommandSender> senders, @NotNull Component... components) {
-        senders.forEach(sender -> send(sender, components));
-    }
-
-    /**
-     * Send a variable number of components to all online
-     * players.
-     *
-     * @param components The components to be sent
-     * @since 0.1.1
-     */
-    public static void broadcast(@NotNull Component... components) {
-        Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
-        players.forEach(player -> send(player, components));
     }
 
     /**
@@ -80,7 +58,7 @@ public final class Components {
      */
     @NotNull
     public static Component join(@NotNull Component... components) {
-        return reset().append(Component.join(JoinConfiguration.noSeparators(), components)).compact();
+        return Component.join(JoinConfiguration.noSeparators(), components);
     }
 
     /**
@@ -92,7 +70,7 @@ public final class Components {
      */
     @NotNull
     public static Component join(@NotNull Iterable<Component> components) {
-        return reset().append(Component.join(JoinConfiguration.noSeparators(), components)).compact();
+        return Component.join(JoinConfiguration.noSeparators(), components);
     }
 
     /**
@@ -104,7 +82,7 @@ public final class Components {
      */
     @NotNull
     public static Component joinSpaces(@NotNull Component... components) {
-        return reset().append(Component.join(JoinConfiguration.separator(Component.space()), components)).compact();
+        return Component.join(JoinConfiguration.separator(Component.space()), components);
     }
 
     /**
@@ -116,7 +94,7 @@ public final class Components {
      */
     @NotNull
     public static Component joinSpaces(@NotNull Iterable<Component> components) {
-        return reset().append(Component.join(JoinConfiguration.separator(Component.space()), components)).compact();
+        return Component.join(JoinConfiguration.separator(Component.space()), components);
     }
 
 
@@ -129,7 +107,7 @@ public final class Components {
      */
     @NotNull
     public static Component joinNewLines(@NotNull Component... components) {
-        return reset().append(Component.join(JoinConfiguration.newlines(), components)).compact();
+        return Component.join(JoinConfiguration.newlines(), components);
     }
 
     /**
@@ -141,6 +119,6 @@ public final class Components {
      */
     @NotNull
     public static Component joinNewLines(@NotNull Iterable<Component> components) {
-        return reset().append(Component.join(JoinConfiguration.newlines(), components)).compact();
+        return Component.join(JoinConfiguration.newlines(), components);
     }
 }

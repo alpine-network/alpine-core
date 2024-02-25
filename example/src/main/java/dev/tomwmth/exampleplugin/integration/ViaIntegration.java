@@ -3,7 +3,7 @@ package dev.tomwmth.exampleplugin.integration;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegrationEngine;
-import co.crystaldev.alpinecore.util.Components;
+import co.crystaldev.alpinecore.util.Messaging;
 import com.viaversion.viaversion.api.Via;
 import dev.tomwmth.exampleplugin.config.Config;
 import net.kyori.adventure.text.Component;
@@ -42,7 +42,7 @@ public class ViaIntegration extends AlpineIntegration {
 
             int protocol = Via.getAPI().getPlayerVersion(event.getPlayer());
 
-            Components.send(event.getPlayer(), prefix, config.integrationJoinMessage.build("protocol", protocol));
+            Messaging.send(event.getPlayer(), prefix, config.integrationJoinMessage.build("protocol", protocol));
         }
     }
 }

@@ -2,7 +2,7 @@ package co.crystaldev.alpinecore.handler;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.config.AlpineCoreConfig;
-import co.crystaldev.alpinecore.util.Components;
+import co.crystaldev.alpinecore.util.Messaging;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
@@ -27,12 +27,12 @@ public final class CommandInvalidUsageHandler implements InvalidUsageHandler<Com
         Schematic command = result.getSchematic();
 
         if (command.isOnlyFirst()) {
-            Components.send(sender, config.invalidUsage.single.build("syntax", command.first()));
+            Messaging.send(sender, config.invalidUsage.single.build("syntax", command.first()));
         }
         else {
-            Components.send(sender, config.invalidUsage.multiHeader.build());
+            Messaging.send(sender, config.invalidUsage.multiHeader.build());
             for (String syntax : command.all()) {
-                Components.send(sender, config.invalidUsage.multiLine.build("syntax", syntax));
+                Messaging.send(sender, config.invalidUsage.multiLine.build("syntax", syntax));
             }
         }
     }
