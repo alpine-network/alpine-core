@@ -219,6 +219,15 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     /**
+     * Retrieves the current server tick.
+     *
+     * @return The current tick.
+     */
+    public long getCurrentTick() {
+        return AlpineCore.TICK_COUNTER.get();
+    }
+
+    /**
      * Logs an information message with color formatting.
      *
      * @param message The message to log

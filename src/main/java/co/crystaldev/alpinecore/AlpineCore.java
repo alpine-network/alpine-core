@@ -18,7 +18,7 @@ public final class AlpineCore extends AlpinePlugin {
     private static AlpineCore instance;
     { instance = this; }
 
-    private static final AtomicLong TICK_COUNTER = new AtomicLong();
+    static final AtomicLong TICK_COUNTER = new AtomicLong();
 
     @Override
     public void onStart() {
