@@ -15,9 +15,7 @@ import java.io.File;
 public final class StatisticsStore extends AlpineStore<Player, Statistics> {
     @Getter
     private static StatisticsStore instance;
-    {
-        instance = this;
-    }
+    { instance = this; }
 
     StatisticsStore(AlpinePlugin plugin) {
         super(plugin, FlatfileDriver.<Player, Statistics>builder()
