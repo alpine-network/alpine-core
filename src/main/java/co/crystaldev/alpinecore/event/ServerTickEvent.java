@@ -1,5 +1,6 @@
-package co.crystaldev.alpinecore.framework.event;
+package co.crystaldev.alpinecore.event;
 
+import co.crystaldev.alpinecore.framework.event.AlpineEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

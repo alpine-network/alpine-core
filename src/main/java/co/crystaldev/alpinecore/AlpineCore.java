@@ -1,6 +1,6 @@
 package co.crystaldev.alpinecore;
 
-import co.crystaldev.alpinecore.framework.event.ServerTickEvent;
+import co.crystaldev.alpinecore.event.ServerTickEvent;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
