@@ -1,18 +1,12 @@
 package co.crystaldev.alpinecore.util;
 
-import co.crystaldev.alpinecore.Reference;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 /**
  * Utility for interacting with Adventure {@link Component}
@@ -24,16 +18,6 @@ import java.util.Collection;
  */
 @UtilityClass @SuppressWarnings("unused")
 public final class Components {
-
-    /**
-     * Send a variable number of components to a receiver.
-     *
-     * @param sender     The receiver
-     * @param components The components to be sent
-     */
-    public static void send(@NotNull CommandSender sender, @NotNull Component... components) {
-        Reference.AUDIENCES.sender(sender).sendMessage(Components.joinSpaces(components));
-    }
 
     /**
      * Constructs a component that can be used to reset
