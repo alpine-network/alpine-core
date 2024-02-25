@@ -1,13 +1,14 @@
 package co.crystaldev.alpinecore.framework.config.object;
 
-import co.crystaldev.alpinecore.Reference;
+import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.util.Formatting;
 import de.exlll.configlib.Configuration;
-import de.exlll.configlib.Serializer;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,14 +25,25 @@ import java.util.stream.Collectors;
  */
 @Configuration @NoArgsConstructor
 public class ConfigMessage {
-    private String message;
 
-    public ConfigMessage(@NotNull String message) {
+    private List<String> message;
+
+    private ConfigMessage(@NotNull List<String> message) {
         this.message = message;
     }
 
-    public ConfigMessage(@NotNull Component component) {
-        this.message = Reference.MINI_MESSAGE.serialize(component);
+    private ConfigMessage(@NotNull String message) {
+        this(Arrays.asList(message.split("(<br>|\n|\r)")));
+    }
+
+    @NotNull
+    public static ConfigMessage of(@NotNull String component) {
+        return new ConfigMessage(Collections.singletonList(component));
+    }
+
+    @NotNull
+    public static ConfigMessage of(@NotNull String... components) {
+        return new ConfigMessage(Arrays.asList(components));
     }
 
     /**
@@ -47,9 +59,9 @@ public class ConfigMessage {
      * @return The {@link Component}
      */
     @NotNull
-    public Component build(@NotNull Object... placeholders) {
-        String formatted = Formatting.formatPlaceholders(this.message, placeholders);
-        return Reference.MINI_MESSAGE.deserialize(formatted);
+    public Component build(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
+        String formatted = Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
+        return plugin.getMiniMessage().deserialize(formatted);
     }
 
     /**
@@ -65,9 +77,9 @@ public class ConfigMessage {
      * @return The {@link Component}
      */
     @NotNull
-    public Component build(@NotNull Map<String, Object> placeholders) {
-        String formatted = Formatting.formatPlaceholders(this.message, placeholders);
-        return Reference.MINI_MESSAGE.deserialize(formatted);
+    public Component build(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
+        String formatted = Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
+        return plugin.getMiniMessage().deserialize(formatted);
     }
 
     /**
@@ -77,8 +89,8 @@ public class ConfigMessage {
      * @return The string
      */
     @NotNull
-    public String buildString(@NotNull Object... placeholders) {
-        return Formatting.formatPlaceholders(this.message, placeholders);
+    public String buildString(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
+        return Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
     }
 
     /**
@@ -88,15 +100,14 @@ public class ConfigMessage {
      * @return The string
      */
     @NotNull
-    public String buildString(@NotNull Map<String, Object> placeholders) {
-        return Formatting.formatPlaceholders(this.message, placeholders);
+    public String buildString(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
+        return Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
     }
 
     public static class Serializer implements de.exlll.configlib.Serializer<ConfigMessage, Object> {
         @Override
         public Object serialize(ConfigMessage element) {
-            String[] split = element.message.replace("\r", "").split("\n|<br>");
-            return split.length == 1 ? element.message : String.join("\n", split);
+            return String.join("\n", element.message);
         }
 
         @Override

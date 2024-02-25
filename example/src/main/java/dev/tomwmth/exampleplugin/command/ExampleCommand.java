@@ -1,9 +1,9 @@
 package dev.tomwmth.exampleplugin.command;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
+import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
 import co.crystaldev.alpinecore.util.Messaging;
-import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.Key;
 import dev.rollczi.litecommands.annotations.command.Command;
@@ -12,24 +12,19 @@ import dev.rollczi.litecommands.annotations.description.Description;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import dev.rollczi.litecommands.argument.Argument;
-import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
-import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
-import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.tomwmth.exampleplugin.config.Config;
 import dev.tomwmth.exampleplugin.storage.Statistics;
 import dev.tomwmth.exampleplugin.storage.StatisticsStore;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,8 +48,12 @@ public class ExampleCommand extends AlpineCommand {
         StatisticsStore store = StatisticsStore.getInstance();
         Statistics stats = store.getOrCreate(target.getPlayer(), new Statistics());
 
-        Component prefix = config.prefix.build();
-        Messaging.send(sender, prefix, config.commandMessage.build("player", target.getPlayer().getName(), "amount", stats.blocksBroken));
+        Messaging.send(sender,
+                config.prefix.build(this.plugin),
+                config.commandMessage.build(this.plugin,
+                        "player", target.getPlayer().getName(),
+                        "amount", stats.blocksBroken)
+        );
     }
 
     @Execute(name = "subcommand")
@@ -76,14 +75,11 @@ public class ExampleCommand extends AlpineCommand {
                 world.createExplosion(sender.getLocation(), 4.0F);
         }
 
-        Component prefix = config.prefix.build();
-        Messaging.send(sender, prefix, config.actionMessage.build("action", message));
-    }
-
-    @Override
-    public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
-        // Register the `lookingAtPlayer` argument here
-        builder.argument(Player.class, ArgumentKey.of("lookingAtPlayer"), new LookingAtPlayersArgument());
+        Messaging.send(sender,
+                config.prefix.build(this.plugin),
+                config.actionMessage.build(this.plugin,
+                        "action", message)
+        );
     }
 
     private enum ExampleAction {
@@ -92,7 +88,10 @@ public class ExampleCommand extends AlpineCommand {
         EXPLODE
     }
 
-    private static final class LookingAtPlayersArgument extends ArgumentResolver<CommandSender, Player> {
+    private static final class LookingAtPlayersArgument extends AlpineArgumentResolver<Player> {
+        public LookingAtPlayersArgument() {
+            super(Player.class, "lookingAtPlayer");
+        }
 
         @Override
         protected ParseResult<Player> parse(Invocation<CommandSender> invocation, Argument<Player> context, String argument) {

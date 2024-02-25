@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 @Configuration
 @AllArgsConstructor @NoArgsConstructor
 public class ConfigRewardPool {
+
     private List<Entry> entries;
 
     /**

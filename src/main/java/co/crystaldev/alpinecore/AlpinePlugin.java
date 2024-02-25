@@ -15,6 +15,7 @@ import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.handler.CommandInvalidUsageHandler;
 import co.crystaldev.alpinecore.util.ChatColor;
 import co.crystaldev.alpinecore.util.SimpleTimer;
+import co.crystaldev.alpinecore.util.StyleTagResolver;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import dev.rollczi.litecommands.LiteCommands;
@@ -28,6 +29,8 @@ import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
@@ -69,6 +72,14 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     /** Registry of config and key serializers for the plugin */
     @Getter
     private final SerializerRegistry serializerRegistry = new SerializerRegistry();
+
+    /** MiniMessage curated by this plugin. */
+    @Getter
+    private MiniMessage miniMessage;
+
+    /** Strict MiniMessage curated by this plugin. */
+    @Getter
+    private MiniMessage strictMiniMessage;
 
     // region Abstract methods
     /**
@@ -123,6 +134,19 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
         // NO-OP
     }
+
+    /**
+     * Configures the MiniMessage parser with custom tag resolvers and other settings.
+     * This method allows for customization of the MiniMessage parser.
+     *
+     * @param builder The MiniMessage {@link MiniMessage.Builder} instance to be configured with custom settings.
+     * @return The MiniMessage instance.
+     * @see MiniMessage
+     */
+    @NotNull
+    public MiniMessage setupMiniMessage(@NotNull MiniMessage.Builder builder) {
+        return builder.build();
+    }
     // endregion
 
     // region Override methods
@@ -133,8 +157,13 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         SimpleTimer timer = new SimpleTimer();
         timer.start();
 
+        // Setup plugin MiniMessage instances
+        TagResolver resolver = TagResolver.resolver(TagResolver.standard(), new StyleTagResolver(this));
+        this.miniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver));
+        this.strictMiniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver).strict(true));
+
         // Setup and register custom data serializers
-        this.serializerRegistry.setMiniMessage(Reference.MINI_MESSAGE);
+        this.serializerRegistry.setMiniMessage(this.miniMessage);
         this.serializerRegistry.putKeySerializer(Number.class, new KeySerializer.NumberKey());
         this.serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
         this.serializerRegistry.putKeySerializer(UUID.class, new KeySerializer.UuidKey());
@@ -308,13 +337,13 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
                 // Input our configurable messages
                 .invalidUsage(new CommandInvalidUsageHandler(this))
-                .message(LiteMessages.MISSING_PERMISSIONS, permission -> messages.missingPermissions.buildString("permission", permission))
-                .message(LiteMessages.INVALID_NUMBER, input -> messages.invalidNumber.buildString("input", input))
-                .message(LiteMessages.INSTANT_INVALID_FORMAT, input -> messages.invalidInstant.buildString("input", input))
-                .message(LiteBukkitMessages.WORLD_NOT_EXIST, input -> messages.invalidWorld.buildString("input", input))
-                .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> messages.invalidLocation.buildString("input", input))
-                .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> messages.playerNotFound.buildString("player", input))
-                .message(LiteBukkitMessages.PLAYER_ONLY, input -> messages.playerOnly.buildString());
+                .message(LiteMessages.MISSING_PERMISSIONS, permission -> messages.missingPermissions.buildString(this, "permission", permission))
+                .message(LiteMessages.INVALID_NUMBER, input -> messages.invalidNumber.buildString(this, "input", input))
+                .message(LiteMessages.INSTANT_INVALID_FORMAT, input -> messages.invalidInstant.buildString(this, "input", input))
+                .message(LiteBukkitMessages.WORLD_NOT_EXIST, input -> messages.invalidWorld.buildString(this, "input", input))
+                .message(LiteBukkitMessages.LOCATION_INVALID_FORMAT, input -> messages.invalidLocation.buildString(this, "input", input))
+                .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> messages.playerNotFound.buildString(this, "player", input))
+                .message(LiteBukkitMessages.PLAYER_ONLY, input -> messages.playerOnly.buildString(this));
 
         // Let the plugin mutate the command manager
         this.setupCommandManager(builder);

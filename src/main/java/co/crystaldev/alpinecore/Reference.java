@@ -4,7 +4,6 @@ import co.crystaldev.alpinecore.util.UuidTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.UUID;
 
@@ -28,10 +27,6 @@ public final class Reference {
     public static final Gson GSON_PRETTY = gsonBuilder().setPrettyPrinting().create();
     /** An Adventure Bukkit platform audience */
     public static final BukkitAudiences AUDIENCES = BukkitAudiences.create(AlpineCore.getInstance());
-    /** An Adventure MiniMessage serializer */
-    public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    /** A Strict Adventure MiniMessage serializer */
-    public static final MiniMessage STRICT_MINI_MESSAGE = MiniMessage.builder().strict(true).build();
 
     private static GsonBuilder gsonBuilder() {
         return new GsonBuilder()

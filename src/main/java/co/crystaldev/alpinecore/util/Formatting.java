@@ -1,8 +1,9 @@
 package co.crystaldev.alpinecore.util;
 
-import co.crystaldev.alpinecore.Reference;
+import co.crystaldev.alpinecore.AlpinePlugin;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +44,38 @@ public final class Formatting {
         else {
             for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
                 String placeholder = (String) placeholders[i];
+                String value = placeholders[i + 1].toString();
+                text = text.replaceAll("%" + placeholder + "%", value);
+            }
+        }
+
+        return text;
+    }
+
+    /**
+     * Formats text with placeholders.
+     * <p>
+     * Placeholders are denoted with percent symbols on either side.
+     *
+     * @param miniMessage  The {@link MiniMessage} instance.
+     * @param text         The text to format
+     * @param placeholders The placeholders used to format the text
+     * @return The formatted text
+     */
+    @NotNull
+    public static String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Object... placeholders) {
+        if (text == null)
+            return "";
+        if (placeholders.length == 0)
+            return text;
+
+        if (placeholders.length == 1) {
+            // Replace all placeholders with given value
+            text = text.replaceAll("%\\w+%", placeholders[0].toString());
+        }
+        else {
+            for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
+                String placeholder = (String) placeholders[i];
                 Object rawReplacer = placeholders[i + 1];
                 String formattedReplacer;
 
@@ -53,7 +86,7 @@ public final class Formatting {
                     formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
                 }
                 else if (rawReplacer instanceof Component) {
-                    formattedReplacer = Reference.STRICT_MINI_MESSAGE.serialize(((Component) rawReplacer).append(Components.reset()));
+                    formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
                 }
                 else {
                     formattedReplacer = rawReplacer.toString();
@@ -64,6 +97,21 @@ public final class Formatting {
         }
 
         return text;
+    }
+
+    /**
+     * Formats text with placeholders.
+     * <p>
+     * Placeholders are denoted with percent symbols on either side.
+     *
+     * @param plugin       The owning plugin.
+     * @param text         The text to format
+     * @param placeholders The placeholders used to format the text
+     * @return The formatted text
+     */
+    @NotNull
+    public static String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Object... placeholders) {
+        return formatPlaceholders(plugin.getStrictMiniMessage(), text, placeholders);
     }
 
     /**
@@ -84,6 +132,32 @@ public final class Formatting {
 
         for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
             String placeholder = "%" + entry.getKey() + "%";
+            String value = entry.getValue().toString();
+            text = text.replace(placeholder, value);
+        }
+
+        return text;
+    }
+
+    /**
+     * Formats text with placeholders.
+     * <p>
+     * Placeholders are denoted with percent symbols on either side.
+     *
+     * @param miniMessage  The {@link MiniMessage} instance.
+     * @param text         The text to format
+     * @param placeholders The placeholders used to format the text
+     * @return The formatted text
+     */
+    @NotNull
+    public String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+        if (text == null)
+            return "";
+        if (placeholders.size() == 0)
+            return text;
+
+        for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
+            String placeholder = "%" + entry.getKey() + "%";
             Object rawReplacer = entry.getValue();
             String formattedReplacer;
 
@@ -94,7 +168,7 @@ public final class Formatting {
                 formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
             }
             else if (rawReplacer instanceof Component) {
-                formattedReplacer = Reference.STRICT_MINI_MESSAGE.serialize(((Component) rawReplacer).append(Components.reset()));
+                formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
             }
             else {
                 formattedReplacer = rawReplacer.toString();
@@ -104,5 +178,20 @@ public final class Formatting {
         }
 
         return text;
+    }
+
+    /**
+     * Formats text with placeholders.
+     * <p>
+     * Placeholders are denoted with percent symbols on either side.
+     *
+     * @param plugin       The owning plugin.
+     * @param text         The text to format
+     * @param placeholders The placeholders used to format the text
+     * @return The formatted text
+     */
+    @NotNull
+    public String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+        return formatPlaceholders(plugin.getStrictMiniMessage(), text, placeholders);
     }
 }

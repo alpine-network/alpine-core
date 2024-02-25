@@ -22,17 +22,17 @@ public final class CommandInvalidUsageHandler implements InvalidUsageHandler<Com
 
     @Override
     public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result, ResultHandlerChain<CommandSender> chain) {
-        AlpineCoreConfig config = plugin.getConfigManager().getConfig(AlpineCoreConfig.class);
+        AlpineCoreConfig config = this.plugin.getConfigManager().getConfig(AlpineCoreConfig.class);
         CommandSender sender = invocation.sender();
         Schematic command = result.getSchematic();
 
         if (command.isOnlyFirst()) {
-            Messaging.send(sender, config.invalidUsage.single.build("syntax", command.first()));
+            Messaging.send(sender, config.invalidUsage.single.build(this.plugin, "syntax", command.first()));
         }
         else {
-            Messaging.send(sender, config.invalidUsage.multiHeader.build());
+            Messaging.send(sender, config.invalidUsage.multiHeader.build(this.plugin));
             for (String syntax : command.all()) {
-                Messaging.send(sender, config.invalidUsage.multiLine.build("syntax", syntax));
+                Messaging.send(sender, config.invalidUsage.multiLine.build(this.plugin, "syntax", syntax));
             }
         }
     }
