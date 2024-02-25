@@ -163,7 +163,6 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.strictMiniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver).strict(true));
 
         // Setup and register custom data serializers
-        this.serializerRegistry.setMiniMessage(this.miniMessage);
         this.serializerRegistry.putKeySerializer(Number.class, new KeySerializer.NumberKey());
         this.serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
         this.serializerRegistry.putKeySerializer(UUID.class, new KeySerializer.UuidKey());
@@ -330,7 +329,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                         .miniMessage(true)
                         .legacyColor(true)
                         .colorizeArgument(true)
-                        .serializer(this.serializerRegistry.getMiniMessage()))
+                        .serializer(this.miniMessage))
 
                 // Feed in our commands
                 .commands((Object[]) commands)

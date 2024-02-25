@@ -1,10 +1,7 @@
 package co.crystaldev.alpinecore.framework.storage;
 
-import co.crystaldev.alpinecore.Reference;
 import de.exlll.configlib.Serializer;
 import lombok.Getter;
-import lombok.Setter;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +22,6 @@ public final class SerializerRegistry {
 
     // A map to store config serializers
     private final Map<Class<?>, Serializer<?, ?>> configSerializers = new HashMap<>();
-
-    // MiniMessage serializer
-    @Getter @Setter
-    private MiniMessage miniMessage;
 
     /**
      * Registers a custom key serializer for a specific data type.
