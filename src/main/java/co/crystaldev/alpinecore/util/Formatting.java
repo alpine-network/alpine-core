@@ -84,7 +84,9 @@ public final class Formatting {
     public static String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Object... placeholders) {
         if (text != null) {
             HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
-            text = variables.isEmpty() ? text : formatPlaceholders(text, variables);
+            for (Map.Entry<String, String> entry : variables.entrySet()) {
+                text = text.replace("%" + entry.getKey() + "%", entry.getValue());
+            }
         }
 
         return formatPlaceholders(plugin.getStrictMiniMessage(), text, placeholders);
@@ -159,7 +161,9 @@ public final class Formatting {
     public static String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Map<String, Object> placeholders) {
         if (text != null) {
             HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
-            text = variables.isEmpty() ? text : formatPlaceholders(text, variables);
+            for (Map.Entry<String, String> entry : variables.entrySet()) {
+                text = text.replace("%" + entry.getKey() + "%", entry.getValue());
+            }
         }
 
         return formatPlaceholders(plugin.getStrictMiniMessage(), text, placeholders);
