@@ -136,6 +136,19 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     /**
+     * Configures default styles for text formatting within the plugin.
+     * This method is used to add custom tags that modify the appearance of text.
+     * <br>
+     * It provides a straightforward way to enrich text presentation by associating
+     * custom style tags with their corresponding formatting instructions.
+     *
+     * @param styleConsumer The consumer that accepts style definitions.
+     */
+    public void setupDefaultStyles(@NotNull StyleConsumer styleConsumer) {
+        // NO-OP
+    }
+
+    /**
      * Configures the MiniMessage parser with custom tag resolvers and other settings.
      * This method allows for customization of the MiniMessage parser.
      *
@@ -173,7 +186,10 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
         // Register command config
         if (!this.configManager.isRegistered(AlpineCoreConfig.class)) {
-            this.configManager.registerConfig(new AlpineCoreConfig());
+            AlpineCoreConfig config = new AlpineCoreConfig();
+            this.setupDefaultStyles((tag, style) -> config.styles.put(tag, style));
+
+            this.configManager.registerConfig(config);
         }
 
         // Setup plugin MiniMessage instances
@@ -418,4 +434,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         }
     }
     // endregion
+
+    @FunctionalInterface
+    public interface StyleConsumer {
+        void addStyle(@NotNull String tag, @NotNull String style);
+    }
 }
