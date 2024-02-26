@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Configuration @NoArgsConstructor
 public class ConfigMessage {
 
-    private List<String> message;
+    protected List<String> message;
 
     protected ConfigMessage(@NotNull List<String> message) {
         this.message = message;
