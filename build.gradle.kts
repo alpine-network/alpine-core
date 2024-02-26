@@ -46,7 +46,7 @@ dependencies {
     testImplementation("commons-lang:commons-lang:2.6")
 
     shade(this, "org.jetbrains:annotations:24.1.0")
-    shade(this, "de.exlll:configlib-spigot:4.5.0")
+    shade(this, "de.exlll:configlib-paper:4.5.0")
     shade(this, "com.github.cryptomorin:XSeries:9.9.0")
 
     val liteCommands = "3.4.0"
