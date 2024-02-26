@@ -45,14 +45,15 @@ dependencies {
     testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
     testImplementation("commons-lang:commons-lang:2.6")
 
-    shade(this, "org.jetbrains:annotations:24.0.1")
-    shade(this, "de.exlll:configlib-spigot:4.2.0")
+    shade(this, "org.jetbrains:annotations:24.1.0")
+    shade(this, "de.exlll:configlib-spigot:4.5.0")
+    shade(this, "com.github.cryptomorin:XSeries:9.9.0")
 
-    val liteCommands = "3.2.2"
+    val liteCommands = "3.4.0"
     shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
-    val adventure = "4.15.0"
+    val adventure = "4.16.0"
     shade(this, "net.kyori:adventure-platform-bukkit:4.3.0")
     shade(this, "net.kyori:adventure-api:$adventure")
     shade(this, "net.kyori:adventure-text-minimessage:$adventure")

@@ -17,6 +17,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
+ * Utility for sending recipients Adventure components.
+ *
  * @author BestBearr <crumbygames12@gmail.com>
  * @since 0.3.0
  */
