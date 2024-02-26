@@ -1,6 +1,7 @@
 package co.crystaldev.alpinecore.util;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
+import co.crystaldev.alpinecore.config.AlpineCoreConfig;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,37 +22,6 @@ import java.util.Map;
 public final class Formatting {
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
-
-    /**
-     * Formats text with placeholders.
-     * <p>
-     * Placeholders are denoted with percent symbols on either side.
-     *
-     * @param text         The text to format
-     * @param placeholders The placeholders used to format the text
-     * @return The formatted text
-     */
-    @NotNull
-    public static String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
-        if (text == null)
-            return "";
-        if (placeholders.length == 0)
-            return text;
-
-        if (placeholders.length == 1) {
-            // Replace all placeholders with given value
-            text = text.replaceAll("%\\w+%", placeholders[0].toString());
-        }
-        else {
-            for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
-                String placeholder = (String) placeholders[i];
-                String value = placeholders[i + 1].toString();
-                text = text.replaceAll("%" + placeholder + "%", value);
-            }
-        }
-
-        return text;
-    }
 
     /**
      * Formats text with placeholders.
@@ -111,6 +82,11 @@ public final class Formatting {
      */
     @NotNull
     public static String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Object... placeholders) {
+        if (text != null) {
+            HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
+            text = variables.isEmpty() ? text : formatPlaceholders(text, variables);
+        }
+
         return formatPlaceholders(plugin.getStrictMiniMessage(), text, placeholders);
     }
 
@@ -124,19 +100,8 @@ public final class Formatting {
      * @return The formatted text
      */
     @NotNull
-    public String formatPlaceholders(@Nullable String text, @NotNull Map<String, Object> placeholders) {
-        if (text == null)
-            return "";
-        if (placeholders.size() == 0)
-            return text;
-
-        for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
-            String placeholder = "%" + entry.getKey() + "%";
-            String value = entry.getValue().toString();
-            text = text.replace(placeholder, value);
-        }
-
-        return text;
+    public static String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
+        return formatPlaceholders(MiniMessage.miniMessage(), text, placeholders);
     }
 
     /**
@@ -150,7 +115,7 @@ public final class Formatting {
      * @return The formatted text
      */
     @NotNull
-    public String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+    public static String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Map<String, Object> placeholders) {
         if (text == null)
             return "";
         if (placeholders.size() == 0)
@@ -191,7 +156,26 @@ public final class Formatting {
      * @return The formatted text
      */
     @NotNull
-    public String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+    public static String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+        if (text != null) {
+            HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
+            text = variables.isEmpty() ? text : formatPlaceholders(text, variables);
+        }
+
         return formatPlaceholders(plugin.getStrictMiniMessage(), text, placeholders);
+    }
+
+    /**
+     * Formats text with placeholders.
+     * <p>
+     * Placeholders are denoted with percent symbols on either side.
+     *
+     * @param text         The text to format
+     * @param placeholders The placeholders used to format the text
+     * @return The formatted text
+     */
+    @NotNull
+    public static String formatPlaceholders(@Nullable String text, @NotNull Map<String, Object> placeholders) {
+        return formatPlaceholders(MiniMessage.miniMessage(), text, placeholders);
     }
 }

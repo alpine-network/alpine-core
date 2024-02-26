@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,11 +25,11 @@ public class ConfigMessage {
 
     private List<String> message;
 
-    private ConfigMessage(@NotNull List<String> message) {
+    protected ConfigMessage(@NotNull List<String> message) {
         this.message = message;
     }
 
-    private ConfigMessage(@NotNull String message) {
+    protected ConfigMessage(@NotNull String message) {
         this(Arrays.asList(message.split("(<br>|\n|\r)")));
     }
 
@@ -113,7 +110,11 @@ public class ConfigMessage {
         @Override
         public ConfigMessage deserialize(Object element) {
             if (element instanceof Map) {
-                return new ConfigMessage((String) ((Map) element).get("message"));
+                Object value = ((Map) element).get("message");
+                List<String> message = value instanceof Collection<?>
+                        ? new LinkedList<>((Collection<String>) value)
+                        : Collections.singletonList(value.toString());
+                return new ConfigMessage(message);
             }
             else if (element instanceof List) {
                 return new ConfigMessage(((List<?>) element).stream()

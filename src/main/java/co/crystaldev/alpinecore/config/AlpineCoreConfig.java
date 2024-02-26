@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
  */
 public final class AlpineCoreConfig extends AlpineConfig implements Initializable {
 
-    @Comment("Predefined chat style tags used in config.")
+    @Comment("Predefined chat style tags for use in config.")
     public HashMap<String, String> styles = new LinkedHashMap<>();
     {
         this.styles.put("info", "dark_aqua bold");
@@ -36,6 +36,17 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
         this.styles.put("text", "white");
         this.styles.put("error_text", "white");
     }
+
+    @Comment({
+            "",
+            "Predefined variables for use in config",
+            " ",
+            "Example:",
+            "variables:",
+            "  prefix: '<bracket>[<info>*</info>]</bracket>'",
+            "  error_prefix: '<bracket>[<error>*</error>]</bracket>'"
+    })
+    public HashMap<String, String> variables = new LinkedHashMap<>();
 
     @Comment({
             "",

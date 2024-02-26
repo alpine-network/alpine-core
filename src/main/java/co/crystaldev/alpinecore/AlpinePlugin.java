@@ -149,6 +149,19 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     /**
+     * Sets up default variables for use within the plugin.
+     * <br>
+     * Unlike styles, variables are placeholders that are not processed for formatting.
+     * This method allows for the registration of default variables providing a simple
+     * way to incorporate dynamic content.
+     *
+     * @param variableConsumer The consumer that accepts variable definitions.
+     */
+    public void setupDefaultVariables(@NotNull VariableConsumer variableConsumer) {
+        // NO-OP
+    }
+
+    /**
      * Configures the MiniMessage parser with custom tag resolvers and other settings.
      * This method allows for customization of the MiniMessage parser.
      *
@@ -188,6 +201,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         if (!this.configManager.isRegistered(AlpineCoreConfig.class)) {
             AlpineCoreConfig config = new AlpineCoreConfig();
             this.setupDefaultStyles((tag, style) -> config.styles.put(tag, style));
+            this.setupDefaultVariables((name, variable) -> config.variables.put(name, variable));
 
             this.configManager.registerConfig(config);
         }
@@ -438,5 +452,10 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     @FunctionalInterface
     public interface StyleConsumer {
         void addStyle(@NotNull String tag, @NotNull String style);
+    }
+
+    @FunctionalInterface
+    public interface VariableConsumer {
+        void addVariable(@NotNull String name, @NotNull String variable);
     }
 }
