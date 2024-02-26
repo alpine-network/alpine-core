@@ -24,7 +24,7 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
         this.styles.put("highlight", "aqua");
         this.styles.put("notice", "dark_aqua");
 
-        this.styles.put("error", "dark_red bold");
+        this.styles.put("error", "red bold");
         this.styles.put("error_highlight", "red");
 
         this.styles.put("success", "green bold");
