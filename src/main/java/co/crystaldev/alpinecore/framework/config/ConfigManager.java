@@ -37,7 +37,6 @@ public final class ConfigManager {
         }
 
         YamlConfigurationProperties.Builder<?> builder = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
-                .charset(StandardCharsets.UTF_8)
                 .inputNulls(true)
                 .outputNulls(true);
 
