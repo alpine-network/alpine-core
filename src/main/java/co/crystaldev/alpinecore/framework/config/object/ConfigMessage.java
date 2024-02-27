@@ -26,7 +26,11 @@ public class ConfigMessage {
     protected List<String> message;
 
     protected ConfigMessage(@NotNull List<String> message) {
-        this.message = message;
+        List<String> processedMessage = new LinkedList<>();
+        for (String s : message) {
+            processedMessage.addAll(Arrays.asList(s.split("(<br>|\n|\r)")));
+        }
+        this.message = processedMessage;
     }
 
     protected ConfigMessage(@NotNull String message) {
@@ -119,7 +123,7 @@ public class ConfigMessage {
             else if (element instanceof List) {
                 return new ConfigMessage(((List<?>) element).stream()
                         .map(Object::toString)
-                        .collect(Collectors.joining("\n")));
+                        .collect(Collectors.toList()));
             }
             else if (element instanceof String) {
                 return new ConfigMessage((String) element);
