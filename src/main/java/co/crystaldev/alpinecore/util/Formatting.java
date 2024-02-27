@@ -42,7 +42,7 @@ public final class Formatting {
 
         if (placeholders.length == 1) {
             // Replace all placeholders with given value
-            text = text.replaceAll("%\\w+%", placeholders[0].toString());
+            text = text.replace("%\\w+%", placeholders[0].toString());
         }
         else {
             for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
@@ -63,7 +63,7 @@ public final class Formatting {
                     formattedReplacer = rawReplacer.toString();
                 }
 
-                text = text.replaceAll("%" + placeholder + "%", formattedReplacer);
+                text = text.replace("%" + placeholder + "%", formattedReplacer);
             }
         }
 
