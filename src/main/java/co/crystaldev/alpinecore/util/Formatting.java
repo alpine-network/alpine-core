@@ -37,34 +37,28 @@ public final class Formatting {
     public static String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Object... placeholders) {
         if (text == null)
             return "";
-        if (placeholders.length == 0)
+        if (placeholders.length < 2)
             return text;
 
-        if (placeholders.length == 1) {
-            // Replace all placeholders with given value
-            text = text.replace("%\\w+%", placeholders[0].toString());
-        }
-        else {
-            for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
-                String placeholder = (String) placeholders[i];
-                Object rawReplacer = placeholders[i + 1];
-                String formattedReplacer;
+        for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
+            String placeholder = (String) placeholders[i];
+            Object rawReplacer = placeholders[i + 1];
+            String formattedReplacer;
 
-                if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
-                    formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
-                }
-                else if (rawReplacer instanceof Boolean) {
-                    formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
-                }
-                else if (rawReplacer instanceof Component) {
-                    formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
-                }
-                else {
-                    formattedReplacer = rawReplacer.toString();
-                }
-
-                text = text.replace("%" + placeholder + "%", formattedReplacer);
+            if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
+                formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
             }
+            else if (rawReplacer instanceof Boolean) {
+                formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
+            }
+            else if (rawReplacer instanceof Component) {
+                formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
+            }
+            else {
+                formattedReplacer = rawReplacer.toString();
+            }
+
+            text = text.replace("%" + placeholder + "%", formattedReplacer);
         }
 
         return text;
@@ -120,7 +114,7 @@ public final class Formatting {
     public static String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Map<String, Object> placeholders) {
         if (text == null)
             return "";
-        if (placeholders.size() == 0)
+        if (placeholders.isEmpty())
             return text;
 
         for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
