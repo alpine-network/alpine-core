@@ -47,11 +47,11 @@ public final class MaterialHelper {
      */
     @NotNull
     public static XMaterial getType(@NotNull Block block) {
-        if (XMaterial.supports(12)) {
-            return XMaterial.matchXMaterial(block.getTypeId(), block.getData()).orElse(XMaterial.AIR);
+        if (XMaterial.supports(13)) {
+            return XMaterial.matchXMaterial(block.getType());
         }
         else {
-            return XMaterial.matchXMaterial(block.getType());
+            return XMaterial.matchXMaterial(block.getTypeId(), block.getData()).orElse(XMaterial.AIR);
         }
     }
 
