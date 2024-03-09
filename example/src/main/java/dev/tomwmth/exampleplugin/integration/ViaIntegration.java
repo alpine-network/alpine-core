@@ -38,11 +38,10 @@ public class ViaIntegration extends AlpineIntegration {
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent event) {
             Config config = this.plugin.getConfiguration(Config.class);
-            Component prefix = config.prefix.build();
 
             int protocol = Via.getAPI().getPlayerVersion(event.getPlayer());
 
-            Messaging.send(event.getPlayer(), prefix, config.integrationJoinMessage.build("protocol", protocol));
+            Messaging.send(event.getPlayer(), config.integrationJoinMessage.build(this.plugin, "protocol", protocol));
         }
     }
 }

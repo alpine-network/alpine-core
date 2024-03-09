@@ -49,7 +49,6 @@ public class ExampleCommand extends AlpineCommand {
         Statistics stats = store.getOrCreate(target.getPlayer(), new Statistics());
 
         Messaging.send(sender,
-                config.prefix.build(this.plugin),
                 config.commandMessage.build(this.plugin,
                         "player", target.getPlayer().getName(),
                         "amount", stats.blocksBroken)
@@ -76,7 +75,6 @@ public class ExampleCommand extends AlpineCommand {
         }
 
         Messaging.send(sender,
-                config.prefix.build(this.plugin),
                 config.actionMessage.build(this.plugin,
                         "action", message)
         );
@@ -88,6 +86,7 @@ public class ExampleCommand extends AlpineCommand {
         EXPLODE
     }
 
+    // `AlpineArgumentResolver<TYPE>` is automatically discovered and instantiated
     private static final class LookingAtPlayersArgument extends AlpineArgumentResolver<Player> {
         public LookingAtPlayersArgument() {
             super(Player.class, "lookingAtPlayer");

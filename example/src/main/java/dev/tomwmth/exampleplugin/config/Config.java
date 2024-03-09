@@ -9,13 +9,12 @@ import de.exlll.configlib.Comment;
  * @since 0.1.0
  */
 public class Config extends AlpineConfig {
-    public ConfigMessage prefix = ConfigMessage.of("<dark_gray>[</dark_gray><gradient:#e81cff:#40c9ff>Example</gradient><dark_gray>]</dark_gray>");
-    public ConfigMessage commandMessage = ConfigMessage.of("<gray>%player% has broken <light_purple>%amount%</light_purple> blocks.</gray>");
-    public ConfigMessage actionMessage = ConfigMessage.of("<gray>Completed action: <gold>%action%");
+    public ConfigMessage commandMessage = ConfigMessage.of("%prefix% <gray>%player% has broken <light_purple>%amount%</light_purple> blocks.</gray>");
+    public ConfigMessage actionMessage = ConfigMessage.of("%prefix% <gray>Completed action: <gold>%action%");
 
     @Comment({
             "",
             "The custom tags used here are located in the AlpineCore config."
     })
-    public ConfigMessage integrationJoinMessage = ConfigMessage.of("<emphasis>Via reports your protocol version as <highlight>%protocol%</highlight>.</emphasis>");
+    public ConfigMessage integrationJoinMessage = ConfigMessage.of("%prefix% <emphasis>Via reports your protocol version as <highlight>%protocol%</highlight>.</emphasis>");
 }
