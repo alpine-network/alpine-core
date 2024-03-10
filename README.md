@@ -1,5 +1,5 @@
 # Alpine Core
-> Current version: 0.3.3
+> Current version: 0.3.5
 
 A lightweight library for creating modern yet widely compatible Minecraft server plugins.
 
@@ -53,7 +53,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'co.crystaldev:alpinecore:0.3.3'
+    compileOnly 'co.crystaldev:alpinecore:0.3.5'
 }
 ```
 
