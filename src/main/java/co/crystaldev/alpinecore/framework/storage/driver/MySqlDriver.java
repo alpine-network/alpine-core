@@ -1,8 +1,11 @@
 package co.crystaldev.alpinecore.framework.storage.driver;
 
 import co.crystaldev.alpinecore.AlpineCore;
+import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.Reference;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
+import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
+import co.crystaldev.alpinecore.util.DatabaseConnection;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.apache.commons.lang.Validate;
@@ -21,27 +24,21 @@ import java.util.function.Consumer;
 @ApiStatus.Experimental
 public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
 
-    private static final String PARAMS = "?" + String.join("&",
-            "useUnicode=true", "useJDBCCompliantTimezoneShift=true",
-            "useLegacyDatetimeCode=false", "serverTimezone=UTC");
-
-    private final String url;
-    private final String table;
-    private final String username;
-    private final String password;
     private final Class<D> dataType;
     private final Gson gson;
 
-    private Connection connection;
+    private final DatabaseConnection connection;
+    private final String table;
 
-    private MySqlDriver(@NotNull String url, @NotNull String table, @NotNull String username, @NotNull String password,
-                        @NotNull Class<D> dataType, @NotNull Gson gson) {
-        this.url = url + PARAMS;
+    private MySqlDriver(@NotNull AlpinePlugin plugin, @NotNull String url, @NotNull String table, @NotNull String username,
+                        @NotNull String password, @NotNull Class<D> dataType, @NotNull Gson gson) {
+        super(plugin);
         this.table = table;
-        this.username = username;
-        this.password = password;
         this.dataType = dataType;
         this.gson = gson;
+
+        // Setup connection
+        this.connection = new DatabaseConnection(null, url, username, password);
 
         // Establish a connection to the database
         if (this.getConnection() == null) {
@@ -130,6 +127,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
         finally {
             try {
                 conn.setAutoCommit(true);
+                conn.close();
             }
             catch (SQLException ignored) {
                 // NO-OP
@@ -155,6 +153,14 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
         catch (SQLException ex) {
             AlpineCore.getInstance().log("Unable to delete entry", ex);
             return false;
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (SQLException e) {
+                // NO-OP
+            }
         }
     }
 
@@ -182,6 +188,14 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
             AlpineCore.getInstance().log("Unable to fetch entry", ex);
             return false;
         }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (SQLException e) {
+                // NO-OP
+            }
+        }
     }
 
     @Override
@@ -203,6 +217,14 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
                 }
             }
         }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (SQLException e) {
+                // NO-OP
+            }
+        }
 
         throw new NoSuchElementException(String.format("No entry found for key \"%s\"", this.serializeKey(key)));
     }
@@ -222,6 +244,14 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
             while (resultSet.next()) {
                 String data = resultSet.getString("storage");
                 entries.add(this.gson.fromJson(data, this.dataType));
+            }
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (SQLException e) {
+                // NO-OP
             }
         }
 
@@ -257,16 +287,30 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
                 exceptionConsumer.accept(ex);
             }
         }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (SQLException e) {
+                // NO-OP
+            }
+        }
 
         return ImmutableList.copyOf(entries);
     }
 
+    @Override
+    public void shutdown() {
+        this.connection.shutdown();
+    }
+
     @NotNull
     private Object serializeKey(@NotNull K key) {
+        SerializerRegistry registry = this.plugin.getSerializerRegistry();
         KeySerializer<K, ?> serializer = null;
-        for (Class<?> clazz : SERIALIZER_REGISTRY.getKeySerializers().keySet()) {
+        for (Class<?> clazz : registry.getKeySerializers().keySet()) {
             if (clazz.isAssignableFrom(key.getClass())) {
-                serializer = (KeySerializer<K, ?>) SERIALIZER_REGISTRY.getKeySerializer(clazz);
+                serializer = (KeySerializer<K, ?>) registry.getKeySerializer(clazz);
             }
         }
 
@@ -280,24 +324,16 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
     @Nullable
     private Connection getConnection() {
         try {
-            if (this.connection == null || this.connection.isClosed()) {
-                if (this.username == null) {
-                    this.connection = DriverManager.getConnection(this.url);
-                }
-                else {
-                    this.connection = DriverManager.getConnection(this.url, this.username, this.password);
-                }
-            }
+            return this.connection.getConnection();
         }
         catch (SQLException ex) {
             ex.printStackTrace();
             return null;
         }
-        return this.connection;
     }
 
     private boolean doesTableExist() throws SQLException {
-        DatabaseMetaData meta = this.connection.getMetaData();
+        DatabaseMetaData meta = this.getConnection().getMetaData();
         try (ResultSet rs = meta.getTables(null, null, this.table, null)) {
             return rs.next();
         }
@@ -305,7 +341,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
 
     private void createTable() throws SQLException {
         String sql = "CREATE TABLE " + this.table + " (id INT AUTO_INCREMENT PRIMARY KEY, data_key VARCHAR(255) NOT NULL, storage JSON, UNIQUE(data_key))";
-        try (Statement statement = this.connection.createStatement()) {
+        try (Statement statement = this.getConnection().createStatement()) {
             statement.execute(sql);
         }
     }
@@ -314,7 +350,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
         String[] columns = { "id", "data_key", "storage" };
         List<String> existingColumns = new ArrayList<>();
 
-        DatabaseMetaData meta = this.connection.getMetaData();
+        DatabaseMetaData meta = this.getConnection().getMetaData();
         try (ResultSet rs = meta.getColumns(null, null, this.table, null)) {
             while (rs.next()) {
                 existingColumns.add(rs.getString("COLUMN_NAME"));
@@ -397,11 +433,17 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
         }
 
         @NotNull
-        public MySqlDriver<K, D> build() {
+        public MySqlDriver<K, D> build(@NotNull AlpinePlugin plugin) {
             Validate.notNull(this.url, "url must not be null");
             Validate.notNull(this.table, "table must not be null");
             Validate.notNull(this.dataType, "dataType must not be null");
-            return new MySqlDriver<>(this.url, this.table, this.username, this.password, this.dataType, this.gson);
+            return new MySqlDriver<>(plugin, this.url, this.table, this.username, this.password, this.dataType, this.gson);
+        }
+
+        @NotNull
+        @Deprecated
+        public MySqlDriver<K, D> build() {
+            return this.build(AlpineCore.getInstance());
         }
     }
 }

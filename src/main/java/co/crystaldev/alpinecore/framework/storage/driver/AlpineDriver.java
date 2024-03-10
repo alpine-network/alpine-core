@@ -1,7 +1,6 @@
 package co.crystaldev.alpinecore.framework.storage.driver;
 
-import co.crystaldev.alpinecore.AlpineCore;
-import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
+import co.crystaldev.alpinecore.AlpinePlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +20,11 @@ import java.util.function.Consumer;
  */
 public abstract class AlpineDriver<K, D> {
 
-    protected static final SerializerRegistry SERIALIZER_REGISTRY = AlpineCore.getInstance().getSerializerRegistry();
+    protected final AlpinePlugin plugin;
+
+    public AlpineDriver(@NotNull AlpinePlugin plugin) {
+        this.plugin = plugin;
+    }
 
     /**
      * Save data under a given key.
@@ -119,4 +122,14 @@ public abstract class AlpineDriver<K, D> {
      */
     @NotNull
     public abstract Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionHandler);
+
+    /**
+     * Shut down the data storage system.
+     * <p>
+     * This method gracefully shuts down the data storage system, ensuring that all pending write operations are completed
+     * and any resources held by the storage system are properly released.
+     */
+    public void shutdown() {
+        // NO-OP
+    }
 }

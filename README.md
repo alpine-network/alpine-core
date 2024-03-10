@@ -3,6 +3,8 @@
 
 A lightweight library for creating modern yet widely compatible Minecraft server plugins.
 
+> This library is currently in an early state of development and breaking changes **will** occur.
+
 Inspired by [MassiveCore](https://gitlab.massivecraft.team/massivecraft/MassiveCore), the project has a few key goals:
 - Reduce boilerplate
 - Integrate modern technologies

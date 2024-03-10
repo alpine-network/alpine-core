@@ -1,5 +1,6 @@
 package co.crystaldev.alpinecore.framework.storage.driver;
 
+import co.crystaldev.alpinecore.AlpinePlugin;
 import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,11 @@ import java.util.function.Consumer;
  */
 @ApiStatus.Experimental
 public class MongoDriver<K, D> extends AlpineDriver<K, D> {
+
+    public MongoDriver(@NotNull AlpinePlugin plugin) {
+        super(plugin);
+    }
+
     @Override
     public boolean persistEntry(@NotNull K key, @NotNull D data) {
         throw new NotImplementedException();

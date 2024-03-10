@@ -1,7 +1,10 @@
 package co.crystaldev.alpinecore.framework.storage.driver;
 
+import co.crystaldev.alpinecore.AlpineCore;
+import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.Reference;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
+import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.apache.commons.lang.Validate;
@@ -41,7 +44,8 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
      *
      * @see Builder
      */
-    private FlatfileDriver(File directory, Gson gson, Class<D> dataType) {
+    private FlatfileDriver(@NotNull AlpinePlugin plugin, @NotNull File directory, @NotNull Gson gson, @NotNull Class<D> dataType) {
+        super(plugin);
         this.directory = directory;
         this.gson = gson;
         this.dataType = dataType;
@@ -140,10 +144,11 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
     }
 
     private File getFileForKey(K key) {
+        SerializerRegistry registry = this.plugin.getSerializerRegistry();
         KeySerializer<K, ?> serializer = null;
-        for (Class<?> clazz : SERIALIZER_REGISTRY.getKeySerializers().keySet()) {
+        for (Class<?> clazz : registry.getKeySerializers().keySet()) {
             if (clazz.isAssignableFrom(key.getClass())) {
-                serializer = (KeySerializer<K, ?>) SERIALIZER_REGISTRY.getKeySerializer(clazz);
+                serializer = (KeySerializer<K, ?>) registry.getKeySerializer(clazz);
             }
         }
 
@@ -199,10 +204,16 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
         }
 
         @NotNull
-        public FlatfileDriver<K, D> build() {
+        public FlatfileDriver<K, D> build(@NotNull AlpinePlugin plugin) {
             Validate.notNull(this.directory, "Directory must not be null");
             Validate.notNull(this.dataType, "Data type must not be null");
-            return new FlatfileDriver<>(this.directory, this.gson, this.dataType);
+            return new FlatfileDriver<>(plugin, this.directory, this.gson, this.dataType);
+        }
+
+        @NotNull
+        @Deprecated
+        public FlatfileDriver<K, D> build() {
+            return this.build(AlpineCore.getInstance());
         }
     }
 }

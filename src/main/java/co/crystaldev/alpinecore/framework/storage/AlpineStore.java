@@ -284,6 +284,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
     public final void deactivate(@NotNull AlpinePlugin context) {
         Bukkit.getScheduler().cancelTask(this.taskId);
         this.flush();
+        this.driver.shutdown();
         this.readCache.invalidateAll();
         this.taskId = -1;
         this.plugin.log(String.format("&cStore deactivated &d%s", this.getClass().getSimpleName()));
