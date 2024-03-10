@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 0.3.0
  */
 @AllArgsConstructor @Getter

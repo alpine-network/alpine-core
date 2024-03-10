@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
 
 /**
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 01/19/2024
  */
 @RequiredArgsConstructor

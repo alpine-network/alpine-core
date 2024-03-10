@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 0.3.0
  */
 public final class StyleTagResolver implements TagResolver {

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 02/24/2024
  */
 public final class ServerTickEvent extends AlpineEvent {

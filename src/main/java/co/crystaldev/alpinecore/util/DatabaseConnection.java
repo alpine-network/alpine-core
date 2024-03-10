@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
 
 /**
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 0.3.5
  */
 public final class DatabaseConnection {

@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 /**
  * A helper class offering a flexible way to group and test against various material types.
  *
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 0.3.1
  */
 @RequiredArgsConstructor @Getter @ToString

@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 0.3.0
  */
 @UtilityClass

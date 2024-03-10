@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Utility for interoperability with XMaterials
  *
- * @author BestBearr <crumbygames12@gmail.com>
+ * @author BestBearr
  * @since 0.3.1
  */
 @UtilityClass
