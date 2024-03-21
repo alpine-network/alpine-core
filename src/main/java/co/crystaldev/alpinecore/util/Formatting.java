@@ -246,6 +246,10 @@ public final class Formatting {
     @NotNull
     public static Component applyTitlePadding(@NotNull AlpinePlugin plugin, @NotNull Component component) {
         AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
+        if (!config.titleUsesPadding) {
+            return component;
+        }
+
         int paddingLength = Math.max(4, (config.titlePaddingLength - Components.length(component)) / 2);
         String paddingString = repeat(config.paddingCharacter, paddingLength);
         Component padding = Components.stylize(config.paddingStyle, Component.text(paddingString));
@@ -265,7 +269,7 @@ public final class Formatting {
     public static Component title(@NotNull AlpinePlugin plugin, @NotNull Component component) {
         AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
         component = config.titleFormat.build(plugin, "content", component);
-        return config.titleUsesPadding ? applyTitlePadding(plugin, component) : component;
+        return applyTitlePadding(plugin, component);
     }
 
     /**
