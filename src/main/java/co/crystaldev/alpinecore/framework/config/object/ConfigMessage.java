@@ -61,7 +61,7 @@ public class ConfigMessage {
      */
     @NotNull
     public Component build(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
-        String formatted = Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
+        String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
         return plugin.getMiniMessage().deserialize(formatted);
     }
 
@@ -79,7 +79,7 @@ public class ConfigMessage {
      */
     @NotNull
     public Component build(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
-        String formatted = Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
+        String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
         return plugin.getMiniMessage().deserialize(formatted);
     }
 
@@ -91,7 +91,7 @@ public class ConfigMessage {
      */
     @NotNull
     public String buildString(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
-        return Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
+        return Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
     }
 
     /**
@@ -102,7 +102,7 @@ public class ConfigMessage {
      */
     @NotNull
     public String buildString(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
-        return Formatting.formatPlaceholders(plugin, String.join("\n", this.message), placeholders);
+        return Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
     }
 
     public static class Serializer implements de.exlll.configlib.Serializer<ConfigMessage, Object> {

@@ -162,6 +162,18 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     /**
+     * Configures the default configuration settings for this AlpineCore plugin.
+     * <br>
+     * Implementations can override this method to apply custom configurations or adjust the existing ones.
+     *
+     * @param config the configuration.
+     * @see AlpineCoreConfig
+     */
+    public void setupDefaultConfiguration(@NotNull AlpineCoreConfig config) {
+        // NO-OP
+    }
+
+    /**
      * Configures the MiniMessage parser with custom tag resolvers and other settings.
      * This method allows for customization of the MiniMessage parser.
      *
@@ -202,6 +214,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             AlpineCoreConfig config = new AlpineCoreConfig();
             this.setupDefaultStyles((tag, style) -> config.styles.put(tag, style));
             this.setupDefaultVariables((name, variable) -> config.variables.put(name, variable));
+            this.setupDefaultConfiguration(config);
 
             this.configManager.registerConfig(config);
         }

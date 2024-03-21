@@ -38,7 +38,7 @@ public final class StyleTagResolver implements TagResolver {
         }
 
         return this.styleToTagMap.computeIfAbsent(style, s -> {
-            List<StyleBuilderApplicable> styles = Components.parseStyle(s);
+            List<StyleBuilderApplicable> styles = Components.processStyle(s);
             return Tag.styling(b -> styles.forEach(b::apply));
         });
     }

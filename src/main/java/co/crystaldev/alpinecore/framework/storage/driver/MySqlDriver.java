@@ -333,15 +333,18 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
     }
 
     private boolean doesTableExist() throws SQLException {
-        DatabaseMetaData meta = this.getConnection().getMetaData();
-        try (ResultSet rs = meta.getTables(null, null, this.table, null)) {
-            return rs.next();
+        try (Connection conn = this.connection.getConnection()) {
+            DatabaseMetaData meta = conn.getMetaData();
+            try (ResultSet rs = meta.getTables(null, null, this.table, null)) {
+                return rs.next();
+            }
         }
     }
 
     private void createTable() throws SQLException {
         String sql = "CREATE TABLE " + this.table + " (id INT AUTO_INCREMENT PRIMARY KEY, data_key VARCHAR(255) NOT NULL, storage JSON, UNIQUE(data_key))";
-        try (Statement statement = this.getConnection().createStatement()) {
+        try (Connection conn = this.connection.getConnection();
+             Statement statement = conn.createStatement()) {
             statement.execute(sql);
         }
     }
@@ -350,10 +353,12 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
         String[] columns = { "id", "data_key", "storage" };
         List<String> existingColumns = new ArrayList<>();
 
-        DatabaseMetaData meta = this.getConnection().getMetaData();
-        try (ResultSet rs = meta.getColumns(null, null, this.table, null)) {
-            while (rs.next()) {
-                existingColumns.add(rs.getString("COLUMN_NAME"));
+        try (Connection conn = this.connection.getConnection()) {
+            DatabaseMetaData meta = conn.getMetaData();
+            try (ResultSet rs = meta.getColumns(null, null, this.table, null)) {
+                while (rs.next()) {
+                    existingColumns.add(rs.getString("COLUMN_NAME"));
+                }
             }
         }
 

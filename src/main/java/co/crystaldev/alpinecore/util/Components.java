@@ -6,7 +6,10 @@ import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.*;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +66,20 @@ public final class Components {
         for (TextDecoration value : TextDecoration.values())
             style.decoration(value, TextDecoration.State.FALSE);
         return Component.text("").color(TextColor.color(-1)).style(style.build());
+    }
+
+    /**
+     * Get the length of the given component.
+     *
+     * @param component The component.
+     * @return The length.
+     */
+    public static int length(@Nullable Component component) {
+        if (component == null) {
+            return 0;
+        }
+
+        return PlainTextComponentSerializer.plainText().serialize(component).length();
     }
 
     /**
@@ -162,6 +179,43 @@ public final class Components {
     }
 
     /**
+     * Add events to the given component.
+     *
+     * @param component The component to add hover and click events to.
+     * @param hover   The text to display while hovering.
+     * @param command The command to execute when the component is clicked.
+     * @return The component.
+     */
+    @NotNull
+    public static Component events(@NotNull Component component, @NotNull Component hover, @NotNull String command) {
+        return component.hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.runCommand(command));
+    }
+
+    /**
+     * Add events to the given component.
+     *
+     * @param component The component to add hover and click events to.
+     * @param both The text to display while hovering and command to execute when clicked.
+     * @return The component.
+     */
+    @NotNull
+    public static Component events(@NotNull Component component, @NotNull Component both) {
+        return events(component, both, PlainTextComponentSerializer.plainText().serialize(both));
+    }
+
+    /**
+     * Add events to the given component.
+     *
+     * @param component The component to add hover and click events to.
+     * @param both The text to display while hovering and command to execute when clicked.
+     * @return The component.
+     */
+    @NotNull
+    public static Component events(@NotNull Component component, @NotNull String both) {
+        return events(component, Component.text(both), both);
+    }
+
+    /**
      * Apply the given style to the given component.
      *
      * @param style     The style.
@@ -178,7 +232,7 @@ public final class Components {
             return stylize(style, component);
         }
 
-        for (StyleBuilderApplicable type : parseStyle(style)) {
+        for (StyleBuilderApplicable type : processStyle(style)) {
             if (type instanceof TextColor) {
                 component = component.color((TextColor) type);
             }
@@ -203,7 +257,7 @@ public final class Components {
         }
 
         TextComponent.Builder builder = Component.text();
-        for (StyleBuilderApplicable type : parseStyle(style)) {
+        for (StyleBuilderApplicable type : processStyle(style)) {
             if (type instanceof TextColor) {
                 builder.color((TextColor) type);
             }
@@ -216,7 +270,7 @@ public final class Components {
     }
 
     @NotNull @ApiStatus.Internal
-    public static List<StyleBuilderApplicable> parseStyle(@NotNull String style) {
+    public static List<StyleBuilderApplicable> processStyle(@NotNull String style) {
         List<StyleBuilderApplicable> styles = new ArrayList<>();
         for (String component : style.split(" +")) {
             StyleBuilderApplicable parsedComponent = null;

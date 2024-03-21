@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
  */
 public final class AlpineCoreConfig extends AlpineConfig implements Initializable {
 
-    @Comment("Predefined chat style tags for use in config.")
+    @Comment("Predefined chat style tags for use in config")
     public HashMap<String, String> styles = new LinkedHashMap<>();
     {
         this.styles.put("info", "dark_aqua bold");
@@ -50,7 +50,7 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
 
     @Comment({
             "",
-            "Command messages."
+            "Plugin Messages"
     })
     public ConfigMessage missingPermissions = ConfigMessage.of("<red>You don't have the <hover:show_text:'%permission%'>" +
             "required permission</hover> to execute this command");
@@ -70,6 +70,60 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
 
     public InvalidUsageMessages invalidUsage = new InvalidUsageMessages();
 
+    @Comment({
+            "",
+            "Title"
+    })
+    public ConfigMessage titleFormat = ConfigMessage.of(
+            "<bracket><</bracket> %content% <bracket>></bracket>");
+
+    public boolean titleUsesPadding = true;
+
+    public int titlePaddingLength = 54;
+
+    public String paddingCharacter = "-";
+
+    public String paddingStyle = "dark_gray strikethrough";
+
+    @Comment({
+            "",
+            "Pagination"
+    })
+    public ConfigMessage paginatorTitleFormat = ConfigMessage.of(
+            "<bracket><</bracket> %content% <separator>|</separator> %previous% %page%/%max_pages% %next% <bracket>></bracket>");
+
+    public ConfigMessage previous = ConfigMessage.of(
+            "<bracket>[</bracket><emphasis><</emphasis><bracket>]</bracket>");
+
+    public ConfigMessage next = ConfigMessage.of(
+            "<bracket>[</bracket><emphasis>></emphasis><bracket>]</bracket>");
+
+    public ConfigMessage previousDisabled = ConfigMessage.of(
+            "<emphasis>[<]</emphasis>");
+
+    public ConfigMessage nextDisabled = ConfigMessage.of(
+            "<emphasis>[>]</emphasis>");
+
+    public ConfigMessage noPages = ConfigMessage.of(
+            "<emphasis><i>No pages available to display</i></emphasis>");
+
+    @Comment({
+            "",
+            "Progress Indicator"
+    })
+    public ConfigMessage progressBarFormat = ConfigMessage.of(
+            "<bracket>[</bracket>%progress%<bracket>]</bracket>");
+
+    public int progressLength = 20;
+
+    public String progressIndicatorCharacter = "=";
+
+    public String progressRemainingCharacter = "⋯";
+
+    public String progressIndicatorStyle = "aqua strikethrough";
+
+    public String progressRemainingStyle = "light_gray";
+
     @Override
     public String getFileName() {
         return "alpinecore.yml";
@@ -82,7 +136,7 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
 
     @Configuration
     public static final class InvalidUsageMessages {
-        public ConfigMessage single = ConfigMessage.of("<red>Invalid command usage.</red> <gray>%syntax%");
+        public ConfigMessage single = ConfigMessage.of("<red>Invalid command usage:</red> <gray>%syntax%");
         public ConfigMessage multiHeader = ConfigMessage.of("<red>Invalid command usage:");
         public ConfigMessage multiLine = ConfigMessage.of("<gray><b>  *</b> %syntax%");
     }
