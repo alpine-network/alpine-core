@@ -1,13 +1,20 @@
 package co.crystaldev.alpinecore.framework.storage.driver;
 
+import co.crystaldev.alpinecore.AlpineCore;
+import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.Reference;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
+import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Implements a simple flatfile storage system where
@@ -20,10 +27,12 @@ import java.io.*;
 public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
     /** The directory the JSON files are stored in */
     private final File directory;
+
     /** The Gson instance responsible for serializing the data */
     private final Gson gson;
+
     /**
-     * The data type of the data.
+     * The data type of the value.
      * <p>
      * We need to feed this to Gson due to limitations on
      * its serialization of generics.
@@ -35,7 +44,8 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
      *
      * @see Builder
      */
-    private FlatfileDriver(File directory, Gson gson, Class<D> dataType) {
+    private FlatfileDriver(@NotNull AlpinePlugin plugin, @NotNull File directory, @NotNull Gson gson, @NotNull Class<D> dataType) {
+        super(plugin);
         this.directory = directory;
         this.gson = gson;
         this.dataType = dataType;
@@ -87,19 +97,68 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
     public @NotNull D retrieveEntry(@NotNull K key) throws Exception {
         File file = this.getFileForKey(key);
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        return Reference.GSON_PRETTY.fromJson(reader, dataType);
+        return this.gson.fromJson(reader, this.dataType);
+    }
+
+    @Override
+    public @NotNull Collection<D> getAllEntries() throws Exception {
+        File[] files = this.directory.listFiles();
+        if (files == null || files.length == 0) {
+            return Collections.emptyList();
+        }
+
+        // discover and deserialize values
+        List<D> values = new ArrayList<>();
+        for (File file : files) {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            values.add(this.gson.fromJson(reader, this.dataType));
+        }
+
+        // value should be immutable
+        return ImmutableList.copyOf(values);
+    }
+
+    @Override
+    public @NotNull Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionConsumer) {
+        File[] files = this.directory.listFiles();
+        if (files == null || files.length == 0) {
+            return Collections.emptyList();
+        }
+
+        // discover and deserialize values
+        List<D> values = new ArrayList<>();
+        for (File file : files) {
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                values.add(this.gson.fromJson(reader, this.dataType));
+            }
+            catch (IOException ex) {
+                if (exceptionConsumer != null) {
+                    exceptionConsumer.accept(ex);
+                }
+            }
+        }
+
+        // value should be immutable
+        return ImmutableList.copyOf(values);
     }
 
     private File getFileForKey(K key) {
+        SerializerRegistry registry = this.plugin.getSerializerRegistry();
         KeySerializer<K, ?> serializer = null;
-        for (Class<?> clazz : SERIALIZERS.keySet()) {
+        for (Class<?> clazz : registry.getKeySerializers().keySet()) {
             if (clazz.isAssignableFrom(key.getClass())) {
-                serializer = (KeySerializer<K, ?>) SERIALIZERS.get(clazz);
+                serializer = (KeySerializer<K, ?>) registry.getKeySerializer(clazz);
             }
         }
+
+        if (serializer == null) {
+            throw new NullPointerException(String.format("No key serializer registered for type \"%s\"", key.getClass().getName()));
+        }
+
         Object serializedKey = serializer.serialize(key);
         String fileName = serializedKey.toString() + ".json";
-        return new File(directory, fileName);
+        return new File(this.directory, fileName);
     }
 
     /**
@@ -118,22 +177,10 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
      * @see co.crystaldev.alpinecore.framework.storage.AlpineStore
      */
     public static final class Builder<K, D> {
-        /**
-         * @see FlatfileDriver#directory
-         */
         private File directory;
-        /**
-         * @see FlatfileDriver#gson
-         */
         private Gson gson = Reference.GSON_PRETTY;
-        /**
-         * @see FlatfileDriver#dataType
-         */
         private Class<D> dataType;
 
-        /**
-         * @see FlatfileDriver#directory
-         */
         @NotNull @Contract("_ -> this")
         public Builder<K, D> directory(@NotNull File directory) {
             if (!directory.exists()) {
@@ -144,32 +191,29 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
             return this;
         }
 
-        /**
-         * @see FlatfileDriver#gson
-         */
         @NotNull @Contract("_ -> this")
         public Builder<K, D> gson(@NotNull Gson gson) {
             this.gson = gson;
             return this;
         }
 
-        /**
-         * @see FlatfileDriver#dataType
-         */
         @NotNull @Contract("_ -> this")
         public Builder<K, D> dataType(@NotNull Class<D> dataType) {
             this.dataType = dataType;
             return this;
         }
 
-        /**
-         * @return The newly constructed {@link FlatfileDriver}.
-         */
         @NotNull
-        public FlatfileDriver<K, D> build() {
+        public FlatfileDriver<K, D> build(@NotNull AlpinePlugin plugin) {
             Validate.notNull(this.directory, "Directory must not be null");
             Validate.notNull(this.dataType, "Data type must not be null");
-            return new FlatfileDriver<>(this.directory, this.gson, this.dataType);
+            return new FlatfileDriver<>(plugin, this.directory, this.gson, this.dataType);
+        }
+
+        @NotNull
+        @Deprecated
+        public FlatfileDriver<K, D> build() {
+            return this.build(AlpineCore.getInstance());
         }
     }
 }

@@ -9,17 +9,15 @@ import org.bukkit.entity.Player;
 import java.io.File;
 
 /**
- * @author Thomas Wearmouth <tomwmth@pm.me>
- * Created on 27/07/2023
+ * @author Thomas Wearmouth
+ * @since 0.1.0
  */
-public class StatisticsStore extends AlpineStore<Player, Statistics> {
+public final class StatisticsStore extends AlpineStore<Player, Statistics> {
     @Getter
     private static StatisticsStore instance;
-    {
-        instance = this;
-    }
+    { instance = this; }
 
-    protected StatisticsStore(AlpinePlugin plugin) {
+    StatisticsStore(AlpinePlugin plugin) {
         super(plugin, FlatfileDriver.<Player, Statistics>builder()
                 .directory(new File(plugin.getDataFolder(), "/stats/"))
                 .dataType(Statistics.class)

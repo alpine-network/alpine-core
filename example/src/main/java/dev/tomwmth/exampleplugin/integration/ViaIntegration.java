@@ -3,7 +3,7 @@ package dev.tomwmth.exampleplugin.integration;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegrationEngine;
-import co.crystaldev.alpinecore.util.Components;
+import co.crystaldev.alpinecore.util.Messaging;
 import com.viaversion.viaversion.api.Via;
 import dev.tomwmth.exampleplugin.config.Config;
 import net.kyori.adventure.text.Component;
@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Thomas Wearmouth <tomwmth@pm.me>
- * Created on 26/07/2023
+ * @author Thomas Wearmouth
+ * @since 0.1.0
  */
 public class ViaIntegration extends AlpineIntegration {
     protected ViaIntegration(AlpinePlugin plugin) {
@@ -38,11 +38,10 @@ public class ViaIntegration extends AlpineIntegration {
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent event) {
             Config config = this.plugin.getConfiguration(Config.class);
-            Component prefix = config.prefix.build();
 
             int protocol = Via.getAPI().getPlayerVersion(event.getPlayer());
 
-            Components.send(event.getPlayer(), prefix, config.integrationJoinMessage.build("protocol", protocol));
+            Messaging.send(event.getPlayer(), config.integrationJoinMessage.build(this.plugin, "protocol", protocol));
         }
     }
 }

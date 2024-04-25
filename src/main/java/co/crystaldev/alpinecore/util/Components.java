@@ -1,18 +1,22 @@
 package co.crystaldev.alpinecore.util;
 
-import co.crystaldev.alpinecore.Reference;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.*;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Utility for interacting with Adventure {@link Component}
@@ -24,38 +28,31 @@ import java.util.Collection;
  */
 @UtilityClass @SuppressWarnings("unused")
 public final class Components {
-    /**
-     * Send a variable number of components to a receiver.
-     *
-     * @param sender     The receiver
-     * @param components The components to be sent
-     */
-    public static void send(@NotNull CommandSender sender, @NotNull Component... components) {
-        Reference.AUDIENCES.sender(sender).sendMessage(Components.joinSpaces(components));
-    }
 
-    /**
-     * Send a variable number of components to a variable
-     * number of receivers.
-     *
-     * @param senders    The receivers
-     * @param components The components to be sent
-     */
-    public static void send(@NotNull Collection<CommandSender> senders, @NotNull Component... components) {
-        senders.forEach(sender -> send(sender, components));
-    }
-
-    /**
-     * Send a variable number of components to all online
-     * players.
-     *
-     * @param components The components to be sent
-     * @since 0.1.1
-     */
-    public static void broadcast(@NotNull Component... components) {
-        Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
-        players.forEach(player -> send(player, components));
-    }
+    /** Map containing vanilla chat formatting codes */
+    private static final Map<StyleBuilderApplicable, List<String>> STYLE_TO_ALIAS_MAP = ImmutableMap.<StyleBuilderApplicable, List<String>>builder()
+            .put(TextDecoration.BOLD, ImmutableList.of("bold", "&l", "l"))
+            .put(TextDecoration.ITALIC, ImmutableList.of("italic", "&o", "o"))
+            .put(TextDecoration.OBFUSCATED, ImmutableList.of("obfuscated", "&k", "k", "magic"))
+            .put(TextDecoration.UNDERLINED, ImmutableList.of("underlined", "&n", "n", "underline", "uline"))
+            .put(TextDecoration.STRIKETHROUGH, ImmutableList.of("strikethrough", "&m", "m", "strike"))
+            .put(NamedTextColor.BLACK, ImmutableList.of("black", "&0", "0"))
+            .put(NamedTextColor.DARK_BLUE, ImmutableList.of("dark_blue", "&1", "1"))
+            .put(NamedTextColor.DARK_GREEN, ImmutableList.of("dark_green", "&2", "2"))
+            .put(NamedTextColor.DARK_AQUA, ImmutableList.of("dark_aqua", "&3", "3"))
+            .put(NamedTextColor.DARK_RED, ImmutableList.of("dark_red", "&4", "4"))
+            .put(NamedTextColor.DARK_PURPLE, ImmutableList.of("dark_purple", "&5", "5", "dark_magenta"))
+            .put(NamedTextColor.GOLD, ImmutableList.of("gold", "&6", "6"))
+            .put(NamedTextColor.GRAY, ImmutableList.of("gray", "grey", "&7", "7"))
+            .put(NamedTextColor.DARK_GRAY, ImmutableList.of("dark_gray", "dark_grey", "&8", "8"))
+            .put(NamedTextColor.BLUE, ImmutableList.of("blue", "&9", "9"))
+            .put(NamedTextColor.GREEN, ImmutableList.of("green", "&a", "a"))
+            .put(NamedTextColor.AQUA, ImmutableList.of("aqua", "&b", "b"))
+            .put(NamedTextColor.RED, ImmutableList.of("red", "&c", "c"))
+            .put(NamedTextColor.LIGHT_PURPLE, ImmutableList.of("light_purple", "&d", "d", "magenta", "purple"))
+            .put(NamedTextColor.YELLOW, ImmutableList.of("yellow", "&e", "e"))
+            .put(NamedTextColor.WHITE, ImmutableList.of("white", "&f", "f"))
+            .build();
 
     /**
      * Constructs a component that can be used to reset
@@ -72,6 +69,20 @@ public final class Components {
     }
 
     /**
+     * Get the length of the given component.
+     *
+     * @param component The component.
+     * @return The length.
+     */
+    public static int length(@Nullable Component component) {
+        if (component == null) {
+            return 0;
+        }
+
+        return PlainTextComponentSerializer.plainText().serialize(component).length();
+    }
+
+    /**
      * Joins a variable number of components together
      * with no joiner.
      *
@@ -80,7 +91,7 @@ public final class Components {
      */
     @NotNull
     public static Component join(@NotNull Component... components) {
-        return reset().append(Component.join(JoinConfiguration.noSeparators(), components)).compact();
+        return Component.join(JoinConfiguration.noSeparators(), components);
     }
 
     /**
@@ -92,7 +103,7 @@ public final class Components {
      */
     @NotNull
     public static Component join(@NotNull Iterable<Component> components) {
-        return reset().append(Component.join(JoinConfiguration.noSeparators(), components)).compact();
+        return Component.join(JoinConfiguration.noSeparators(), components);
     }
 
     /**
@@ -104,7 +115,7 @@ public final class Components {
      */
     @NotNull
     public static Component joinSpaces(@NotNull Component... components) {
-        return reset().append(Component.join(JoinConfiguration.separator(Component.space()), components)).compact();
+        return Component.join(JoinConfiguration.separator(Component.space()), components);
     }
 
     /**
@@ -116,9 +127,32 @@ public final class Components {
      */
     @NotNull
     public static Component joinSpaces(@NotNull Iterable<Component> components) {
-        return reset().append(Component.join(JoinConfiguration.separator(Component.space()), components)).compact();
+        return Component.join(JoinConfiguration.separator(Component.space()), components);
     }
 
+    /**
+     * Joins a variable number of components together
+     * with a single comma as a joiner.
+     *
+     * @param components The components to join
+     * @return The joined component
+     */
+    @NotNull
+    public static Component joinCommas(@NotNull Component... components) {
+        return Component.join(JoinConfiguration.commas(true), components);
+    }
+
+    /**
+     * Joins a variable number of components together
+     * with a single comma as a joiner.
+     *
+     * @param components The components to join
+     * @return The joined component
+     */
+    @NotNull
+    public static Component joinCommas(@NotNull Iterable<Component> components) {
+        return Component.join(JoinConfiguration.commas(true), components);
+    }
 
     /**
      * Joins a variable number of components together
@@ -129,7 +163,7 @@ public final class Components {
      */
     @NotNull
     public static Component joinNewLines(@NotNull Component... components) {
-        return reset().append(Component.join(JoinConfiguration.newlines(), components)).compact();
+        return Component.join(JoinConfiguration.newlines(), components);
     }
 
     /**
@@ -141,6 +175,128 @@ public final class Components {
      */
     @NotNull
     public static Component joinNewLines(@NotNull Iterable<Component> components) {
-        return reset().append(Component.join(JoinConfiguration.newlines(), components)).compact();
+        return Component.join(JoinConfiguration.newlines(), components);
+    }
+
+    /**
+     * Add events to the given component.
+     *
+     * @param component The component to add hover and click events to.
+     * @param hover   The text to display while hovering.
+     * @param command The command to execute when the component is clicked.
+     * @return The component.
+     */
+    @NotNull
+    public static Component events(@NotNull Component component, @NotNull Component hover, @NotNull String command) {
+        return component.hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.runCommand(command));
+    }
+
+    /**
+     * Add events to the given component.
+     *
+     * @param component The component to add hover and click events to.
+     * @param both The text to display while hovering and command to execute when clicked.
+     * @return The component.
+     */
+    @NotNull
+    public static Component events(@NotNull Component component, @NotNull Component both) {
+        return events(component, both, PlainTextComponentSerializer.plainText().serialize(both));
+    }
+
+    /**
+     * Add events to the given component.
+     *
+     * @param component The component to add hover and click events to.
+     * @param both The text to display while hovering and command to execute when clicked.
+     * @return The component.
+     */
+    @NotNull
+    public static Component events(@NotNull Component component, @NotNull String both) {
+        return events(component, Component.text(both), both);
+    }
+
+    /**
+     * Apply the given style to the given component.
+     *
+     * @param style     The style.
+     * @param component The component.
+     * @return The stylized component.
+     */
+    @NotNull
+    public static Component stylize(@Nullable String style, @NotNull Component component, boolean force) {
+        if (style == null) {
+            return component;
+        }
+
+        if (!force) {
+            return stylize(style, component);
+        }
+
+        for (StyleBuilderApplicable type : processStyle(style)) {
+            if (type instanceof TextColor) {
+                component = component.color((TextColor) type);
+            }
+            else {
+                component = component.decorate((TextDecoration) type);
+            }
+        }
+        return component;
+    }
+
+    /**
+     * Apply the given style to the given component.
+     *
+     * @param style     The style.
+     * @param component The component.
+     * @return The stylized component.
+     */
+    @NotNull
+    public static Component stylize(@Nullable String style, @NotNull Component component) {
+        if (style == null) {
+            return component;
+        }
+
+        TextComponent.Builder builder = Component.text();
+        for (StyleBuilderApplicable type : processStyle(style)) {
+            if (type instanceof TextColor) {
+                builder.color((TextColor) type);
+            }
+            else {
+                builder.decorate((TextDecoration) type);
+            }
+        }
+        builder.append(component);
+        return builder.asComponent();
+    }
+
+    @NotNull @ApiStatus.Internal
+    public static List<StyleBuilderApplicable> processStyle(@NotNull String style) {
+        List<StyleBuilderApplicable> styles = new ArrayList<>();
+        for (String component : style.split(" +")) {
+            StyleBuilderApplicable parsedComponent = null;
+
+            // Match any known style or color
+            for (Map.Entry<StyleBuilderApplicable, List<String>> entry : STYLE_TO_ALIAS_MAP.entrySet()) {
+                List<String> aliases = entry.getValue();
+                if (aliases.contains(component.toLowerCase())) {
+                    parsedComponent = entry.getKey();
+                    break;
+                }
+            }
+
+            // Attempt to parse a hex string
+            if (parsedComponent == null) {
+                if (!component.startsWith(TextColor.HEX_PREFIX)) {
+                    component = TextColor.HEX_PREFIX + component;
+                }
+                parsedComponent = TextColor.fromHexString(component);
+            }
+
+            if (parsedComponent != null) {
+                styles.add(parsedComponent);
+            }
+        }
+
+        return styles;
     }
 }

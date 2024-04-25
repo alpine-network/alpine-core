@@ -10,8 +10,8 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://lib.alpn.cloud/alpine-public/")
-    maven("https://repo.aikar.co/content/groups/aikar/")
     maven("https://repo.viaversion.com/")
+    maven("https://repo.panda-lang.org/releases")
 }
 
 dependencies {
@@ -26,7 +26,7 @@ dependencies {
 
 tasks.withType<Jar> {
     // Rename jar
-    archiveFileName.set("ExamplePlugin-$version.jar")
+//    archiveFileName.set("ExamplePlugin-$version.jar")
 
     // Add exclusions
     exclude("META-INF/versions/")
@@ -35,4 +35,10 @@ tasks.withType<Jar> {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

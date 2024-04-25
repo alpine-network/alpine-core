@@ -19,8 +19,9 @@ import org.jetbrains.annotations.NotNull;
  */
 @Configuration @NoArgsConstructor
 public abstract class AlpineConfig implements Activatable {
+
     @Getter
-    private transient boolean active = false;
+    private transient boolean active;
 
     /**
      * Gets the name for the file that this configuration

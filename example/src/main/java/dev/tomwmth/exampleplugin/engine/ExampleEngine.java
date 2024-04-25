@@ -11,8 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 
 /**
- * @author Thomas Wearmouth <tomwmth@pm.me>
- * Created on 24/07/2023
+ * @author Thomas Wearmouth
+ * @since 0.1.0
  */
 public class ExampleEngine extends AlpineEngine {
     protected ExampleEngine(AlpinePlugin plugin) {
