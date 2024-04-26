@@ -56,6 +56,7 @@ public class ConfigMessage {
      *
      * @see co.crystaldev.alpinecore.util.Components
      * @see net.kyori.adventure.text.minimessage.MiniMessage
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      */
@@ -74,6 +75,7 @@ public class ConfigMessage {
      *
      * @see co.crystaldev.alpinecore.util.Components
      * @see net.kyori.adventure.text.minimessage.MiniMessage
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      */
@@ -86,6 +88,7 @@ public class ConfigMessage {
     /**
      * Formats the text of this message with placeholders
      *
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The string
      */
@@ -97,6 +100,7 @@ public class ConfigMessage {
     /**
      * Formats the text of this message with placeholders
      *
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The string
      */
