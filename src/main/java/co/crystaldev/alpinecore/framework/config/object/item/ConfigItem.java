@@ -53,7 +53,8 @@ public interface ConfigItem {
             @NotNull AlpinePlugin plugin,
             @Nullable XMaterial type,
             int count,
-            @Nullable Function<ItemStack, ItemStack> function, @NotNull Object... placeholders
+            @Nullable Function<ItemStack, ItemStack> function,
+            @NotNull Object... placeholders
     ) {
         if (type == null || !type.isSupported()) {
             type = XMaterial.AIR;
@@ -131,7 +132,7 @@ public interface ConfigItem {
      * Constructs an ItemStack based on the current configuration.
      * <br>
      * This method does not define a type by default. It is for internal use within
-     * plugins (i.e. dynamic guis which define a type based on a state)
+     * plugins (i.e., dynamic guis which define a type based on a state)
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param count        The quantity of the item
