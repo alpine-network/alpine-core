@@ -27,7 +27,7 @@ The project consists of the following core systems:
 - Configurations
   - Extended from `AlpineConfig`
   - A collection of settings that is automatically registered and persisted
-  - Utilizes a fork of [Exll's ConfigLib](https://github.com/Exll/ConfigLib) to provide a smooth configuration experience for both developers and administrators
+  - Utilizes a fork of [Exlll's ConfigLib](https://github.com/Exlll/ConfigLib) to provide a smooth configuration experience for both developers and administrators
   - Pre-written integrations with common configuration use cases, including messages compatible with [Kyori's Adventure](https://github.com/KyoriPowered/adventure)
 - Storage
   - Extended from `AlpineStore`
