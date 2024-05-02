@@ -27,9 +27,7 @@ import java.util.List;
 public final class VaultIntegration extends AlpineIntegration {
     @Getter
     private static VaultIntegration instance;
-    {
-        instance = this;
-    }
+    { instance = this; }
 
     /**
      * Reflectively accessed dependency injection constructor.

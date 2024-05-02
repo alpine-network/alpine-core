@@ -26,6 +26,15 @@ public interface Activatable {
     void deactivate(@NotNull AlpinePlugin context);
 
     /**
+     * Can this Activatable object be deactivated?
+     *
+     * @return Whether this activatable object can be deactivated.
+     */
+    default boolean canDeactivate() {
+        return true;
+    }
+
+    /**
      * Is this object active?
      *
      * @return Whether the object is active

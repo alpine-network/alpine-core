@@ -1,30 +1,29 @@
 package co.crystaldev.alpinecore.framework.command;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.PaperCommandManager;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.Activatable;
-import co.crystaldev.alpinecore.framework.storage.driver.FlatfileDriver;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import lombok.Getter;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A wrapper around the Annotation Command Framework to
- * allow for automatic activation by the framework.
+ * A wrapper around LiteCommands to allow for
+ * automatic activation by the framework.
  * <p>
  * Inheritors should never be manually instantiated.
  *
- * @see BaseCommand
- * @see <a href="https://github.com/aikar/commands/wiki">aikar/commands</a>
+ * @see <a href="https://litedevelopers.github.io/LiteDevelopers-documentation/introdution.html">LiteCommands Wiki</a>
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-public abstract class AlpineCommand extends BaseCommand implements Activatable {
+public abstract class AlpineCommand implements Activatable {
     /** The plugin that activated this command */
     protected final AlpinePlugin plugin;
 
     @Getter
-    private boolean active = false;
+    private boolean active;
 
     /**
      * Locked down to prevent improper instantiation.
@@ -37,35 +36,26 @@ public abstract class AlpineCommand extends BaseCommand implements Activatable {
     }
 
     /**
-     * Called when command conditions should be registered.
+     * Called to register command-specific conditions and suggestions.
      *
-     * @param commandManager The command manager
+     * @param builder The LiteCommands builder.
      */
-    public void registerConditions(@NotNull PaperCommandManager commandManager) {
-        // NO-OP
-    }
-
-    /**
-     * Called when command completions should be registered.
-     *
-     * @param commandManager The command manager
-     */
-    public void registerCompletions(@NotNull PaperCommandManager commandManager) {
+    public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
         // NO-OP
     }
 
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
-        PaperCommandManager commandManager = this.plugin.getCommandManager();
-        commandManager.registerCommand(this);
-        this.registerConditions(commandManager);
-        this.registerCompletions(commandManager);
         this.active = true;
     }
 
     @Override
     public final void deactivate(@NotNull AlpinePlugin context) {
-        this.plugin.getCommandManager().unregisterCommand(this);
-        this.active = false;
+        throw new UnsupportedOperationException("commands can not be deactivated");
+    }
+
+    @Override
+    public final boolean canDeactivate() {
+        return false;
     }
 }

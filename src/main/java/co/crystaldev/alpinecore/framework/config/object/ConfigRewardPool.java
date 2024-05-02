@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 @Configuration
 @AllArgsConstructor @NoArgsConstructor
 public class ConfigRewardPool {
+
     private List<Entry> entries;
 
     /**
@@ -111,7 +112,7 @@ public class ConfigRewardPool {
 
         protected void executeCommands(Map<String, Object> placeholders) {
             for (String command : this.commands) {
-                command = Formatting.formatPlaceholders(command, placeholders);
+                command = Formatting.placeholders(command, placeholders);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }
         }

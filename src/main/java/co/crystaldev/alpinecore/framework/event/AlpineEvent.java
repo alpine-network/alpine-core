@@ -12,14 +12,14 @@ import org.bukkit.event.HandlerList;
  * @since 0.1.0
  */
 public abstract class AlpineEvent extends Event {
-    private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     @Override
     public final HandlerList getHandlers() {
-        return HANDLERS;
+        return HANDLER_LIST;
     }
 
     public static HandlerList getHandlerList() {
-        return HANDLERS;
+        return HANDLER_LIST;
     }
 }

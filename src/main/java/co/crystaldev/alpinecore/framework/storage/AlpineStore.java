@@ -11,8 +11,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -130,6 +133,59 @@ public abstract class AlpineStore<K, D> implements Activatable {
     }
 
     /**
+     * Get data stored at a given key, or create
+     * an entry if there is none.
+     *
+     * @param key the key
+     * @param defaultDataSupplier the data to create a new entry with
+     * @return the data
+     */
+    @NotNull
+    public final D getOrCreate(@NotNull K key, @NotNull Supplier<D> defaultDataSupplier) {
+        if (!this.has(key)) {
+            this.put(key, defaultDataSupplier.get());
+        }
+        D data = this.get(key);
+        if (data != null) {
+            return data;
+        }
+        else {
+            // How???
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Retrieve all stored data entries from the underlying data storage.
+     * <p>
+     * It may be a blocking task, and the time it takes to
+     * complete depends on the size of the data storage.
+     *
+     * @see AlpineDriver#getAllEntries()
+     * @return A collection containing all stored data entries.
+     * @throws Exception If an exception occurs while retrieving the data entries.
+     */
+    @NotNull
+    public final Collection<D> loadAllEntries() throws Exception {
+        return this.driver.getAllEntries();
+    }
+
+    /**
+     * Retrieve all stored data entries from the underlying data storage.
+     * <p>
+     * It may be a blocking task, and the time it takes to
+     * complete depends on the size of the data storage.
+     *
+     * @see AlpineDriver#getAllEntries(Consumer)
+     * @param exceptionHandler A function for handling errors.
+     * @return A collection containing all stored data entries.
+     */
+    @NotNull
+    public final Collection<D> loadAllEntries(@Nullable Consumer<Exception> exceptionHandler) {
+        return this.driver.getAllEntries(exceptionHandler);
+    }
+
+    /**
      * Check if data exists for a given key.
      *
      * @param key the key
@@ -170,9 +226,53 @@ public abstract class AlpineStore<K, D> implements Activatable {
         this.readCache.refresh(key);
     }
 
+    /**
+     * Persists cached data entries to the underlying data storage.
+     * <p>
+     * This method is responsible for persisting data entries that have been cached
+     * but not yet saved to the underlying data storage. It attempts to persist the
+     * entries and clears the cache.
+     *
+     * @return whether the operation was successful
+     */
+    public boolean flush() {
+        boolean success = true;
+        if (!this.driver.persistEntries(this.writeCache)) {
+            this.plugin.log(Level.SEVERE, String.format("&cError persisting value in %s", this.getClass().getSimpleName()));
+            success = false;
+        }
+        this.writeCache.clear();
+        return success;
+    }
+
+    /**
+     * Persists a cached data entry associated with the given key to the underlying data storage.
+     * <p>
+     * This method is responsible for persisting a specific data entry that has been cached
+     * but not yet saved to the underlying data storage. It attempts to persist the entry and
+     * returns whether the operation was successful. If the persistence operation fails, it logs
+     * an error message.
+     *
+     * @param key The key associated with the data entry to be persisted.
+     * @return Whether the persistence operation was successful.
+     */
+    public boolean flush(@NotNull K key) {
+        D value = this.writeCache.remove(key);
+        if (value == null) {
+            return false;
+        }
+
+        boolean success = true;
+        if (!this.driver.persistEntry(key, value)) {
+            this.plugin.log(Level.SEVERE, String.format("&cError persisting value \"%s\" in %s", key, this.getClass().getSimpleName()));
+            success = false;
+        }
+        return success;
+    }
+
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
-        this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, this::persistCache, 1L, PERSIST_TASK_PERIOD);
+        this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, this::flush, 1L, PERSIST_TASK_PERIOD);
 
         if (this.taskId != -1)
             this.plugin.log(String.format("&aStore activated &d%s", this.getClass().getSimpleName()));
@@ -183,7 +283,8 @@ public abstract class AlpineStore<K, D> implements Activatable {
     @Override
     public final void deactivate(@NotNull AlpinePlugin context) {
         Bukkit.getScheduler().cancelTask(this.taskId);
-        this.persistCache();
+        this.flush();
+        this.driver.shutdown();
         this.readCache.invalidateAll();
         this.taskId = -1;
         this.plugin.log(String.format("&cStore deactivated &d%s", this.getClass().getSimpleName()));
@@ -192,15 +293,5 @@ public abstract class AlpineStore<K, D> implements Activatable {
     @Override
     public final boolean isActive() {
         return this.taskId != -1;
-    }
-
-    private void persistCache() {
-        for (Map.Entry<K, D> entry : this.writeCache.entrySet()) {
-            boolean success = this.driver.persistEntry(entry.getKey(), entry.getValue());
-            if (!success) {
-                this.plugin.log(Level.SEVERE, String.format("&cError persisting key \"%s\" in %s", entry.getKey(), this.getClass().getSimpleName()));
-            }
-        }
-        this.writeCache.clear();
     }
 }

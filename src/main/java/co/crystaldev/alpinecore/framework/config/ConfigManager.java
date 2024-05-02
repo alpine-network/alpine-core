@@ -1,13 +1,16 @@
 package co.crystaldev.alpinecore.framework.config;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
+import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import de.exlll.configlib.ConfigLib;
+import de.exlll.configlib.Serializer;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,20 +22,29 @@ import java.util.Map;
  * @since 0.1.0
  */
 public final class ConfigManager {
-    public static final YamlConfigurationProperties PROPERTIES = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
-            .inputNulls(true).outputNulls(true)
-            .build();
 
     @Getter
     private final File rootDirectory;
     private final Map<Class<? extends AlpineConfig>, AlpineConfig> registeredConfigurations = new HashMap<>();
 
-    public ConfigManager(@NotNull AlpinePlugin plugin) {
+    public final YamlConfigurationProperties properties;
+
+    public ConfigManager(@NotNull AlpinePlugin plugin, @NotNull SerializerRegistry serializerRegistry) {
         this.rootDirectory = plugin.getDataFolder();
 
         if (!this.rootDirectory.exists() && !this.rootDirectory.mkdirs()) {
             throw new IllegalStateException("Unable to generate configuration root directory");
         }
+
+        YamlConfigurationProperties.Builder<?> builder = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
+                .inputNulls(true)
+                .outputNulls(true);
+
+        serializerRegistry.getConfigSerializers().forEach((dataType, serializer) -> {
+            builder.addSerializer((Class) dataType, serializer);
+        });
+
+        this.properties = builder.build();
     }
 
     public void registerConfig(@NotNull AlpineConfig config) {
@@ -40,12 +52,12 @@ public final class ConfigManager {
         if (!this.registeredConfigurations.containsKey(clazz)) {
             File configFile = new File(this.rootDirectory, config.getFileName());
             if (configFile.exists()) {
-                AlpineConfig existingConfig = YamlConfigurations.load(configFile.toPath(), clazz, PROPERTIES);
-                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, existingConfig, PROPERTIES);
+                AlpineConfig existingConfig = YamlConfigurations.load(configFile.toPath(), clazz, this.properties);
+                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, existingConfig, this.properties);
                 this.registeredConfigurations.put(clazz, existingConfig);
             }
             else {
-                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, config, PROPERTIES);
+                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, config, this.properties);
                 this.registeredConfigurations.put(clazz, config);
             }
         }
@@ -63,6 +75,10 @@ public final class ConfigManager {
 
     public boolean isRegistered(@NotNull AlpineConfig config) {
         Class<? extends AlpineConfig> clazz = config.getClass();
+        return this.registeredConfigurations.containsKey(clazz);
+    }
+
+    public <T extends AlpineConfig> boolean isRegistered(@NotNull Class<T> clazz) {
         return this.registeredConfigurations.containsKey(clazz);
     }
 
