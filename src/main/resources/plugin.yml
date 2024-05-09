@@ -2,7 +2,9 @@ main: ${group}.${pluginName}
 name: ${pluginName}
 version: ${pluginVersion}
 description: ${pluginDescription}
-author: tomwmth
+authors:
+  - tomwmth
+  - BestBearr
 website: ${pluginWebsite}
 api-version: 1.13
 
