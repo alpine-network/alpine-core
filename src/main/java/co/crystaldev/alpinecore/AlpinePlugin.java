@@ -12,6 +12,7 @@ import co.crystaldev.alpinecore.framework.engine.AlpineEngine;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
+import co.crystaldev.alpinecore.framework.ui.AlpineUIManager;
 import co.crystaldev.alpinecore.handler.CommandInvalidUsageHandler;
 import co.crystaldev.alpinecore.util.ChatColor;
 import co.crystaldev.alpinecore.util.SimpleTimer;
@@ -22,9 +23,9 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
 import dev.rollczi.litecommands.argument.ArgumentKey;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
-import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import lombok.Getter;
@@ -55,30 +56,28 @@ import java.util.stream.Collectors;
  * @since 0.1.0
  */
 @SuppressWarnings({"UnstableApiUsage", "unchecked", "rawtypes", "unused"})
+@Getter
 public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
     /** Manages any {@link co.crystaldev.alpinecore.framework.config.AlpineConfig}s for the plugin */
-    @Getter
     protected ConfigManager configManager;
 
     /** Manages any {@link co.crystaldev.alpinecore.framework.command.AlpineCommand}s for the plugin */
-    @Getter
     protected LiteCommands<CommandSender> commandManager;
 
     /** All {@link co.crystaldev.alpinecore.framework.Activatable}s registered for the plugin */
-    @Getter
     private final Set<Activatable> activatables = new CopyOnWriteArraySet<>();
 
     /** Registry of config and key serializers for the plugin */
-    @Getter
     private final SerializerRegistry serializerRegistry = new SerializerRegistry();
 
+    /** Manager for handling inventory UIs. */
+    private final AlpineUIManager uiManager = new AlpineUIManager();
+
     /** MiniMessage curated by this plugin. */
-    @Getter
     private MiniMessage miniMessage = MiniMessage.miniMessage();
 
     /** Strict MiniMessage curated by this plugin. */
-    @Getter
     private MiniMessage strictMiniMessage = MiniMessage.builder().strict(true).build();
 
     // region Abstract methods
@@ -129,7 +128,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      *
      * @param builder the pre-configured {@link LiteCommandsBuilder} ready for plugin-specific configurations.
      * @see LiteCommandsBuilder
-     * @see LiteCommandsBukkit#builder(String)
+     * @see dev.rollczi.litecommands.bukkit.LiteBukkitFactory#builder(String)
      */
     public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
         // NO-OP
@@ -372,7 +371,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                 .toArray(AlpineCommand[]::new);
 
         // Set up the LiteCommands builder
-        LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder = LiteCommandsBukkit.builder(this.getName())
+        LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder = LiteBukkitFactory.builder(this.getName())
                 // <Required Arguments> [Optional Arguments]
                 .schematicGenerator(SchematicFormat.angleBrackets())
 

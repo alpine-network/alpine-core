@@ -2,9 +2,13 @@ package co.crystaldev.alpinecore.framework.config.object.item;
 
 import com.cryptomorin.xseries.XMaterial;
 import de.exlll.configlib.Configuration;
+import de.exlll.configlib.SerializeWith;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -19,18 +23,20 @@ import java.util.List;
  * @since 0.4.0
  */
 @NoArgsConstructor @AllArgsConstructor @Getter
-@Configuration
+@Configuration @SerializeWith(serializer = ConfigItemAdapter.class)
 public class VaryingConfigItem implements ConfigItem {
 
-    private String name;
+    protected String name;
 
-    private List<String> lore;
+    protected List<String> lore;
 
-    private boolean enchanted;
+    protected int count = -1;
+
+    protected boolean enchanted;
 
     @NotNull
     public DefinedConfigItem define(@NotNull XMaterial type) {
-        return new DefinedConfigItem(type, this.name, this.lore, this.enchanted);
+        return new DefinedConfigItem(type, this.name, this.lore, this.count, this.enchanted);
     }
 
     @NotNull
@@ -42,21 +48,50 @@ public class VaryingConfigItem implements ConfigItem {
 
         private String name;
         private List<String> lore;
+        private int count = -1;
         private boolean enchanted;
 
         @NotNull
         public Builder name(@NotNull String name) {
+            Validate.notNull(name, "name cannot be null");
             this.name = name;
             return this;
         }
 
         @NotNull
         public Builder lore(@NotNull String... lore) {
+            Validate.notNull(lore, "lore cannot be null");
             List<String> processedLore = new LinkedList<>();
             for (String s : lore) {
                 processedLore.addAll(Arrays.asList(s.split("(\n|<br>)")));
             }
             this.lore = processedLore;
+            return this;
+        }
+
+        @NotNull
+        public Builder lore(@NotNull Iterable<String> lore) {
+            Validate.notNull(lore, "lore cannot be null");
+            List<String> processedLore = new LinkedList<>();
+            for (String s : lore) {
+                processedLore.addAll(Arrays.asList(s.split("(\n|<br>)")));
+            }
+            this.lore = processedLore;
+            return this;
+        }
+
+        @NotNull
+        public Builder lore(@NotNull Component lore) {
+            Validate.notNull(lore, "lore cannot be null");
+            PlainTextComponentSerializer serializer = PlainTextComponentSerializer.plainText();
+            String serialized = serializer.serialize(lore);
+            this.lore = new LinkedList<>(Arrays.asList(serialized.split("(\n|<br>)")));
+            return this;
+        }
+
+        @NotNull
+        public Builder count(int count) {
+            this.count = count;
             return this;
         }
 
@@ -68,8 +103,9 @@ public class VaryingConfigItem implements ConfigItem {
 
         @NotNull
         public VaryingConfigItem build() {
+            String name = this.name == null ? "" : this.name;
             List<String> lore = this.lore == null ? Collections.emptyList() : this.lore ;
-            return new VaryingConfigItem(this.name, lore, this.enchanted);
+            return new VaryingConfigItem(name, lore, this.count, this.enchanted);
         }
     }
 }

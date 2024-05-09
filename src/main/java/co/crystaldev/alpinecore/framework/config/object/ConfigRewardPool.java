@@ -27,8 +27,8 @@ import java.util.function.Consumer;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@Configuration
 @AllArgsConstructor @NoArgsConstructor
+@Configuration
 public class ConfigRewardPool {
 
     private List<Entry> entries;
@@ -91,7 +91,8 @@ public class ConfigRewardPool {
     /**
      * Represents a possible reward.
      */
-    @Configuration @NoArgsConstructor
+    @NoArgsConstructor
+    @Configuration
     public static class Entry {
         private String name;
         private double chance;

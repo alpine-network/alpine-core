@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@Configuration @NoArgsConstructor
+@NoArgsConstructor
+@Configuration
 public class ConfigMessage {
 
     protected List<String> message;

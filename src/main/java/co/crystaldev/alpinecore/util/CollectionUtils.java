@@ -127,6 +127,25 @@ public final class CollectionUtils {
     }
 
     /**
+     * Creates a new map with the specified items.
+     *
+     * @param <T> the type of the elements in the map
+     *
+     * @param items the items to add to the map
+     * @return the map
+     *
+     * @see HashMap
+     */
+    @NotNull
+    public static <T> Map<T, T> map(@NotNull T... items) {
+        Map<T, T> map = new HashMap<>(items.length / 2);
+        for (int i = 0; i < items.length; i += 2) {
+            map.put(items[i], items[i + 1]);
+        }
+        return map;
+    }
+
+    /**
      * Creates a new ordered map with the specified objects.
      * <p>
      * Varargs should be specified by alternating keys and values.
@@ -157,6 +176,28 @@ public final class CollectionUtils {
             }
         }
 
+        return map;
+    }
+
+    /**
+     * Creates a new LinkedHashMap with the specified objects.
+     * <p>
+     * Varargs should be specified by alternating keys and values.
+     * <p>
+     * If the number of varargs is odd, the method will quietly ignore them.
+     *
+     * @param <T>    the type of the elements in the map
+     * @param items  the keys and values to add to the map
+     * @return the map
+     *
+     * @see java.util.LinkedHashMap
+     */
+    @NotNull
+    public static <T> LinkedHashMap<T, T> linkedMap(@NotNull T... items) {
+        LinkedHashMap<T, T> map = new LinkedHashMap<>(items.length / 2);
+        for (int i = 0; i < items.length; i += 2) {
+            map.put(items[i], items[i + 1]);
+        }
         return map;
     }
 }

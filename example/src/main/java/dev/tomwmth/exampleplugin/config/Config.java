@@ -2,6 +2,9 @@ package dev.tomwmth.exampleplugin.config;
 
 import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
+import co.crystaldev.alpinecore.framework.config.object.item.DefinedConfigItem;
+import co.crystaldev.alpinecore.framework.ui.type.ConfigInventoryUI;
+import com.cryptomorin.xseries.XMaterial;
 import de.exlll.configlib.Comment;
 
 /**
@@ -17,4 +20,38 @@ public class Config extends AlpineConfig {
             "The custom tags used here are located in the AlpineCore config."
     })
     public ConfigMessage integrationJoinMessage = ConfigMessage.of("%prefix% <emphasis>Via reports your protocol version as <highlight>%protocol%</highlight>.</emphasis>");
+
+    @Comment({
+            "",
+            "Create an advanced and configurable inventory",
+            "UI with ease!"
+    })
+    public ConfigInventoryUI basicInventory = ConfigInventoryUI.builder()
+            .name("<primary>Test Inventory")
+            .slots(
+                    "#########",
+                    "#|||||||#",
+                    "#|||||||#",
+                    "#########",
+                    "--<-I->--"
+            )
+            .dictionary(
+                    "#", "background",
+                    "|", "stock-selection",
+                    "-", "footer",
+                    "<", "previous-page",
+                    ">", "next-page",
+                    "I", "page-info"
+            )
+            .item("background", DefinedConfigItem
+                    .builder(XMaterial.LIGHT_GRAY_STAINED_GLASS_PANE)
+                    .name("")
+                    .lore("")
+                    .build())
+            .item("footer", DefinedConfigItem
+                    .builder(XMaterial.BLACK_STAINED_GLASS_PANE)
+                    .name("")
+                    .lore("")
+                    .build())
+            .build();
 }

@@ -3,6 +3,8 @@ package dev.tomwmth.exampleplugin.command;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
+import co.crystaldev.alpinecore.framework.ui.handler.GenericUIHandler;
+import co.crystaldev.alpinecore.framework.ui.type.InventoryUI;
 import co.crystaldev.alpinecore.util.Messaging;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.Key;
@@ -56,7 +58,7 @@ public class ExampleCommand extends AlpineCommand {
     }
 
     @Execute(name = "subcommand")
-    public void execute(@Context Player sender, @Arg("action") ExampleAction action) {
+    public void executeSubcommand(@Context Player sender, @Arg("action") ExampleAction action) {
         Config config = this.plugin.getConfigManager().getConfig(Config.class);
         World world = sender.getWorld();
         String message;
@@ -77,6 +79,18 @@ public class ExampleCommand extends AlpineCommand {
         Messaging.send(sender,
                 config.actionMessage.build(this.plugin,
                         "action", message)
+        );
+    }
+
+    @Execute(name = "ui")
+    public void executeUI(@Context Player sender) {
+        Config config = this.plugin.getConfigManager().getConfig(Config.class);
+        InventoryUI ui = config.basicInventory.build(GenericUIHandler.getInstance());
+        ui.view(sender);
+
+        Messaging.send(sender,
+                config.actionMessage.build(this.plugin,
+                        "action", "Opened inventory UI")
         );
     }
 

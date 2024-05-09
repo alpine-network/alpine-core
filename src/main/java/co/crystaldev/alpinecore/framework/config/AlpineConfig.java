@@ -17,7 +17,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@Configuration @NoArgsConstructor
+@NoArgsConstructor
+@Configuration
 public abstract class AlpineConfig implements Activatable {
 
     @Getter
