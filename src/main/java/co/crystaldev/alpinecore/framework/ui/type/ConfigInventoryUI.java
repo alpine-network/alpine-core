@@ -1,8 +1,10 @@
 package co.crystaldev.alpinecore.framework.ui.type;
 
+import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.config.object.item.DefinedConfigItem;
 import co.crystaldev.alpinecore.framework.ui.handler.UIHandler;
 import co.crystaldev.alpinecore.util.CollectionUtils;
+import com.google.common.annotations.Beta;
 import de.exlll.configlib.Configuration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +21,7 @@ import java.util.Map;
  */
 @AllArgsConstructor @NoArgsConstructor @Getter
 @Configuration
+@Beta
 public class ConfigInventoryUI {
 
     protected String name;
@@ -30,8 +33,8 @@ public class ConfigInventoryUI {
     protected LinkedHashMap<String, DefinedConfigItem> items;
 
     @NotNull
-    public InventoryUI build(@NotNull UIHandler handler) {
-        return new InventoryUI(this, handler);
+    public InventoryUI build(@NotNull AlpinePlugin plugin, @NotNull UIHandler handler) {
+        return new InventoryUI(this, plugin, handler);
     }
 
     @NotNull

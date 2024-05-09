@@ -17,7 +17,7 @@ public enum GuiType {
     DISPENSER(InventoryType.DISPENSER, 3, 3, 3),
     BREWING(InventoryType.BREWING, 4, 1, 1);
 
-    private final InventoryType type;
+    private final InventoryType inventoryType;
 
     private final int rowLength;
 

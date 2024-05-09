@@ -85,7 +85,7 @@ public class ExampleCommand extends AlpineCommand {
     @Execute(name = "ui")
     public void executeUI(@Context Player sender) {
         Config config = this.plugin.getConfigManager().getConfig(Config.class);
-        InventoryUI ui = config.basicInventory.build(GenericUIHandler.getInstance());
+        InventoryUI ui = config.basicInventory.build(this.plugin, GenericUIHandler.getInstance());
         ui.view(sender);
 
         Messaging.send(sender,

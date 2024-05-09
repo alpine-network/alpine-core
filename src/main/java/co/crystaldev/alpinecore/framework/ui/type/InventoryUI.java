@@ -1,27 +1,35 @@
 package co.crystaldev.alpinecore.framework.ui.type;
 
+import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.ui.GuiType;
 import co.crystaldev.alpinecore.framework.ui.handler.UIHandler;
+import co.crystaldev.alpinecore.framework.ui.AlpineUIManager;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @since 0.4.0
  */
+@Getter
 public final class InventoryUI {
 
     private final ConfigInventoryUI properties;
 
+    private final AlpineUIManager manager;
+
     private final UIHandler handler;
 
-    public InventoryUI(@NotNull ConfigInventoryUI properties, @NotNull UIHandler handler) {
-        this.properties = properties;
-        this.handler = handler;
+    private final GuiType type;
 
-        GuiType resolved = GuiType.resolveType(properties.getSlots());
+    public InventoryUI(@NotNull ConfigInventoryUI properties, @NotNull AlpinePlugin plugin, @NotNull UIHandler handler) {
+        this.properties = properties;
+        this.manager = plugin.getUiManager();
+        this.handler = handler;
+        this.type = GuiType.resolveType(properties.getSlots());
     }
 
     public void view(@NotNull Player player) {
-
+        this.manager.open(player, this);
     }
 }

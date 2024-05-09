@@ -27,7 +27,7 @@ public class Config extends AlpineConfig {
             "UI with ease!"
     })
     public ConfigInventoryUI basicInventory = ConfigInventoryUI.builder()
-            .name("<primary>Test Inventory")
+            .name("<gradient:#fc5353:#eaeaea:#1f5aef>Test Inventory")
             .slots(
                     "#########",
                     "#|||||||#",

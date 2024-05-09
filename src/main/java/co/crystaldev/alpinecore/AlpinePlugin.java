@@ -72,7 +72,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     private final SerializerRegistry serializerRegistry = new SerializerRegistry();
 
     /** Manager for handling inventory UIs. */
-    private final AlpineUIManager uiManager = new AlpineUIManager();
+    private AlpineUIManager uiManager;
 
     /** MiniMessage curated by this plugin. */
     private MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -222,6 +222,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         TagResolver resolver = TagResolver.resolver(TagResolver.standard(), new StyleTagResolver(this));
         this.miniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver));
         this.strictMiniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver).strict(true));
+
+        // Initialize the ui manager
+        this.uiManager = new AlpineUIManager(this);
 
         // Initialize the command manager
         this.setupCommandManager();
