@@ -5,6 +5,8 @@ import co.crystaldev.alpinecore.util.Components;
 import co.crystaldev.alpinecore.util.Formatting;
 import co.crystaldev.alpinecore.util.ItemHelper;
 import com.cryptomorin.xseries.XMaterial;
+import de.exlll.configlib.Polymorphic;
+import de.exlll.configlib.PolymorphicTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -27,6 +29,11 @@ import java.util.stream.Collectors;
  *
  * @since 0.4.0
  */
+@Polymorphic
+@PolymorphicTypes({
+        @PolymorphicTypes.Type(type = DefinedConfigItem.class),
+        @PolymorphicTypes.Type(type = VaryingConfigItem.class)
+})
 public interface ConfigItem {
 
     @Nullable

@@ -27,7 +27,7 @@ import java.util.function.Function;
  * @since 0.4.0
  */
 @NoArgsConstructor @AllArgsConstructor @Getter
-@Configuration @SerializeWith(serializer = ConfigItemAdapter.class)
+@Configuration @SerializeWith(serializer = DefinedConfigItem.Adapter.class)
 public class DefinedConfigItem implements ConfigItem {
 
     protected XMaterial type;
@@ -277,6 +277,13 @@ public class DefinedConfigItem implements ConfigItem {
             String name = this.name == null ? "" : this.name;
             List<String> lore = this.lore == null ? Collections.emptyList() : this.lore ;
             return new DefinedConfigItem(this.material, name, lore, this.count, this.enchanted);
+        }
+    }
+
+    static final class Adapter extends ConfigItemAdapter {
+        @Override
+        public boolean requiresType() {
+            return true;
         }
     }
 }

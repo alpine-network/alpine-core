@@ -23,7 +23,7 @@ import java.util.List;
  * @since 0.4.0
  */
 @NoArgsConstructor @AllArgsConstructor @Getter
-@Configuration @SerializeWith(serializer = ConfigItemAdapter.class)
+@Configuration @SerializeWith(serializer = VaryingConfigItem.Adapter.class)
 public class VaryingConfigItem implements ConfigItem {
 
     protected String name;
@@ -106,6 +106,13 @@ public class VaryingConfigItem implements ConfigItem {
             String name = this.name == null ? "" : this.name;
             List<String> lore = this.lore == null ? Collections.emptyList() : this.lore ;
             return new VaryingConfigItem(name, lore, this.count, this.enchanted);
+        }
+    }
+
+    static final class Adapter extends ConfigItemAdapter {
+        @Override
+        public boolean requiresType() {
+            return false;
         }
     }
 }

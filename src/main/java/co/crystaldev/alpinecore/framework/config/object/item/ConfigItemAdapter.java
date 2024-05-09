@@ -8,7 +8,9 @@ import java.util.*;
 /**
  * @since 0.4.0
  */
-final class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, Object>> {
+abstract class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, Object>> {
+
+    public abstract boolean requiresType();
 
     @Override
     public Map<String, Object> serialize(ConfigItem element) {
@@ -39,6 +41,9 @@ final class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, Obje
         if (type != null) {
             type = XMaterial.matchXMaterial(type.toString()).orElse(null);
         }
+        else if (this.requiresType()) {
+            throw new IllegalStateException("material type is required for ConfigItem \"" + element + "\"");
+        }
 
         String name = element.getOrDefault("name", "").toString();
         Object lore = element.getOrDefault("lore", Collections.emptyList());
@@ -49,7 +54,7 @@ final class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, Obje
         int count = (int) element.getOrDefault("count", -1);
         boolean enchanted = element.getOrDefault("enchanted", "false").toString().equalsIgnoreCase("true");
 
-        if (type instanceof XMaterial) {
+        if (this.requiresType() || type instanceof XMaterial) {
             return new DefinedConfigItem((XMaterial) type, name, (List<String>) lore, count, enchanted);
         }
         else {

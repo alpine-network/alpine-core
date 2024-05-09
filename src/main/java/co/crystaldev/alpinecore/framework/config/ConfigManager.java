@@ -3,14 +3,12 @@ package co.crystaldev.alpinecore.framework.config;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import de.exlll.configlib.ConfigLib;
-import de.exlll.configlib.Serializer;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 

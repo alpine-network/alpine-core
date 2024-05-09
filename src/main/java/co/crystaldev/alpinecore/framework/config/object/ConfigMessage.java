@@ -3,6 +3,7 @@ package co.crystaldev.alpinecore.framework.config.object;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.util.Formatting;
 import de.exlll.configlib.Configuration;
+import de.exlll.configlib.Serializer;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +111,7 @@ public class ConfigMessage {
         return Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
     }
 
-    public static class Serializer implements de.exlll.configlib.Serializer<ConfigMessage, Object> {
+    public static final class Adapter implements Serializer<ConfigMessage, Object> {
         @Override
         public Object serialize(ConfigMessage element) {
             return String.join("\n", element.message);

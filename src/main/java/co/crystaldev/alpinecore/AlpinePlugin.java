@@ -199,7 +199,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
         this.serializerRegistry.putKeySerializer(UUID.class, new KeySerializer.UuidKey());
         this.serializerRegistry.putKeySerializer(OfflinePlayer.class, new KeySerializer.PlayerKey());
-        this.serializerRegistry.putConfigSerializer(ConfigMessage.class, new ConfigMessage.Serializer());
+        this.serializerRegistry.putConfigSerializer(ConfigMessage.class, new ConfigMessage.Adapter());
         this.registerSerializers(this.serializerRegistry);
 
         // Initialize the config manager
