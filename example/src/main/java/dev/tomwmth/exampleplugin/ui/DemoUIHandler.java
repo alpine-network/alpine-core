@@ -60,25 +60,25 @@ public final class DemoUIHandler extends GenericUIHandler {
     }
 
     @Override
-    public @Nullable Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem dictionaryDefinition) {
+    public @Nullable Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
         switch (key) {
             case "stock-selection":
-                return this.paginator.nextElement(context);
+                return this.paginator.buildNextSlot(context);
             case "previous-page":
-                if (dictionaryDefinition == null) {
+                if (definition == null) {
                     return null;
                 }
-                return this.paginator.buildPrevious(context, dictionaryDefinition);
+                return this.paginator.buildPreviousNav(context, definition);
             case "next-page":
-                if (dictionaryDefinition == null) {
+                if (definition == null) {
                     return null;
                 }
-                return this.paginator.buildNext(context, dictionaryDefinition);
+                return this.paginator.buildNextNav(context, definition);
             case "page-info":
-                if (dictionaryDefinition == null) {
+                if (definition == null) {
                     return null;
                 }
-                return this.paginator.buildInfo(context, dictionaryDefinition);
+                return this.paginator.buildNavInfo(context, definition);
             default:
                 return null;
         }

@@ -44,6 +44,30 @@ public class VaryingConfigItem implements ConfigItem {
         return new Builder();
     }
 
+    /**
+     * The Builder class is used to construct instances of the VaryingConfigItem class.
+     * It provides methods to set the name, lore, count, enchanted status, and attributes of the item.
+     * <br>
+     * Example usage:
+     * <pre>{@code
+     * Builder builder = VaryingConfigItem.builder();
+     * VaryingConfigItem item = builder
+     *      .name("<info>Varying Item")
+     *      .lore(
+     *          "These are some nifty lore lines!",
+     *          "",
+     *          "<info>  *</info> <emphasis>Type: %type%"
+     *      )
+     *      .count(64)
+     *      .enchanted()
+     *      .attribute("key", "value");
+     *
+     * XMaterial type = XMaterial.STICK;
+     * ItemStack builtItem = item.build(plugin,
+     *      type, // You need to plug the type in here
+     *      "type", type);
+     * }</pre>
+     */
     public static final class Builder {
 
         private String name;

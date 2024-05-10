@@ -214,6 +214,28 @@ public class DefinedConfigItem implements ConfigItem {
         return new Builder(material);
     }
 
+    /**
+     * The Builder class is used to construct instances of the DefinedConfigItem class.
+     * It provides methods to set the name, lore, count, enchanted status, and attributes of the item.
+     * <br>
+     * Example usage:
+     * <pre>{@code
+     * Builder builder = DefinedConfigItem.builder(XMaterial.STICK);
+     * DefinedConfigItem item = builder
+     *      .name("<info>Defined Item")
+     *      .lore(
+     *          "These are some nifty lore lines!",
+     *          "",
+     *          "<info>  *</info> <emphasis>Type: %type%"
+     *      )
+     *      .count(64)
+     *      .enchanted()
+     *      .attribute("key", "value");
+     *
+     * ItemStack builtItem = item.build(plugin,
+     *      "type", item.getType());
+     * }</pre>
+     */
     @RequiredArgsConstructor
     public static final class Builder {
 

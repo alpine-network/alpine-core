@@ -25,7 +25,7 @@ public class GenericUIHandler extends UIHandler {
     }
 
     @Override
-    public @Nullable Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem dictionaryDefinition) {
+    public @Nullable Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
         return null;
     }
 

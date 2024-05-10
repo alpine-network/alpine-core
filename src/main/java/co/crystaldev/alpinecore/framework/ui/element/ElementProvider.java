@@ -18,6 +18,9 @@ import java.util.function.BiFunction;
  * The ElementProvider class provides a way to iterate over a collection of objects and
  * convert them into elements using a provided function.
  *
+ * @param <S> the type of the entries in the provider
+ * @param <T> the type of the elements built by the provider
+ *
  * @since 0.4.0
  */
 public final class ElementProvider<S, T extends Element> {
@@ -34,27 +37,56 @@ public final class ElementProvider<S, T extends Element> {
         this.toElementFunction = toElementFunction;
     }
 
+    /**
+     * Retrieves the next element from the paginator.
+     *
+     * @param context the UI context
+     * @return the next element from the paginator
+     */
     @Nullable
     public T nextElement(@NotNull UIContext context) {
         State<S> state = this.states.computeIfAbsent(context, ctx -> new State<>(this.entries.iterator()));
         return state.hasNext() ? this.toElementFunction.apply(context, state.next()) : null;
     }
 
+    /**
+     * Retrieves an element from the paginator at the specified index.
+     *
+     * @param context the UI context
+     * @param index the index of the element to retrieve
+     * @return the element at the specified index
+     */
     @NotNull
     public T getElement(@NotNull UIContext context, int index) {
         Validate.isTrue(index >= 0 && index < this.entries.size(), "index out of bounds");
         return this.toElementFunction.apply(context, this.entries.stream().skip(index).findFirst().orElse(null));
     }
 
+    /**
+     * Retrieves the index of an element from the iterator in the given UI context.
+     *
+     * @param context The UI context.
+     * @return The index of the element at the current UI context, or -1 if the element is not found.
+     */
     public int getIndex(@NotNull UIContext context) {
         State<S> state = this.states.get(context);
-        return state == null ? 0 : state.index;
+        return state == null ? -1 : state.index;
     }
 
+    /**
+     * Retrieves the size of the entries in the provider.
+     *
+     * @return the number of entries
+     */
     public int size() {
         return this.entries.size();
     }
 
+    /**
+     * Removes any stale states or states associated with a specific player from the context.
+     *
+     * @param context the UI context
+     */
     public void closed(@NotNull UIContext context) {
         this.states.entrySet().removeIf(e -> e.getKey().isStale() || e.getKey().playerId().equals(context.playerId()));
     }
@@ -80,6 +112,14 @@ public final class ElementProvider<S, T extends Element> {
         }
     }
 
+    /**
+     * The Builder class is used to construct an ElementProvider object.
+     *
+     * @param <S> the type of the entries in the provider
+     * @param <T> the type of the elements built by the provider
+     *
+     * @since 0.4.0
+     */
     public static final class Builder<S, T extends Element> {
         private Collection<S> entries;
         private BiFunction<UIContext, S, T> toElementFunction;

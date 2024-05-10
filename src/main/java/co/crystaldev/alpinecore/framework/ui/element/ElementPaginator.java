@@ -14,6 +14,11 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
+ * The ElementPaginator class is responsible for paginating elements
+ * and building navigation elements for a user interface.
+ *
+ * @param <T> the type of the entries in the paginator
+ *
  * @since 0.4.0
  */
 public final class ElementPaginator<T> {
@@ -30,8 +35,14 @@ public final class ElementPaginator<T> {
         this.emptySlotProvider = emptySlotProvider;
     }
 
+    /**
+     * Retrieves the next element from the paginator.
+     *
+     * @param context the UI context
+     * @return the next element from the paginator
+     */
     @NotNull
-    public PaginatorElement<T> nextElement(@NotNull UIContext context) {
+    public PaginatorElement<T> buildNextSlot(@NotNull UIContext context) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.size()));
         this.elementProvider.nextElement(context);
@@ -42,8 +53,15 @@ public final class ElementPaginator<T> {
         return new PaginatorElement<>(context, this.elementProvider, this.emptySlotProvider, state, offset);
     }
 
+    /**
+     * Builds a previous navigation element for the UI paginator.
+     *
+     * @param context the UI context
+     * @param item the defined config item
+     * @return the previous navigation element
+     */
     @NotNull
-    public Element buildPrevious(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
+    public Element buildPreviousNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
@@ -54,8 +72,15 @@ public final class ElementPaginator<T> {
         return element;
     }
 
+    /**
+     * Builds the next navigation element for the UI paginator.
+     *
+     * @param context the UI context
+     * @param item the defined config item
+     * @return the next navigation element
+     */
     @NotNull
-    public Element buildNext(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
+    public Element buildNextNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
@@ -66,13 +91,25 @@ public final class ElementPaginator<T> {
         return element;
     }
 
+    /**
+     * Builds a navigation info element for the UI paginator.
+     *
+     * @param context the UI context
+     * @param item    the defined config item
+     * @return the navigation info element
+     */
     @NotNull
-    public Element buildInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
+    public Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         return new PaginatorNavigationElement(context, state, item);
     }
 
+    /**
+     * Removes any stale states or states associated with a specific player from the context.
+     *
+     * @param context the UI context
+     */
     public void closed(@NotNull UIContext context) {
         this.elementProvider.closed(context);
         this.states.entrySet().removeIf(e -> e.getKey().isStale() || e.getKey().playerId().equals(context.playerId()));
@@ -110,6 +147,14 @@ public final class ElementPaginator<T> {
         }
     }
 
+    /**
+     * The Builder class provides a way to construct an instance of ElementPaginator class.
+     * It allows setting the element provider and empty slot provider for the paginator.
+     *
+     * @param <T> the type of the entries in the paginator
+     *
+     * @since 0.4.0
+     */
     public static final class Builder<T> {
 
         private ElementProvider<T, ?> elementProvider;

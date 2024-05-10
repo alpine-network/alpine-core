@@ -71,9 +71,25 @@ public abstract class UIHandler implements UIEventSubscriber {
         }
     }
 
+    /**
+     * Creates an entry for the UI context with the given key and dictionary definition.
+     *
+     * @param context    the UI context in which the entry is created
+     * @param key        the key for the entry
+     * @param definition the dictionary definition for the entry
+     *
+     * @return the created Element instance, or null if the entry cannot be created
+     */
     @Nullable
-    public abstract Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem dictionaryDefinition);
+    public abstract Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition);
 
+    /**
+     * Populates an entry in the UI context with the given key.
+     *
+     * @param context the UI context in which to populate the entry
+     * @param key     the key for the entry to populate
+     * @return the populated Element instance, or null if the entry cannot be populated
+     */
     @NotNull
     public final Element populateEntry(@NotNull UIContext context, @NotNull String key) {
         ConfigInventoryUI properties = context.ui().getProperties();
