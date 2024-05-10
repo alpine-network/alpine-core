@@ -3,7 +3,6 @@ package dev.tomwmth.exampleplugin.command;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
-import co.crystaldev.alpinecore.framework.ui.handler.InventoryUIHandler;
 import co.crystaldev.alpinecore.framework.ui.type.InventoryUI;
 import co.crystaldev.alpinecore.util.Messaging;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -21,6 +20,7 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.tomwmth.exampleplugin.config.Config;
 import dev.tomwmth.exampleplugin.storage.Statistics;
 import dev.tomwmth.exampleplugin.storage.StatisticsStore;
+import dev.tomwmth.exampleplugin.ui.DemoUIHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -85,7 +85,7 @@ public class ExampleCommand extends AlpineCommand {
     @Execute(name = "ui")
     public void executeUI(@Context Player sender) {
         Config config = this.plugin.getConfigManager().getConfig(Config.class);
-        InventoryUI ui = config.basicInventory.build(this.plugin, InventoryUIHandler.getInstance());
+        InventoryUI ui = config.demoUI.build(this.plugin, DemoUIHandler.getInstance());
         ui.view(sender);
 
         Messaging.send(sender,

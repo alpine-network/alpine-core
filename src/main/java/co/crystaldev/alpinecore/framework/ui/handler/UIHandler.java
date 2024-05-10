@@ -2,9 +2,9 @@ package co.crystaldev.alpinecore.framework.ui.handler;
 
 import co.crystaldev.alpinecore.framework.config.object.item.DefinedConfigItem;
 import co.crystaldev.alpinecore.framework.ui.UIContext;
-import co.crystaldev.alpinecore.framework.ui.element.type.GenericUIElement;
+import co.crystaldev.alpinecore.framework.ui.element.type.GenericElement;
 import co.crystaldev.alpinecore.framework.ui.SlotPosition;
-import co.crystaldev.alpinecore.framework.ui.element.UIElement;
+import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventSubscriber;
 import co.crystaldev.alpinecore.framework.ui.type.ConfigInventoryUI;
 import org.bukkit.ChatColor;
@@ -14,7 +14,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The backbone for user interfaces.
@@ -61,7 +63,7 @@ public abstract class UIHandler implements UIEventSubscriber {
 
                 String key = dictionary.get(Character.toString(symbol));
                 if (key != null) {
-                    UIElement element = this.populateEntry(context, key);
+                    Element element = this.populateEntry(context, key);
                     element.setPosition(SlotPosition.from(context.inventory(), x, y));
                     context.addElement(element);
                 }
@@ -70,31 +72,31 @@ public abstract class UIHandler implements UIEventSubscriber {
     }
 
     @Nullable
-    public abstract UIElement getEntry(@NotNull UIContext context, @NotNull String key);
+    public abstract Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem dictionaryDefinition);
 
     @NotNull
-    public final UIElement populateEntry(@NotNull UIContext context, @NotNull String key) {
+    public final Element populateEntry(@NotNull UIContext context, @NotNull String key) {
         ConfigInventoryUI properties = context.ui().getProperties();
         Map<String, DefinedConfigItem> dictionary = properties.getItems();
 
-        UIElement fallback = this.getEntry(context, key);
-        if (fallback != null) {
-            return fallback;
+        Element entry = this.createEntry(context, key, dictionary.get(key));
+        if (entry != null) {
+            return entry;
         }
         else if (dictionary.containsKey(key)) {
             DefinedConfigItem configItem = dictionary.get(key);
-            UIElement element = new GenericUIElement(context, configItem.build(context.manager().getPlugin()));
-            element.setAttributes(configItem.getAttributes());
+            Element element = new GenericElement(context, configItem.build(context.manager().getPlugin()));
+            element.putAttributes(Optional.ofNullable(configItem.getAttributes()).orElse(Collections.emptyMap()));
             return element;
         }
         else {
             // the dictionary does not define the requested item
             ItemStack itemStack = new ItemStack(Material.BARRIER, 1);
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName(ChatColor.RED + "Undefined Element");
+            itemMeta.setDisplayName(ChatColor.RED + "Undefined Element: " + key);
             itemStack.setItemMeta(itemMeta);
 
-            return new GenericUIElement(context, itemStack);
+            return new GenericElement(context, itemStack);
         }
     }
 }

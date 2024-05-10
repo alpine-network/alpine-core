@@ -1,9 +1,10 @@
 package co.crystaldev.alpinecore.framework.ui.element;
 
+import co.crystaldev.alpinecore.framework.ui.ClickedFunction;
 import co.crystaldev.alpinecore.framework.ui.SlotPosition;
 import co.crystaldev.alpinecore.framework.ui.UIContext;
-import co.crystaldev.alpinecore.framework.ui.element.type.EmptyUIElement;
-import co.crystaldev.alpinecore.framework.ui.element.type.GenericUIElement;
+import co.crystaldev.alpinecore.framework.ui.element.type.EmptyElement;
+import co.crystaldev.alpinecore.framework.ui.element.type.GenericElement;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventSubscriber;
 import lombok.Getter;
@@ -12,14 +13,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @since 0.4.0
  */
-public abstract class UIElement implements UIEventSubscriber {
+public abstract class Element implements UIEventSubscriber {
 
     protected final UIContext context;
 
@@ -28,7 +27,10 @@ public abstract class UIElement implements UIEventSubscriber {
 
     protected Map<String, Object> attributes;
 
-    public UIElement(UIContext context) {
+    @Setter
+    protected ClickedFunction onClick;
+
+    public Element(@NotNull UIContext context) {
         this.context = context;
     }
 
@@ -37,9 +39,15 @@ public abstract class UIElement implements UIEventSubscriber {
     @Nullable
     public abstract ItemStack buildItemStack();
 
+    public void clicked(int mouseButton) {
+        if (this.onClick != null) {
+            this.onClick.mouseClicked(mouseButton);
+        }
+    }
+
     @Nullable
     public <T> T getAttribute(@NotNull String key) {
-        return (T) this.attributes.get(key);
+        return this.attributes == null ? null : (T) this.attributes.get(key);
     }
 
     public void setAttribute(@NotNull String key, @Nullable Object value) {
@@ -54,8 +62,11 @@ public abstract class UIElement implements UIEventSubscriber {
         return this.attributes == null ? Collections.emptyMap() : this.attributes;
     }
 
-    public void setAttributes(@Nullable Map<String, Object> attributes) {
-        this.attributes = attributes;
+    public void putAttributes(@NotNull Map<String, Object> attributes) {
+        if (this.attributes == null) {
+            this.attributes = new HashMap<>();
+        }
+        this.attributes.putAll(attributes);
     }
 
     @Override
@@ -63,18 +74,22 @@ public abstract class UIElement implements UIEventSubscriber {
         // NO OP
     }
 
-    @NotNull
-    public static GenericUIElement of(@NotNull UIContext context, @NotNull ItemStack itemStack) {
-        return new GenericUIElement(context, itemStack);
+    public static boolean isEmpty(@Nullable Element element) {
+        return element == null || element instanceof EmptyElement;
     }
 
     @NotNull
-    public static UIElement fromNullable(@Nullable UIElement element) {
+    public static GenericElement of(@NotNull UIContext context, @NotNull ItemStack itemStack) {
+        return new GenericElement(context, itemStack);
+    }
+
+    @NotNull
+    public static Element fromNullable(@Nullable Element element) {
         return element == null ? empty() : element;
     }
 
     @NotNull
-    public static UIElement empty() {
-        return EmptyUIElement.empty();
+    public static Element empty() {
+        return EmptyElement.empty();
     }
 }

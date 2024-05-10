@@ -1,10 +1,10 @@
 package co.crystaldev.alpinecore.framework.ui;
 
-import co.crystaldev.alpinecore.framework.ui.element.UIElement;
+import co.crystaldev.alpinecore.AlpinePlugin;
+import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;
 import co.crystaldev.alpinecore.framework.ui.type.InventoryUI;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -27,12 +27,12 @@ public final class UIContext {
 
     private final InventoryUI ui;
 
-    private Inventory inventory;
+    private final Inventory inventory;
 
     private final UIEventBus eventBus = new UIEventBus();
 
     @Getter
-    private final List<UIElement> elements = new LinkedList<>();
+    private final List<Element> elements = new LinkedList<>();
 
     @Getter @Setter(AccessLevel.PACKAGE)
     private boolean stale;
@@ -44,13 +44,23 @@ public final class UIContext {
     }
 
     /**
-     * Returns the AlpineUIManager instance associated with this UIContext.
+     * Returns the AlpineUIManager instance associated with this context.
      *
      * @return the AlpineUIManager instance
      */
     @NotNull
     public AlpineUIManager manager() {
         return this.ui.getManager();
+    }
+
+    /**
+     * Returns the AlpinePlugin associated with this context.
+     *
+     * @return the AlpinePlugin instance
+     */
+    @NotNull
+    public AlpinePlugin plugin() {
+        return this.manager().getPlugin();
     }
 
     /**
@@ -64,7 +74,7 @@ public final class UIContext {
     }
 
     /**
-     * Retrieves the UUID of the player associated with the UIState.
+     * Retrieves the UUID of the player associated with this context.
      *
      * @return the UUID of the player
      */
@@ -74,7 +84,7 @@ public final class UIContext {
     }
 
     /**
-     * Retrieves the Player object associated with the UIState.
+     * Retrieves the Player object associated with this context.
      *
      * @return the Player object
      */
@@ -84,7 +94,7 @@ public final class UIContext {
     }
 
     /**
-     * Retrieves the InventoryUI object associated with the UIState.
+     * Retrieves the InventoryUI object associated with this context.
      *
      * @return the InventoryUI object
      */
@@ -94,9 +104,9 @@ public final class UIContext {
     }
 
     /**
-     * Returns the inventory of the UI state.
+     * Returns the inventory associated with this context.
      *
-     * @return the inventory of the UI state
+     * @return the inventory associated with this context
      */
     @NotNull
     public Inventory inventory() {
@@ -104,11 +114,18 @@ public final class UIContext {
     }
 
     /**
+     * Refreshes the inventory associated with this context.
+     */
+    public void refresh() {
+        this.manager().refresh(this);
+    }
+
+    /**
      * Adds an element to the context.
      *
      * @param element the context to add
      */
-    public void addElement(@NotNull UIElement element) {
+    public void addElement(@NotNull Element element) {
         element.registerEvents(this, this.eventBus);
         this.elements.add(element);
     }
@@ -118,7 +135,7 @@ public final class UIContext {
      *
      * @param element the context to remove
      */
-    public void removeElement(@NotNull UIElement element) {
+    public void removeElement(@NotNull Element element) {
         this.elements.remove(element);
     }
 

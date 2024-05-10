@@ -2,6 +2,8 @@ package co.crystaldev.alpinecore.framework.ui.element;
 
 import co.crystaldev.alpinecore.framework.ui.UIContext;
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +13,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * The ElementProvider class provides a way to iterate over a collection of objects and
@@ -19,39 +20,67 @@ import java.util.function.Function;
  *
  * @since 0.4.0
  */
-public final class ElementProvider<S, T extends UIElement> {
+public final class ElementProvider<S, T extends Element> {
 
-    private final Collection<S> entries;
+    @Getter
+    private final @NotNull Collection<S> entries;
 
     private final BiFunction<UIContext, S, T> toElementFunction;
 
-    private final Map<UIContext, Iterator<S>> states = new HashMap<>();
+    private final Map<UIContext, State<S>> states = new HashMap<>();
 
     private ElementProvider(@NotNull Collection<S> entries, @NotNull BiFunction<UIContext, S, T> toElementFunction) {
         this.entries = entries;
         this.toElementFunction = toElementFunction;
     }
 
-    public void init(@NotNull UIContext context) {
-        this.states.entrySet().removeIf(e -> e.getKey().isStale() || e.getKey().playerId().equals(context.playerId()));
-    }
-
     @Nullable
     public T nextElement(@NotNull UIContext context) {
-        Iterator<S> iterator = this.states.computeIfAbsent(context, ctx -> this.entries.iterator());
-        return iterator.hasNext() ? this.toElementFunction.apply(context, iterator.next()) : null;
+        State<S> state = this.states.computeIfAbsent(context, ctx -> new State<>(this.entries.iterator()));
+        return state.hasNext() ? this.toElementFunction.apply(context, state.next()) : null;
+    }
+
+    @NotNull
+    public T getElement(@NotNull UIContext context, int index) {
+        Validate.isTrue(index >= 0 && index < this.entries.size(), "index out of bounds");
+        return this.toElementFunction.apply(context, this.entries.stream().skip(index).findFirst().orElse(null));
+    }
+
+    public int getIndex(@NotNull UIContext context) {
+        State<S> state = this.states.get(context);
+        return state == null ? 0 : state.index;
     }
 
     public int size() {
         return this.entries.size();
     }
 
+    public void closed(@NotNull UIContext context) {
+        this.states.entrySet().removeIf(e -> e.getKey().isStale() || e.getKey().playerId().equals(context.playerId()));
+    }
+
     @NotNull
-    public static <S, T extends UIElement> Builder<S, T> builder() {
+    public static <S, T extends Element> Builder<S, T> builder() {
         return new Builder<>();
     }
 
-    public static final class Builder<S, T extends UIElement> {
+    @RequiredArgsConstructor
+    private static final class State<S> {
+        private final Iterator<S> iterator;
+        private int index;
+
+        @NotNull
+        public S next() {
+            this.index++;
+            return this.iterator.next();
+        }
+
+        public boolean hasNext() {
+            return this.iterator.hasNext();
+        }
+    }
+
+    public static final class Builder<S, T extends Element> {
         private Collection<S> entries;
         private BiFunction<UIContext, S, T> toElementFunction;
 
@@ -79,10 +108,8 @@ public final class ElementProvider<S, T extends UIElement> {
         }
 
         @NotNull
-        public Builder<S, T> element(@NotNull Function<S, T> toElementFunction) {
-            Validate.notNull(toElementFunction, "toElementFunction cannot be null");
-            this.toElementFunction = (context, element) -> toElementFunction.apply(element);
-            return this;
+        public ElementPaginator<S> createPaginator() {
+            return ElementPaginator.from(this.build());
         }
 
         @NotNull

@@ -1,7 +1,7 @@
 package co.crystaldev.alpinecore.framework.ui;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
-import co.crystaldev.alpinecore.framework.ui.element.UIElement;
+import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.handler.UIHandler;
 import co.crystaldev.alpinecore.framework.ui.type.ConfigInventoryUI;
 import co.crystaldev.alpinecore.framework.ui.type.InventoryUI;
@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,7 +138,7 @@ public final class AlpineUIManager {
         Inventory inventory = context.inventory();
         inventory.clear();
 
-        for (UIElement element : context.getElements()) {
+        for (Element element : context.getElements()) {
             SlotPosition position = element.getPosition();
             if (position == null) {
                 continue;
@@ -145,6 +146,12 @@ public final class AlpineUIManager {
 
             element.init();
             inventory.setItem(position.getSlot(), element.buildItemStack());
+        }
+
+        Player player = context.player();
+        InventoryView openInventory = player.getOpenInventory();
+        if (openInventory != null && openInventory.getTopInventory().equals(inventory)) {
+            player.updateInventory();
         }
     }
 }

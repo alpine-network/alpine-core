@@ -1,6 +1,6 @@
 package co.crystaldev.alpinecore.framework.ui.element.type;
 
-import co.crystaldev.alpinecore.framework.ui.element.UIElement;
+import co.crystaldev.alpinecore.framework.ui.element.Element;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -8,13 +8,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @since 0.4.0
  */
-public final class EmptyUIElement extends UIElement {
+public final class EmptyElement extends Element {
 
-    private static final EmptyUIElement EMPTY = new EmptyUIElement();
+    private static final EmptyElement EMPTY = new EmptyElement();
 
     private static final ItemStack EMPTY_ITEM_STACK = new ItemStack(Material.AIR, 1);
 
-    private EmptyUIElement() {
+    private EmptyElement() {
         super(null);
     }
 
@@ -29,7 +29,7 @@ public final class EmptyUIElement extends UIElement {
     }
 
     @NotNull
-    public static EmptyUIElement empty() {
+    public static EmptyElement empty() {
         return EMPTY;
     }
 }
