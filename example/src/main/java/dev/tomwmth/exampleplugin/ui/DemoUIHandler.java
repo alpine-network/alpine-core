@@ -12,7 +12,6 @@ import com.cryptomorin.xseries.XMaterial;
 import dev.tomwmth.exampleplugin.config.Config;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
