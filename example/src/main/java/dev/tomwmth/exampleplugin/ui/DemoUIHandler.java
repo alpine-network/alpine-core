@@ -10,7 +10,6 @@ import co.crystaldev.alpinecore.framework.ui.handler.GenericUIHandler;
 import co.crystaldev.alpinecore.util.MappedMaterial;
 import com.cryptomorin.xseries.XMaterial;
 import dev.tomwmth.exampleplugin.config.Config;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,13 +65,19 @@ public final class DemoUIHandler extends GenericUIHandler {
             case "stock-selection":
                 return this.paginator.nextElement(context);
             case "previous-page":
-                Validate.notNull(dictionaryDefinition, "not found in dictionary: " + key);
+                if (dictionaryDefinition == null) {
+                    return null;
+                }
                 return this.paginator.buildPrevious(context, dictionaryDefinition);
             case "next-page":
-                Validate.notNull(dictionaryDefinition, "not found in dictionary: " + key);
+                if (dictionaryDefinition == null) {
+                    return null;
+                }
                 return this.paginator.buildNext(context, dictionaryDefinition);
             case "page-info":
-                Validate.notNull(dictionaryDefinition, "not found in dictionary: " + key);
+                if (dictionaryDefinition == null) {
+                    return null;
+                }
                 return this.paginator.buildInfo(context, dictionaryDefinition);
             default:
                 return null;
