@@ -3,7 +3,7 @@ package dev.tomwmth.exampleplugin.command;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
-import co.crystaldev.alpinecore.framework.ui.handler.GenericUIHandler;
+import co.crystaldev.alpinecore.framework.ui.handler.InventoryUIHandler;
 import co.crystaldev.alpinecore.framework.ui.type.InventoryUI;
 import co.crystaldev.alpinecore.util.Messaging;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -85,7 +85,7 @@ public class ExampleCommand extends AlpineCommand {
     @Execute(name = "ui")
     public void executeUI(@Context Player sender) {
         Config config = this.plugin.getConfigManager().getConfig(Config.class);
-        InventoryUI ui = config.basicInventory.build(this.plugin, GenericUIHandler.getInstance());
+        InventoryUI ui = config.basicInventory.build(this.plugin, InventoryUIHandler.getInstance());
         ui.view(sender);
 
         Messaging.send(sender,

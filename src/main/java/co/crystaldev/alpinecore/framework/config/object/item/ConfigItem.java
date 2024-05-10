@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,20 @@ public interface ConfigItem {
     boolean isEnchanted();
 
     int getCount();
+
+    @Nullable
+    Map<String, Object> getAttributes();
+
+    /**
+     * Retrieves the attribute associated with the given key.
+     *
+     * @param key The key of the attribute
+     * @return The value associated with the key, or null if the key does not exist
+     */
+    @Nullable
+    default <T> T attribute(@NotNull String key) {
+        return this.getAttributes() == null ? null : (T) this.getAttributes().get(key);
+    }
 
     /**
      * Constructs an ItemStack based on the current configuration.
@@ -183,7 +198,7 @@ public interface ConfigItem {
      * Constructs an ItemStack based on the current configuration.
      * <br>
      * This method does not define a type by default. It is for internal use within
-     * plugins (i.e. dynamic guis which define a type based on a state)
+     * plugins (i.e., dynamic guis which define a type based on a state)
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param function     A function that can apply additional modifications to the ItemStack

@@ -40,6 +40,8 @@ public class DefinedConfigItem implements ConfigItem {
 
     protected boolean enchanted;
 
+    protected Map<String, Object> attributes;
+
     /**
      * Constructs an ItemStack based on the current configuration.
      * <br>
@@ -221,6 +223,7 @@ public class DefinedConfigItem implements ConfigItem {
         private List<String> lore;
         private int count = -1;
         private boolean enchanted;
+        private Map<String, Object> attributes;
 
         @NotNull
         public Builder name(@NotNull String name) {
@@ -273,10 +276,30 @@ public class DefinedConfigItem implements ConfigItem {
         }
 
         @NotNull
+        public Builder attribute(@NotNull String key, @Nullable Object value) {
+            if (this.attributes == null) {
+                if (value == null) {
+                    return this;
+                }
+
+                this.attributes = new LinkedHashMap<>();
+            }
+
+            this.attributes.put(key, value);
+            return this;
+        }
+
+        @NotNull
+        public Builder attributes(@NotNull Map<String, Object> attributes) {
+            this.attributes = attributes;
+            return this;
+        }
+
+        @NotNull
         public DefinedConfigItem build() {
             String name = this.name == null ? "" : this.name;
             List<String> lore = this.lore == null ? Collections.emptyList() : this.lore ;
-            return new DefinedConfigItem(this.material, name, lore, this.count, this.enchanted);
+            return new DefinedConfigItem(this.material, name, lore, this.count, this.enchanted, this.attributes);
         }
     }
 

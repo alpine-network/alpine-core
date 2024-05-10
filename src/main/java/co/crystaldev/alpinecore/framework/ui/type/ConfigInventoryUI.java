@@ -22,15 +22,15 @@ import java.util.Map;
 @AllArgsConstructor @NoArgsConstructor @Getter
 @Configuration
 @Beta
-public class ConfigInventoryUI {
+public final class ConfigInventoryUI {
 
-    protected String name;
+    private String name;
 
-    protected String[] slots;
+    private String[] slots;
 
-    protected LinkedHashMap<String, String> dictionary;
+    private LinkedHashMap<String, String> dictionary;
 
-    protected LinkedHashMap<String, DefinedConfigItem> items;
+    private LinkedHashMap<String, DefinedConfigItem> items;
 
     @NotNull
     public InventoryUI build(@NotNull AlpinePlugin plugin, @NotNull UIHandler handler) {
@@ -95,6 +95,10 @@ public class ConfigInventoryUI {
 
         @NotNull
         public ConfigInventoryUI build() {
+            Validate.notNull(this.name, "name cannot be null");
+            Validate.notNull(this.slots, "slots cannot be null");
+            Validate.notNull(this.dictionary, "dictionary cannot be null");
+            Validate.notNull(this.items, "items cannot be null");
             return new ConfigInventoryUI(this.name, this.slots, this.dictionary, this.items);
         }
     }

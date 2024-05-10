@@ -10,11 +10,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a configurable item within the plugin framework.
@@ -34,9 +32,11 @@ public class VaryingConfigItem implements ConfigItem {
 
     protected boolean enchanted;
 
+    protected Map<String, Object> attributes;
+
     @NotNull
     public DefinedConfigItem define(@NotNull XMaterial type) {
-        return new DefinedConfigItem(type, this.name, this.lore, this.count, this.enchanted);
+        return new DefinedConfigItem(type, this.name, this.lore, this.count, this.enchanted, this.attributes);
     }
 
     @NotNull
@@ -50,6 +50,7 @@ public class VaryingConfigItem implements ConfigItem {
         private List<String> lore;
         private int count = -1;
         private boolean enchanted;
+        private Map<String, Object> attributes;
 
         @NotNull
         public Builder name(@NotNull String name) {
@@ -102,10 +103,30 @@ public class VaryingConfigItem implements ConfigItem {
         }
 
         @NotNull
+        public Builder attribute(@NotNull String key, @Nullable Object value) {
+            if (this.attributes == null) {
+                if (value == null) {
+                    return this;
+                }
+
+                this.attributes = new LinkedHashMap<>();
+            }
+
+            this.attributes.put(key, value);
+            return this;
+        }
+
+        @NotNull
+        public Builder attributes(@NotNull Map<String, Object> attributes) {
+            this.attributes = attributes;
+            return this;
+        }
+
+        @NotNull
         public VaryingConfigItem build() {
             String name = this.name == null ? "" : this.name;
             List<String> lore = this.lore == null ? Collections.emptyList() : this.lore ;
-            return new VaryingConfigItem(name, lore, this.count, this.enchanted);
+            return new VaryingConfigItem(name, lore, this.count, this.enchanted, this.attributes);
         }
     }
 

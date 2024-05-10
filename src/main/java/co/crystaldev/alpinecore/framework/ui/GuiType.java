@@ -48,7 +48,7 @@ public enum GuiType {
         GuiType bestMatch = null;
         int minWaste = Integer.MAX_VALUE;
 
-        for (GuiType type : GuiType.values()) {
+        for (GuiType type : values()) {
             if (type.fits(slots)) {
                 int currentWaste = type.waste(slots);
                 if (currentWaste < minWaste) {
@@ -58,5 +58,15 @@ public enum GuiType {
             }
         }
         return bestMatch != null ? bestMatch : GuiType.CHEST;
+    }
+
+    @NotNull
+    public static GuiType fromType(@NotNull InventoryType inventoryType) {
+        for (GuiType type : values()) {
+            if (type.inventoryType == inventoryType) {
+                return type;
+            }
+        }
+        return GuiType.CHEST;
     }
 }

@@ -71,11 +71,4 @@ public final class UIEventBus {
     public <T extends UIEvent> void register(@NotNull Class<T> type, @NotNull EventCallback<T> callback) {
         this.register(type, UIEventPriority.NORMAL, callback);
     }
-
-    /**
-     * Clears all registered events in the UIEventBus.
-     */
-    public void clear() {
-        this.registeredEvents.clear();
-    }
 }

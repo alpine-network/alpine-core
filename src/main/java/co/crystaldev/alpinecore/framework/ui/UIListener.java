@@ -1,6 +1,7 @@
 package co.crystaldev.alpinecore.framework.ui;
 
 import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
+import co.crystaldev.alpinecore.framework.ui.event.type.ClickEvent;
 import co.crystaldev.alpinecore.framework.ui.event.type.DragEvent;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.HumanEntity;
@@ -11,8 +12,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
 /**
- * @author BestBearr <crumbygames12@gmail.com>
- * @since 05/08/2024
+ * @since 0.4.0
  */
 @RequiredArgsConstructor
 final class UIListener implements Listener {
@@ -34,7 +34,11 @@ final class UIListener implements Listener {
             return;
         }
 
-
+        UIContext context = this.manager.get(player.getUniqueId());
+        ActionResult result = context.eventBus().call(context, new ClickEvent(event));
+        if (result == ActionResult.CANCEL) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -44,7 +48,7 @@ final class UIListener implements Listener {
             return;
         }
 
-        UIContext context = this.manager.getState(player.getUniqueId());
+        UIContext context = this.manager.get(player.getUniqueId());
         ActionResult result = context.eventBus().call(context, new DragEvent(event));
         if (result == ActionResult.CANCEL) {
             event.setCancelled(true);

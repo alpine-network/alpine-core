@@ -22,7 +22,9 @@ abstract class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, O
 
         result.put("name", element.getName());
 
-        result.put("lore", element.getLore());
+        if (element.getLore() != null && !element.getLore().isEmpty()) {
+            result.put("lore", element.getLore());
+        }
 
         if (element.isEnchanted()) {
             result.put("enchanted", element.isEnchanted());
@@ -30,6 +32,10 @@ abstract class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, O
 
         if (element.getCount() > 0) {
             result.put("count", element.getCount());
+        }
+
+        if (element.getAttributes() != null && !element.getAttributes().isEmpty()) {
+            result.put("attributes", element.getAttributes());
         }
 
         return result;
@@ -54,11 +60,16 @@ abstract class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, O
         int count = (int) element.getOrDefault("count", -1);
         boolean enchanted = element.getOrDefault("enchanted", "false").toString().equalsIgnoreCase("true");
 
+        Object attributes = element.get("attributes");
+        if (!(attributes instanceof Map)) {
+            attributes = null;
+        }
+
         if (this.requiresType() || type instanceof XMaterial) {
-            return new DefinedConfigItem((XMaterial) type, name, (List<String>) lore, count, enchanted);
+            return new DefinedConfigItem((XMaterial) type, name, (List<String>) lore, count, enchanted, (Map<String, Object>) attributes);
         }
         else {
-            return new VaryingConfigItem(name, (List<String>) lore, count, enchanted);
+            return new VaryingConfigItem(name, (List<String>) lore, count, enchanted, (Map<String, Object>) attributes);
         }
     }
 }

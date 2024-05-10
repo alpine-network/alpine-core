@@ -245,7 +245,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.deactivateAll();
 
         // Unregister all commands from the server
-        this.commandManager.unregister();
+        if (this.commandManager != null) {
+            this.commandManager.unregister();
+        }
     }
     // endregion
 

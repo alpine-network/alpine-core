@@ -27,7 +27,7 @@ public class Config extends AlpineConfig {
             "UI with ease!"
     })
     public ConfigInventoryUI basicInventory = ConfigInventoryUI.builder()
-            .name("<gradient:#fc5353:#eaeaea:#1f5aef>Test Inventory")
+            .name("<gradient:#a059f7:#2c25f9>Test InventoryUI Screen")
             .slots(
                     "#########",
                     "#|||||||#",
@@ -46,12 +46,10 @@ public class Config extends AlpineConfig {
             .item("background", DefinedConfigItem
                     .builder(XMaterial.LIGHT_GRAY_STAINED_GLASS_PANE)
                     .name("")
-                    .lore("")
                     .build())
             .item("footer", DefinedConfigItem
                     .builder(XMaterial.BLACK_STAINED_GLASS_PANE)
                     .name("")
-                    .lore("")
                     .build())
             .build();
 }

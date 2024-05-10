@@ -1,11 +1,14 @@
 package co.crystaldev.alpinecore.framework.ui;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
+import co.crystaldev.alpinecore.framework.ui.element.UIElement;
 import co.crystaldev.alpinecore.framework.ui.handler.UIHandler;
 import co.crystaldev.alpinecore.framework.ui.type.ConfigInventoryUI;
 import co.crystaldev.alpinecore.framework.ui.type.InventoryUI;
+import co.crystaldev.alpinecore.util.Formatting;
 import co.crystaldev.alpinecore.util.InventoryHelper;
 import com.google.common.annotations.Beta;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Beta
 public final class AlpineUIManager {
 
+    @Getter
     private final AlpinePlugin plugin;
 
     private final Map<UUID, UIContext> states = new ConcurrentHashMap<>();
@@ -44,7 +48,7 @@ public final class AlpineUIManager {
         ConfigInventoryUI properties = ui.getProperties();
 
         // create the inventory
-        Component title = this.plugin.getMiniMessage().deserialize(properties.getName());
+        Component title = this.plugin.getMiniMessage().deserialize(Formatting.placeholders(this.plugin, properties.getName()));
         Inventory inventory;
         if (ui.getType() == GuiType.CHEST) {
             inventory = InventoryHelper.createInventory(player, properties.getSlots().length * 9, title);
@@ -62,6 +66,10 @@ public final class AlpineUIManager {
         UIHandler handler = ui.getHandler();
         handler.registerEvents(context, context.eventBus());
         handler.init(context);
+
+        // fill the gui
+        handler.fill(context);
+        this.refresh(context);
 
         // display to the player
         player.openInventory(inventory);
@@ -83,7 +91,10 @@ public final class AlpineUIManager {
             resolved.closeInventory();
         }
 
-        this.states.remove(player);
+        UIContext context = this.states.remove(player);
+        if (context != null) {
+            context.setStale(true);
+        }
     }
 
     /**
@@ -102,7 +113,7 @@ public final class AlpineUIManager {
      * @return the UIState object representing the state of the user interface, or null if the player has no state
      */
     @Nullable
-    public UIContext getState(@NotNull UUID player) {
+    public UIContext get(@NotNull UUID player) {
         return this.states.get(player);
     }
 
@@ -115,5 +126,25 @@ public final class AlpineUIManager {
     public boolean isManaged(@NotNull UUID player) {
         Player resolved = Bukkit.getPlayer(player);
         return resolved != null && this.states.containsKey(player);
+    }
+
+    /**
+     * Refreshes the inventory with the current elements in the UIContext.
+     *
+     * @param context the context containing the elements and inventory
+     */
+    public void refresh(@NotNull UIContext context) {
+        Inventory inventory = context.inventory();
+        inventory.clear();
+
+        for (UIElement element : context.getElements()) {
+            SlotPosition position = element.getPosition();
+            if (position == null) {
+                continue;
+            }
+
+            element.init();
+            inventory.setItem(position.getSlot(), element.buildItemStack());
+        }
     }
 }
