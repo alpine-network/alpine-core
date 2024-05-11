@@ -37,7 +37,7 @@ public final class Formatting {
     public static String placeholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Object... placeholders) {
         if (text == null)
             return "";
-        if (placeholders.length < 2)
+        if (placeholders == null || placeholders.length < 2)
             return text;
 
         for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {

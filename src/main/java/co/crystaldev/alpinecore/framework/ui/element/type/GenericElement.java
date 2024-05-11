@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ * Represents a generic UI element.
+ *
  * @since 0.4.0
  */
 public final class GenericElement extends Element {
