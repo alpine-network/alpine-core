@@ -1,6 +1,5 @@
 package co.crystaldev.alpinecore.framework.ui.event;
 
-import co.crystaldev.alpinecore.framework.ui.UIContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,8 +11,7 @@ public interface UIEventSubscriber {
     /**
      * Registers the events of a UIContext to a UIEventBus.
      *
-     * @param context the UIContext object to register events for
-     * @param bus     the UIEventBus object to register the events to
+     * @param bus the UIEventBus object to register the events to
      */
-    void registerEvents(@NotNull UIContext context, @NotNull UIEventBus bus);
+    void registerEvents(@NotNull UIEventBus bus);
 }

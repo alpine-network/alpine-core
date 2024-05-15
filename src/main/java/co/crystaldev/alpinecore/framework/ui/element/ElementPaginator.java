@@ -65,7 +65,7 @@ public final class ElementPaginator<T> {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
-        element.setOnClick(button -> {
+        element.setOnClick((ctx, click) -> {
             state.setPage(state.getCurrentPage() - 1);
             context.refresh();
         });
@@ -84,7 +84,7 @@ public final class ElementPaginator<T> {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
-        element.setOnClick(button -> {
+        element.setOnClick((ctx, click) -> {
             state.setPage(state.getCurrentPage() + 1);
             context.refresh();
         });

@@ -19,11 +19,6 @@ public final class EmptyElement extends Element {
     }
 
     @Override
-    public void init() {
-        // NO OP
-    }
-
-    @Override
     public @NotNull ItemStack buildItemStack() {
         return EMPTY_ITEM_STACK;
     }

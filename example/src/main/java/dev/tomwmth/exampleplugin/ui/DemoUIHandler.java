@@ -6,11 +6,15 @@ import co.crystaldev.alpinecore.framework.ui.UIContext;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.element.ElementPaginator;
 import co.crystaldev.alpinecore.framework.ui.element.ElementProvider;
+import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
+import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;
+import co.crystaldev.alpinecore.framework.ui.event.type.DragEvent;
 import co.crystaldev.alpinecore.framework.ui.handler.GenericUIHandler;
 import co.crystaldev.alpinecore.util.MappedMaterial;
 import com.cryptomorin.xseries.XMaterial;
 import dev.tomwmth.exampleplugin.config.Config;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class DemoUIHandler extends GenericUIHandler {
 
-    private static final MappedMaterial BOATS_AND_DOORS_ROCK = MappedMaterial.builder()
+    private static final MappedMaterial BOATS_AND_DOORS = MappedMaterial.builder()
             .add(materials -> materials.filter(type -> type.name().endsWith("_BOAT") || type.name().endsWith("_DOOR")))
             .build();
 
@@ -33,7 +37,7 @@ public final class DemoUIHandler extends GenericUIHandler {
     private final ElementPaginator<XMaterial> paginator = ElementPaginator.<XMaterial>builder()
             .elementProvider(
                     ElementProvider.<XMaterial, Element>builder()
-                            .entries(BOATS_AND_DOORS_ROCK.getMaterials())
+                            .entries(BOATS_AND_DOORS.getMaterials())
                             .element((ctx, type) -> {
                                 AlpinePlugin plugin = ctx.plugin();
                                 Config config = plugin.getConfigManager().getConfig(Config.class);
@@ -82,5 +86,17 @@ public final class DemoUIHandler extends GenericUIHandler {
             default:
                 return null;
         }
+    }
+
+    @Override
+    public void registerEvents(@NotNull UIEventBus bus) {
+        super.registerEvents(bus);
+
+        bus.register(DragEvent.class, (ctx, event) -> {
+            InventoryDragEvent handle = event.getHandle();
+            System.out.println(handle.getInventory().equals(ctx.inventory()));
+
+            return ActionResult.PASS;
+        });
     }
 }

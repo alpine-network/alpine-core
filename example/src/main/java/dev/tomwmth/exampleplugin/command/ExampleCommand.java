@@ -21,6 +21,7 @@ import dev.tomwmth.exampleplugin.config.Config;
 import dev.tomwmth.exampleplugin.storage.Statistics;
 import dev.tomwmth.exampleplugin.storage.StatisticsStore;
 import dev.tomwmth.exampleplugin.ui.DemoUIHandler;
+import dev.tomwmth.exampleplugin.ui.MutableUIHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -82,15 +83,27 @@ public class ExampleCommand extends AlpineCommand {
         );
     }
 
-    @Execute(name = "ui")
-    public void executeUI(@Context Player sender) {
+    @Execute(name = "demoui")
+    public void executeDemoUI(@Context Player sender) {
         Config config = this.plugin.getConfigManager().getConfig(Config.class);
-        InventoryUI ui = config.demoUI.build(this.plugin, DemoUIHandler.getInstance());
+        InventoryUI ui = config.paginatedUI.build(this.plugin, DemoUIHandler.getInstance());
         ui.view(sender);
 
         Messaging.send(sender,
                 config.actionMessage.build(this.plugin,
-                        "action", "Opened inventory UI")
+                        "action", "Opened Paginated Demo Inventory UI")
+        );
+    }
+
+    @Execute(name = "mutableui")
+    public void executeMutableUI(@Context Player sender) {
+        Config config = this.plugin.getConfigManager().getConfig(Config.class);
+        InventoryUI ui = config.mutableUI.build(this.plugin, MutableUIHandler.getInstance());
+        ui.view(sender);
+
+        Messaging.send(sender,
+                config.actionMessage.build(this.plugin,
+                        "action", "Opened Mutable Demo Inventory UI")
         );
     }
 

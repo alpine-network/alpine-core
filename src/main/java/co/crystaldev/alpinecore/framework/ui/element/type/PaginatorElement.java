@@ -38,9 +38,9 @@ public final class PaginatorElement<S> extends Element {
         this.state = state;
         this.offset = offset;
 
-        this.setOnClick(button -> {
+        this.setOnClick((ctx, click) -> {
             if (this.currentElement != null) {
-                this.currentElement.clicked(button);
+                this.currentElement.clicked(click);
             }
         });
     }

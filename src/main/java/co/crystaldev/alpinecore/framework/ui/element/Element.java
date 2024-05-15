@@ -1,6 +1,6 @@
 package co.crystaldev.alpinecore.framework.ui.element;
 
-import co.crystaldev.alpinecore.framework.ui.ClickedFunction;
+import co.crystaldev.alpinecore.framework.ui.ClickFunction;
 import co.crystaldev.alpinecore.framework.ui.SlotPosition;
 import co.crystaldev.alpinecore.framework.ui.UIContext;
 import co.crystaldev.alpinecore.framework.ui.element.type.EmptyElement;
@@ -30,16 +30,14 @@ public abstract class Element implements UIEventSubscriber {
     protected Map<String, Object> attributes;
 
     @Setter
-    protected ClickedFunction onClick;
+    protected ClickFunction onClick;
+
+    @Getter @Setter
+    protected ClickProperties clickProperties = ClickProperties.ALL_DISALLOWED;
 
     public Element(@NotNull UIContext context) {
         this.context = context;
     }
-
-    /**
-     * Initializes the UI element.
-     */
-    public abstract void init();
 
     /**
      * Builds an ItemStack representing this UI element.
@@ -50,14 +48,30 @@ public abstract class Element implements UIEventSubscriber {
     public abstract ItemStack buildItemStack();
 
     /**
-     * Handle the click event on the UI element.
-     *
-     * @param mouseButton the mouse button that was clicked
+     * Initializes the UI element.
      */
-    public void clicked(int mouseButton) {
+    public void init() {
+        // NO OP
+    }
+
+    /**
+     * Called when the UI element is clicked.
+     *
+     * @param context the click context for the interaction
+     */
+    public void clicked(@NotNull ClickContext context) {
         if (this.onClick != null) {
-            this.onClick.mouseClicked(mouseButton);
+            this.onClick.mouseClicked(this.context, context);
         }
+    }
+
+    /**
+     * Checks for permission to transfer items in user's inventory.
+     *
+     * @return true if transfer is permitted, false otherwise
+     */
+    public boolean canTransferItems() {
+        return false;
     }
 
     /**
@@ -109,7 +123,7 @@ public abstract class Element implements UIEventSubscriber {
     }
 
     @Override
-    public void registerEvents(@NotNull UIContext context, @NotNull UIEventBus bus) {
+    public void registerEvents(@NotNull UIEventBus bus) {
         // NO OP
     }
 

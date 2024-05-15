@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 final class RegisteredEventCallback<T extends UIEvent> {
-    public final EventCallback<T> callback;
-    public final byte priority;
+    final Object source;
+    final EventCallback<T> callback;
+    final byte priority;
 }

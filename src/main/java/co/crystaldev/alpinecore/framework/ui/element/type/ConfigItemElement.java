@@ -35,11 +35,6 @@ public final class ConfigItemElement extends Element {
     }
 
     @Override
-    public void init() {
-        // NO OP
-    }
-
-    @Override
     public @NotNull ItemStack buildItemStack() {
         return this.configItem.build(this.context.plugin(), this.placeholders);
     }

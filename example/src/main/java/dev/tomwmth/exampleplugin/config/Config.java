@@ -27,7 +27,7 @@ public class Config extends AlpineConfig {
             "Create an advanced and configurable inventory",
             "UI with ease!"
     })
-    public ConfigInventoryUI demoUI = ConfigInventoryUI.builder()
+    public ConfigInventoryUI paginatedUI = ConfigInventoryUI.builder()
             .name("<gradient:#a074f2:#f27a74><b>Test InventoryUI Screen")
             .slots(
                     "#########",
@@ -83,5 +83,31 @@ public class Config extends AlpineConfig {
     @Comment("")
     public DefinedConfigItem stockPlaceholderItem = DefinedConfigItem.builder(XMaterial.WHITE_STAINED_GLASS_PANE)
             .name("")
+            .build();
+
+    @Comment({
+            "",
+            "This is another basic UI screen meant to demo",
+            "user interaction with elements"
+    })
+    public ConfigInventoryUI mutableUI = ConfigInventoryUI.builder()
+            .name("<gradient:#a074f2:#f27a74><b>Test InventoryUI Screen")
+            .slots(
+                    "#########",
+                    "#|||||||#",
+                    "#|||||||#",
+                    "#|||||||#",
+                    "#|||||||#",
+                    "#########"
+            )
+            .dictionary(
+                    "#", "background",
+                    "|", "storage"
+            )
+            .item("background", DefinedConfigItem
+                    .builder(XMaterial.BLACK_STAINED_GLASS_PANE)
+                    .name("")
+                    .enchanted()
+                    .build())
             .build();
 }

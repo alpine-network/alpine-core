@@ -65,7 +65,7 @@ public final class AlpineUIManager {
 
         // initialize the gui
         UIHandler handler = ui.getHandler();
-        handler.registerEvents(context, context.eventBus());
+        handler.registerEvents(context.eventBus());
         handler.init(context);
 
         // fill the gui
@@ -119,6 +119,23 @@ public final class AlpineUIManager {
     }
 
     /**
+     * Retrieves the UIContext object associated with the given inventory.
+     *
+     * @param inventory the inventory to search for
+     * @return the UIContext object representing the state of the user interface, or null if the inventory is not found
+     */
+    @Nullable
+    public UIContext get(@NotNull Inventory inventory) {
+        for (Map.Entry<UUID, UIContext> entry : this.states.entrySet()) {
+            UIContext context = entry.getValue();
+            if (context.inventory().equals(inventory)) {
+                return context;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Checks if a player is managed by the AlpineUIManager.
      *
      * @param player the UUID of the player
@@ -127,6 +144,22 @@ public final class AlpineUIManager {
     public boolean isManaged(@NotNull UUID player) {
         Player resolved = Bukkit.getPlayer(player);
         return resolved != null && this.states.containsKey(player);
+    }
+
+    /**
+     * Checks if an inventory is managed by the AlpineUIManager.
+     *
+     * @param inventory the inventory to check
+     * @return true if the inventory is managed, false otherwise
+     */
+    public boolean isManaged(@NotNull Inventory inventory) {
+        for (Map.Entry<UUID, UIContext> entry : this.states.entrySet()) {
+            UIContext context = entry.getValue();
+            if (context.inventory().equals(inventory)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

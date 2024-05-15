@@ -126,7 +126,7 @@ public final class UIContext {
      * @param element the context to add
      */
     public void addElement(@NotNull Element element) {
-        element.registerEvents(this, this.eventBus);
+        element.registerEvents(this.eventBus);
         this.elements.add(element);
     }
 
@@ -136,6 +136,7 @@ public final class UIContext {
      * @param element the context to remove
      */
     public void removeElement(@NotNull Element element) {
+        this.eventBus.unregister(element);
         this.elements.remove(element);
     }
 
@@ -147,7 +148,20 @@ public final class UIContext {
     public void removeElement(int slot) {
         this.elements.removeIf(element -> {
             SlotPosition position = element.getPosition();
-            return position != null && position.getSlot() == slot;
+            if (position != null && position.getSlot() == slot) {
+                this.eventBus.unregister(element);
+                return true;
+            }
+            return false;
         });
+    }
+
+    /**
+     * Checks if any element in the context can transfer items in the user's inventory.
+     *
+     * @return true if at least one element can transfer items, false otherwise
+     */
+    public boolean canTransferItems() {
+        return elements.stream().anyMatch(Element::canTransferItems);
     }
 }
