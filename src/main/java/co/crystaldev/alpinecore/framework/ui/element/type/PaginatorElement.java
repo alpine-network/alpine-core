@@ -46,11 +46,6 @@ public final class PaginatorElement<S> extends Element {
     }
 
     @Override
-    public void init() {
-        // NO OP
-    }
-
-    @Override
     public @Nullable ItemStack buildItemStack() {
         int totalOffset = this.state.getCurrentPage() * this.state.getPageSize() + this.offset;
         if (totalOffset >= this.elementProvider.size()) {

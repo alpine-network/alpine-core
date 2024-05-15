@@ -26,11 +26,6 @@ public final class PaginatorNavigationElement extends Element {
     }
 
     @Override
-    public void init() {
-        // NO OP
-    }
-
-    @Override
     public @NotNull ItemStack buildItemStack() {
         int page = this.state.getCurrentPage() + 1;
         return this.item.build(this.context.manager().getPlugin(),

@@ -21,11 +21,6 @@ public final class GenericElement extends Element {
     }
 
     @Override
-    public void init() {
-        // NO OP
-    }
-
-    @Override
     public @Nullable ItemStack buildItemStack() {
         return this.itemStack;
     }
