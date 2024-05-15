@@ -155,13 +155,4 @@ public final class UIContext {
             return false;
         });
     }
-
-    /**
-     * Checks if any element in the context can transfer items in the user's inventory.
-     *
-     * @return true if at least one element can transfer items, false otherwise
-     */
-    public boolean canTransferItems() {
-        return elements.stream().anyMatch(Element::canTransferItems);
-    }
 }

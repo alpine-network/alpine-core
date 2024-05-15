@@ -1,6 +1,5 @@
 package dev.tomwmth.exampleplugin.ui;
 
-import co.crystaldev.alpinecore.framework.ui.GuiType;
 import co.crystaldev.alpinecore.framework.ui.UIContext;
 import co.crystaldev.alpinecore.framework.ui.element.ClickContext;
 import co.crystaldev.alpinecore.framework.ui.element.ClickProperties;
@@ -37,10 +36,5 @@ public final class TestElement extends Element {
     @Override
     public @Nullable ItemStack buildItemStack() {
         return null;
-    }
-
-    @Override
-    public boolean canTransferItems() {
-        return true;
     }
 }

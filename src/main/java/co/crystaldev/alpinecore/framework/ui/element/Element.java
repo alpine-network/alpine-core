@@ -66,15 +66,6 @@ public abstract class Element implements UIEventSubscriber {
     }
 
     /**
-     * Checks for permission to transfer items in user's inventory.
-     *
-     * @return true if transfer is permitted, false otherwise
-     */
-    public boolean canTransferItems() {
-        return false;
-    }
-
-    /**
      * Retrieves the attribute with the specified key.
      *
      * @param <T> the type of the attribute value
