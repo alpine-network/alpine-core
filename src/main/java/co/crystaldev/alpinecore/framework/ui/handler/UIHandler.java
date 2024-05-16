@@ -6,6 +6,7 @@ import co.crystaldev.alpinecore.framework.ui.element.type.GenericElement;
 import co.crystaldev.alpinecore.framework.ui.SlotPosition;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventSubscriber;
+import co.crystaldev.alpinecore.framework.ui.interaction.DropContext;
 import co.crystaldev.alpinecore.framework.ui.type.ConfigInventoryUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -44,6 +45,16 @@ public abstract class UIHandler implements UIEventSubscriber {
     }
 
     /**
+     * Handles the event when an item is dropped from the mouse cursor.
+     *
+     * @param context the UI context
+     * @param drop    the drop context
+     */
+    public void dropped(@NotNull UIContext context, @NotNull DropContext drop) {
+        // NO OP
+    }
+
+    /**
      * Fills the UI context with elements.
      *
      * @param context the UI context to fill
@@ -63,7 +74,7 @@ public abstract class UIHandler implements UIEventSubscriber {
 
                 String key = dictionary.get(Character.toString(symbol));
                 if (key != null) {
-                    Element element = this.populateEntry(context, key);
+                    Element element = this.populateElement(context, key);
                     element.setPosition(SlotPosition.from(context.inventory(), x, y));
                     context.addElement(element);
                 }
@@ -72,7 +83,7 @@ public abstract class UIHandler implements UIEventSubscriber {
     }
 
     /**
-     * Creates an entry for the UI context with the given key and dictionary definition.
+     * Creates an element for the UI context with the given key and dictionary definition.
      *
      * @param context    the UI context in which the entry is created
      * @param key        the key for the entry
@@ -81,21 +92,21 @@ public abstract class UIHandler implements UIEventSubscriber {
      * @return the created Element instance, or null if the entry cannot be created
      */
     @Nullable
-    public abstract Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition);
+    public abstract Element createElement(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition);
 
     /**
-     * Populates an entry in the UI context with the given key.
+     * Populates an element in the UI context with the given key.
      *
      * @param context the UI context in which to populate the entry
      * @param key     the key for the entry to populate
      * @return the populated Element instance, or null if the entry cannot be populated
      */
     @NotNull
-    public final Element populateEntry(@NotNull UIContext context, @NotNull String key) {
+    public final Element populateElement(@NotNull UIContext context, @NotNull String key) {
         ConfigInventoryUI properties = context.ui().getProperties();
         Map<String, DefinedConfigItem> dictionary = properties.getItems();
 
-        Element entry = this.createEntry(context, key, dictionary.get(key));
+        Element entry = this.createElement(context, key, dictionary.get(key));
         if (entry != null) {
             return entry;
         }

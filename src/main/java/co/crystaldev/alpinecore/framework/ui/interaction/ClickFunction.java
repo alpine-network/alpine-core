@@ -1,5 +1,6 @@
-package co.crystaldev.alpinecore.framework.ui;
+package co.crystaldev.alpinecore.framework.ui.interaction;
 
+import co.crystaldev.alpinecore.framework.ui.UIContext;
 import org.jetbrains.annotations.NotNull;
 
 /**

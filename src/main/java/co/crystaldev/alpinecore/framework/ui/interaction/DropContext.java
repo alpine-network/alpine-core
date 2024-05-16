@@ -1,4 +1,4 @@
-package co.crystaldev.alpinecore.framework.ui;
+package co.crystaldev.alpinecore.framework.ui.interaction;
 
 import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
 import org.bukkit.Material;
@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents the context for a click event.
+ * Represents the context for an item drop event.
  *
  * @since 0.4.0
  */
-public final class ClickContext {
+public final class DropContext {
 
     private final ClickType type;
 
@@ -23,9 +23,7 @@ public final class ClickContext {
 
     private ActionResult result;
 
-    private boolean consumedItem;
-
-    public ClickContext(@NotNull ClickType type, @NotNull InventoryAction action, @Nullable ItemStack item, @NotNull ActionResult result) {
+    public DropContext(@NotNull ClickType type, @NotNull InventoryAction action, @NotNull ItemStack item, @NotNull ActionResult result) {
         this.type = type;
         this.action = action;
         this.item = item;
@@ -33,7 +31,7 @@ public final class ClickContext {
     }
 
     /**
-     * Retrieves the click type associated with this click context.
+     * Retrieves the click type associated with this context.
      *
      * @return the click type
      */
@@ -43,7 +41,7 @@ public final class ClickContext {
     }
 
     /**
-     * Retrieves the action associated with this click context.
+     * Retrieves the action associated with this context.
      *
      * @return the action
      */
@@ -53,48 +51,40 @@ public final class ClickContext {
     }
 
     /**
-     * Checks if this click context has an item.
+     * Checks if this context has an item.
      *
-     * @return true if this click context has an item, false otherwise
+     * @return true if this context has an item, false otherwise
      */
     public boolean hasItem() {
         return this.item != null && this.item.getType() != Material.AIR && this.item.getAmount() > 0;
     }
 
     /**
-     * Retrieves the item associated with this click context.
+     * Retrieves the item associated with this context.
      *
      * @return the item, or null if there is no item
      */
-    @Nullable
+    @NotNull
     public ItemStack item() {
         return this.item;
     }
 
     /**
-     * Consumes the item associated with this click context.
-     * <p>
-     * This method removes the item from the cursor.
+     * Retrieves the amount of the item associated with this context.
      *
-     * @return the item, or null if there is no item
+     * @return the amount of the item
      */
-    @Nullable
-    public ItemStack consumeItem() {
-        this.consumedItem = true;
-        return this.item;
+    public int amount() {
+        if (this.action == InventoryAction.DROP_ONE_CURSOR) {
+            return 1;
+        }
+        else {
+            return this.item.getAmount();
+        }
     }
 
     /**
-     * Determines if the item associated with this click context has been consumed.
-     *
-     * @return true if the item has been consumed, false otherwise
-     */
-    public boolean consumedItem() {
-        return this.consumedItem;
-    }
-
-    /**
-     * Retrieves the result of the click.
+     * Retrieves the result of the item drop.
      *
      * @return the {@link ActionResult} of the action
      */
@@ -104,7 +94,7 @@ public final class ClickContext {
     }
 
     /**
-     * Sets the result of the click.
+     * Sets the result of the item drop.
      *
      * @param result the {@link ActionResult} to set
      */

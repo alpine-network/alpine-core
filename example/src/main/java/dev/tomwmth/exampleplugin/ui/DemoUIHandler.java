@@ -62,7 +62,7 @@ public final class DemoUIHandler extends GenericUIHandler {
     }
 
     @Override
-    public @Nullable Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
+    public @Nullable Element createElement(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
         switch (key) {
             case "stock-selection":
                 return this.paginator.buildNextSlot(context);

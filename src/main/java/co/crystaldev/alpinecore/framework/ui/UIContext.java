@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -111,6 +112,39 @@ public final class UIContext {
     @NotNull
     public Inventory inventory() {
         return this.inventory;
+    }
+
+    /**
+     * Retrieves the ItemStack at the specified SlotPosition in the inventory.
+     *
+     * @param slot The slot representing the position of the item in the inventory
+     * @return the item at the specified position
+     */
+    @NotNull
+    public ItemStack getItem(int slot) {
+        return this.inventory.getItem(slot);
+    }
+
+    /**
+     * Retrieves the ItemStack at the specified SlotPosition in the inventory.
+     *
+     * @param slot The slot representing the position of the item in the inventory
+     * @return the item at the specified position
+     */
+    @NotNull
+    public ItemStack getItem(@NotNull SlotPosition slot) {
+        return this.inventory.getItem(slot.getSlot());
+    }
+
+    /**
+     * Retrieves the ItemStack at the specified Element position.
+     *
+     * @param element the Element representing the position of the item in the inventory
+     * @return the item at the specified position
+     */
+    @NotNull
+    public ItemStack getItem(@NotNull Element element) {
+        return this.inventory.getItem(element.getPosition().getSlot());
     }
 
     /**

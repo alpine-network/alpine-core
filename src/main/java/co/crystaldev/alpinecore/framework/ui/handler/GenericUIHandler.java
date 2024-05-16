@@ -1,8 +1,8 @@
 package co.crystaldev.alpinecore.framework.ui.handler;
 
 import co.crystaldev.alpinecore.framework.config.object.item.DefinedConfigItem;
-import co.crystaldev.alpinecore.framework.ui.ClickContext;
-import co.crystaldev.alpinecore.framework.ui.ClickProperties;
+import co.crystaldev.alpinecore.framework.ui.interaction.ClickContext;
+import co.crystaldev.alpinecore.framework.ui.interaction.ClickProperties;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;
@@ -10,8 +10,8 @@ import co.crystaldev.alpinecore.framework.ui.event.UIEventPriority;
 import co.crystaldev.alpinecore.framework.ui.event.type.ClickEvent;
 import co.crystaldev.alpinecore.framework.ui.event.type.DragEvent;
 import co.crystaldev.alpinecore.framework.ui.UIContext;
+import co.crystaldev.alpinecore.framework.ui.interaction.DropContext;
 import org.bukkit.Material;
-import org.bukkit.event.Event;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -34,7 +34,7 @@ public class GenericUIHandler extends UIHandler {
     }
 
     @Override
-    public @Nullable Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
+    public @Nullable Element createElement(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
         return null;
     }
 
@@ -89,14 +89,45 @@ public class GenericUIHandler extends UIHandler {
                     result = ActionResult.SUCCESS;
                     break;
 
-                case COLLECT_TO_CURSOR:
-                    // TODO
-                    result = ActionResult.CANCEL;
-                    break;
-
                 case DROP_ALL_CURSOR:
                 case DROP_ONE_CURSOR:
-                    // TODO
+                    DropContext dropContext = new DropContext(type, action, handle.getCursor(), result);
+
+                    ctx.ui().getHandler().dropped(ctx, dropContext);
+
+                    result = dropContext.result();
+                    break;
+
+                case COLLECT_TO_CURSOR:
+                    if (!top.equals(clicked)) {
+                        ItemStack moving = handle.getCursor();
+                        Material cursorType = moving.getType();
+                        int maxSize = cursorType.getMaxStackSize();
+                        int remainingAmount = maxSize - moving.getAmount();
+
+                        for (int i = 0; i < top.getSize(); i++) {
+                            ItemStack item = top.getItem(i);
+                            if (item == null || !item.isSimilar(moving)) {
+                                continue;
+                            }
+
+                            int slotAmount = Math.min(item.getAmount(), remainingAmount);
+                            remainingAmount -= slotAmount;
+
+                            ItemStack adding = new ItemStack(moving);
+                            adding.setAmount(slotAmount);
+
+                            ClickContext handledClick = handleClick(ctx, i, type, action, null);
+                            if (handledClick != null && handledClick.result() != ActionResult.PASS) {
+                                result = handledClick.result();
+                                break;
+                            }
+
+                            if (remainingAmount <= 0) {
+                                break;
+                            }
+                        }
+                    }
                     break;
 
                 case DROP_ALL_SLOT:
@@ -128,38 +159,7 @@ public class GenericUIHandler extends UIHandler {
                         break;
                     }
 
-                    ItemStack moving = handle.getCurrentItem();
-                    int remainingAmount = moving.getAmount();
-                    int nextSlot = findNextSlot(top, moving, 0);
-
-                    while (nextSlot > -1 && remainingAmount > 0 && handle.getResult() != Event.Result.DENY) {
-                        ItemStack item = top.getItem(nextSlot);
-
-                        int slotAmount;
-                        if (item == null || item.getType() == Material.AIR) {
-                            slotAmount = moving.getMaxStackSize();
-                        }
-                        else {
-                            slotAmount = item.getMaxStackSize() - item.getAmount();
-                        }
-
-                        slotAmount = Math.min(slotAmount, remainingAmount);
-                        remainingAmount -= slotAmount;
-
-                        ItemStack adding = new ItemStack(moving);
-                        adding.setAmount(slotAmount);
-
-                        ClickContext handledClick = handleClick(ctx, nextSlot, type, action, adding);
-                        if (handledClick != null && handledClick.result() != ActionResult.PASS) {
-                            result = handledClick.result();
-                        }
-
-                        if (handledClick != null && handledClick.consumedItem()) {
-                            handle.setCursor(null);
-                        }
-
-                        nextSlot = findNextSlot(top, moving, nextSlot + 1);
-                    }
+                    result = handleShiftClick(ctx, handle, top, type, action, result);
             }
 
             return result;
@@ -203,7 +203,47 @@ public class GenericUIHandler extends UIHandler {
         return null;
     }
 
-    private static int findNextSlot(@NotNull Inventory inventory, @NotNull ItemStack moving, int startIndex) {
+    @NotNull
+    private static ActionResult handleShiftClick(@NotNull UIContext context, @NotNull InventoryClickEvent event,
+                                                 @NotNull Inventory top, @NotNull ClickType type,
+                                                 @NotNull InventoryAction action, @NotNull ActionResult result) {
+        ItemStack moving = event.getCurrentItem();
+        int remainingAmount = moving.getAmount();
+        int nextSlot = findNextEmptySlot(top, moving, 0);
+
+        while (nextSlot > -1 && remainingAmount > 0 && result == ActionResult.PASS) {
+            ItemStack item = top.getItem(nextSlot);
+
+            int slotAmount;
+            if (item == null || item.getType() == Material.AIR) {
+                slotAmount = moving.getMaxStackSize();
+            }
+            else {
+                slotAmount = item.getMaxStackSize() - item.getAmount();
+            }
+
+            slotAmount = Math.min(slotAmount, remainingAmount);
+            remainingAmount -= slotAmount;
+
+            ItemStack adding = new ItemStack(moving);
+            adding.setAmount(slotAmount);
+
+            ClickContext handledClick = handleClick(context, nextSlot, type, action, adding);
+            if (handledClick != null && handledClick.result() != ActionResult.PASS) {
+                result = handledClick.result();
+            }
+
+            if (handledClick != null && handledClick.consumedItem()) {
+                event.setCursor(null);
+            }
+
+            nextSlot = findNextEmptySlot(top, moving, nextSlot + 1);
+        }
+
+        return result;
+    }
+
+    private static int findNextEmptySlot(@NotNull Inventory inventory, @NotNull ItemStack moving, int startIndex) {
         for (int i = startIndex ; i < inventory.getSize() ; i++) {
             ItemStack item = inventory.getItem(i);
             if (moving.isSimilar(item) && item.getAmount() < item.getMaxStackSize()) {

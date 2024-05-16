@@ -5,6 +5,9 @@ import co.crystaldev.alpinecore.framework.ui.element.type.EmptyElement;
 import co.crystaldev.alpinecore.framework.ui.element.type.GenericElement;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventSubscriber;
+import co.crystaldev.alpinecore.framework.ui.interaction.ClickContext;
+import co.crystaldev.alpinecore.framework.ui.interaction.ClickFunction;
+import co.crystaldev.alpinecore.framework.ui.interaction.ClickProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -49,6 +52,13 @@ public abstract class Element implements UIEventSubscriber {
      * Initializes the UI element.
      */
     public void init() {
+        // NO OP
+    }
+
+    /**
+     * Called when the UI has been closed.
+     */
+    public void closed() {
         // NO OP
     }
 

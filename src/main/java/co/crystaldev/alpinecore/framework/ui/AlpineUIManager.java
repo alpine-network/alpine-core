@@ -94,6 +94,12 @@ public final class AlpineUIManager {
 
         UIContext context = this.states.remove(player);
         if (context != null) {
+            context.ui().getHandler().closed(context);
+
+            for (Element element : context.getElements()) {
+                element.closed();
+            }
+
             context.setStale(true);
         }
     }

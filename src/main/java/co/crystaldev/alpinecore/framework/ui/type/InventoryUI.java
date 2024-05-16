@@ -29,6 +29,11 @@ public final class InventoryUI {
         this.type = GuiType.resolveType(properties.getSlots());
     }
 
+    /**
+     * Opens the inventory user interface for the specified player.
+     *
+     * @param player the player to open the inventory for
+     */
     public void view(@NotNull Player player) {
         this.manager.open(player, this);
     }
