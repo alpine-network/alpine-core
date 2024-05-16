@@ -99,33 +99,7 @@ public class GenericUIHandler extends UIHandler {
 
                 case COLLECT_TO_CURSOR:
                     if (!top.equals(clicked)) {
-                        ItemStack moving = handle.getCursor();
-                        Material cursorType = moving.getType();
-                        int maxSize = cursorType.getMaxStackSize();
-                        int remainingAmount = maxSize - moving.getAmount();
-
-                        for (int i = 0; i < top.getSize(); i++) {
-                            ItemStack item = top.getItem(i);
-                            if (item == null || !item.isSimilar(moving)) {
-                                continue;
-                            }
-
-                            int slotAmount = Math.min(item.getAmount(), remainingAmount);
-                            remainingAmount -= slotAmount;
-
-                            ItemStack adding = new ItemStack(moving);
-                            adding.setAmount(slotAmount);
-
-                            ClickContext handledClick = handleClick(ctx, i, type, action, null);
-                            if (handledClick != null && handledClick.result() != ActionResult.PASS) {
-                                result = handledClick.result();
-                                break;
-                            }
-
-                            if (remainingAmount <= 0) {
-                                break;
-                            }
-                        }
+                        result = handleCollectClick(ctx, handle, top, type, action, result);
                     }
                     break;
 
@@ -201,6 +175,40 @@ public class GenericUIHandler extends UIHandler {
         }
 
         return null;
+    }
+
+    @NotNull
+    private static ActionResult handleCollectClick(@NotNull UIContext ctx, @NotNull InventoryClickEvent handle,
+                                                   @NotNull Inventory top, @NotNull ClickType type,
+                                                   @NotNull InventoryAction action, @NotNull ActionResult result) {
+        ItemStack moving = handle.getCursor();
+        Material cursorType = moving.getType();
+        int maxSize = cursorType.getMaxStackSize();
+        int remainingAmount = maxSize - moving.getAmount();
+
+        for (int i = 0; i < top.getSize(); i++) {
+            ItemStack item = top.getItem(i);
+            if (item == null || !item.isSimilar(moving)) {
+                continue;
+            }
+
+            int slotAmount = Math.min(item.getAmount(), remainingAmount);
+            remainingAmount -= slotAmount;
+
+            ItemStack adding = new ItemStack(moving);
+            adding.setAmount(slotAmount);
+
+            ClickContext handledClick = handleClick(ctx, i, type, action, null);
+            if (handledClick != null && handledClick.result() != ActionResult.PASS) {
+                result = handledClick.result();
+                break;
+            }
+
+            if (remainingAmount <= 0) {
+                break;
+            }
+        }
+        return result;
     }
 
     @NotNull
