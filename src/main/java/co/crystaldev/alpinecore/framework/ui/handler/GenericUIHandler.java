@@ -1,8 +1,8 @@
 package co.crystaldev.alpinecore.framework.ui.handler;
 
 import co.crystaldev.alpinecore.framework.config.object.item.DefinedConfigItem;
-import co.crystaldev.alpinecore.framework.ui.element.ClickContext;
-import co.crystaldev.alpinecore.framework.ui.element.ClickProperties;
+import co.crystaldev.alpinecore.framework.ui.ClickContext;
+import co.crystaldev.alpinecore.framework.ui.ClickProperties;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;

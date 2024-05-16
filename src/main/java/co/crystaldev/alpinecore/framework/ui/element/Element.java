@@ -1,8 +1,6 @@
 package co.crystaldev.alpinecore.framework.ui.element;
 
-import co.crystaldev.alpinecore.framework.ui.ClickFunction;
-import co.crystaldev.alpinecore.framework.ui.SlotPosition;
-import co.crystaldev.alpinecore.framework.ui.UIContext;
+import co.crystaldev.alpinecore.framework.ui.*;
 import co.crystaldev.alpinecore.framework.ui.element.type.EmptyElement;
 import co.crystaldev.alpinecore.framework.ui.element.type.GenericElement;
 import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;

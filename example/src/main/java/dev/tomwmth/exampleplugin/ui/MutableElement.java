@@ -1,8 +1,8 @@
 package dev.tomwmth.exampleplugin.ui;
 
 import co.crystaldev.alpinecore.framework.ui.UIContext;
-import co.crystaldev.alpinecore.framework.ui.element.ClickContext;
-import co.crystaldev.alpinecore.framework.ui.element.ClickProperties;
+import co.crystaldev.alpinecore.framework.ui.ClickContext;
+import co.crystaldev.alpinecore.framework.ui.ClickProperties;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.util.Messaging;
 import dev.tomwmth.exampleplugin.config.Config;
@@ -13,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @since 0.4.0
  */
-public final class TestElement extends Element {
+public final class MutableElement extends Element {
 
-    public TestElement(@NotNull UIContext context) {
+    public MutableElement(@NotNull UIContext context) {
         super(context);
         this.clickProperties = ClickProperties.ALL_ALLOWED;
     }
@@ -23,8 +23,6 @@ public final class TestElement extends Element {
     @Override
     public void clicked(@NotNull ClickContext context) {
         super.clicked(context);
-
-        System.out.println("Interacted @ " + this.position.getSlot());
 
         if (context.hasItem()) {
             Config config = this.context.plugin().getConfiguration(Config.class);

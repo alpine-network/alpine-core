@@ -1,4 +1,4 @@
-package co.crystaldev.alpinecore.framework.ui.element;
+package co.crystaldev.alpinecore.framework.ui;
 
 import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
 import org.bukkit.Material;

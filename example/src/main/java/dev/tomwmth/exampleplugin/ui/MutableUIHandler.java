@@ -22,7 +22,7 @@ public final class MutableUIHandler extends GenericUIHandler {
     @Override
     public @Nullable Element createEntry(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
         if (key.equals("storage")) {
-            return new TestElement(context);
+            return new MutableElement(context);
         }
 
         return super.createEntry(context, key, definition);

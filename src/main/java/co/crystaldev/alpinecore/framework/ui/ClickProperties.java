@@ -1,4 +1,4 @@
-package co.crystaldev.alpinecore.framework.ui.element;
+package co.crystaldev.alpinecore.framework.ui;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
