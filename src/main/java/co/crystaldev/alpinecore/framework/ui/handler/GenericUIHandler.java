@@ -84,7 +84,6 @@ public class GenericUIHandler extends UIHandler {
             ActionResult result = ActionResult.PASS;
 
             switch (action) {
-                case NOTHING:
                 case UNKNOWN:
                     result = ActionResult.SUCCESS;
                     break;
@@ -130,6 +129,7 @@ public class GenericUIHandler extends UIHandler {
                     }
                     break;
 
+                case NOTHING:
                 case DROP_ALL_SLOT:
                 case DROP_ONE_SLOT:
                 case HOTBAR_MOVE_AND_READD:
