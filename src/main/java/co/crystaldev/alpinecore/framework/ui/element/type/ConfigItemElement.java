@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * Represents a UI element wrapping a {@link DefinedConfigItem}.
@@ -76,6 +77,13 @@ public final class ConfigItemElement extends Element {
 
         @NotNull
         public Builder placeholder(@NotNull String key, @NotNull Object value) {
+            Validate.notNull(key, "key cannot be null");
+            this.placeholders.put(key, value);
+            return this;
+        }
+
+        @NotNull
+        public Builder placeholder(@NotNull String key, @NotNull Supplier<?> value) {
             Validate.notNull(key, "key cannot be null");
             this.placeholders.put(key, value);
             return this;

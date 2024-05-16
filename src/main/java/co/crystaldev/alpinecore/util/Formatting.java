@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Utility for formatting generic strings of text.
@@ -53,6 +54,9 @@ public final class Formatting {
             }
             else if (rawReplacer instanceof Component) {
                 formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
+            }
+            else if (rawReplacer instanceof Supplier) {
+                formattedReplacer = ((Supplier<?>) rawReplacer).get().toString();
             }
             else {
                 formattedReplacer = rawReplacer.toString();
