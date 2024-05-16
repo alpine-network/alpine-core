@@ -6,15 +6,12 @@ import co.crystaldev.alpinecore.framework.ui.UIContext;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
 import co.crystaldev.alpinecore.framework.ui.element.ElementPaginator;
 import co.crystaldev.alpinecore.framework.ui.element.ElementProvider;
-import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
-import co.crystaldev.alpinecore.framework.ui.event.UIEventBus;
-import co.crystaldev.alpinecore.framework.ui.event.type.DragEvent;
+import co.crystaldev.alpinecore.framework.ui.element.type.ConfigItemElement;
 import co.crystaldev.alpinecore.framework.ui.handler.GenericUIHandler;
 import co.crystaldev.alpinecore.util.MappedMaterial;
 import com.cryptomorin.xseries.XMaterial;
 import dev.tomwmth.exampleplugin.config.Config;
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,10 +39,11 @@ public final class DemoUIHandler extends GenericUIHandler {
                                 AlpinePlugin plugin = ctx.plugin();
                                 Config config = plugin.getConfigManager().getConfig(Config.class);
 
-                                return Element.of(ctx, config.stockSelectionItem.define(type).build(plugin,
-                                        "item_name", WordUtils.capitalizeFully(type.name().replace('_', ' ')),
-                                        "price", 50
-                                ));
+                                return ConfigItemElement.builder()
+                                        .type(config.stockSelectionItem.define(type))
+                                        .placeholder("item_name", WordUtils.capitalizeFully(type.name().replace('_', ' ')))
+                                        .placeholder("price", 50)
+                                        .build(ctx);
                             })
                             .build()
             )
@@ -86,17 +84,5 @@ public final class DemoUIHandler extends GenericUIHandler {
             default:
                 return null;
         }
-    }
-
-    @Override
-    public void registerEvents(@NotNull UIEventBus bus) {
-        super.registerEvents(bus);
-
-        bus.register(DragEvent.class, (ctx, event) -> {
-            InventoryDragEvent handle = event.getHandle();
-            System.out.println(handle.getInventory().equals(ctx.inventory()));
-
-            return ActionResult.PASS;
-        });
     }
 }
