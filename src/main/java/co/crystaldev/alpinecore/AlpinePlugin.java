@@ -403,8 +403,8 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // Let the plugin mutate the command manager
         this.setupCommandManager(builder);
 
-        // Register all activatable argument resolvers
-        for (Activatable activatable : this.activatables) {
+        // Register all argument resolvers
+        for (Activatable activatable : AlpineCore.getInstance().getArgumentResolvers()) {
             if (!(activatable instanceof AlpineArgumentResolver<?>))
                 continue;
 

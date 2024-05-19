@@ -1,5 +1,6 @@
 package co.crystaldev.alpinecore.framework.command;
 
+import co.crystaldev.alpinecore.AlpineCore;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.Activatable;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
@@ -21,7 +22,8 @@ public abstract class AlpineArgumentResolver<T> extends ArgumentResolver<Command
 
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
-        // NO-OP
+        // ArgumentResolvers should be shared across plugin instances
+        AlpineCore.getInstance().getArgumentResolvers().add(this);
     }
 
     @Override

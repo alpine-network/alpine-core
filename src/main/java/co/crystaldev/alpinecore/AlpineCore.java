@@ -1,9 +1,12 @@
 package co.crystaldev.alpinecore;
 
 import co.crystaldev.alpinecore.event.ServerTickEvent;
+import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -19,6 +22,9 @@ public final class AlpineCore extends AlpinePlugin {
     { instance = this; }
 
     static final AtomicLong TICK_COUNTER = new AtomicLong();
+
+    @Getter
+    private final Set<AlpineArgumentResolver<?>> argumentResolvers = new HashSet<>();
 
     @Override
     public void onStart() {
