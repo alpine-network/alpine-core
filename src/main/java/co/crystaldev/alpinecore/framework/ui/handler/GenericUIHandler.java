@@ -178,17 +178,19 @@ public class GenericUIHandler extends UIHandler {
     }
 
     @NotNull
-    private static ActionResult handleCollectClick(@NotNull UIContext ctx, @NotNull InventoryClickEvent handle,
+    private static ActionResult handleCollectClick(@NotNull UIContext ctx, @NotNull InventoryClickEvent event,
                                                    @NotNull Inventory top, @NotNull ClickType type,
                                                    @NotNull InventoryAction action, @NotNull ActionResult result) {
-        ItemStack moving = handle.getCursor();
+        ItemStack moving = event.getCursor();
         Material cursorType = moving.getType();
-        int maxSize = cursorType.getMaxStackSize();
-        int remainingAmount = maxSize - moving.getAmount();
+        int inventorySize = top.getSize();
+        int remainingAmount = cursorType.getMaxStackSize() - moving.getAmount();
 
-        for (int i = 0; i < top.getSize(); i++) {
-            ItemStack item = top.getItem(i);
-            if (item == null || !item.isSimilar(moving)) {
+        int nextSlot = 0;
+        while (remainingAmount > 0 && nextSlot < inventorySize && result == ActionResult.PASS) {
+            ItemStack item = top.getItem(nextSlot);
+            if (!moving.isSimilar(item)) {
+                nextSlot++;
                 continue;
             }
 
@@ -198,16 +200,20 @@ public class GenericUIHandler extends UIHandler {
             ItemStack adding = new ItemStack(moving);
             adding.setAmount(slotAmount);
 
-            ClickContext handledClick = handleClick(ctx, i, type, action, null);
-            if (handledClick != null && handledClick.result() != ActionResult.PASS) {
-                result = handledClick.result();
-                break;
+            ClickContext handledClick = handleClick(ctx, nextSlot, type, action, null);
+            if (handledClick != null) {
+                if (handledClick.result() != ActionResult.PASS) {
+                    result = handledClick.result();
+                }
+
+                if (handledClick.consumedItem()) {
+                    event.setCursor(null);
+                }
             }
 
-            if (remainingAmount <= 0) {
-                break;
-            }
+            nextSlot++;
         }
+
         return result;
     }
 
@@ -219,7 +225,7 @@ public class GenericUIHandler extends UIHandler {
         int remainingAmount = moving.getAmount();
         int nextSlot = findNextEmptySlot(top, moving, 0);
 
-        while (nextSlot > -1 && remainingAmount > 0 && result == ActionResult.PASS) {
+        while (remainingAmount > 0 && nextSlot > -1 && result == ActionResult.PASS) {
             ItemStack item = top.getItem(nextSlot);
 
             int slotAmount;
@@ -237,12 +243,14 @@ public class GenericUIHandler extends UIHandler {
             adding.setAmount(slotAmount);
 
             ClickContext handledClick = handleClick(context, nextSlot, type, action, adding);
-            if (handledClick != null && handledClick.result() != ActionResult.PASS) {
-                result = handledClick.result();
-            }
+            if (handledClick != null) {
+                if (handledClick.result() != ActionResult.PASS) {
+                    result = handledClick.result();
+                }
 
-            if (handledClick != null && handledClick.consumedItem()) {
-                event.setCursor(null);
+                if (handledClick.consumedItem()) {
+                    event.setCursor(null);
+                }
             }
 
             nextSlot = findNextEmptySlot(top, moving, nextSlot + 1);
