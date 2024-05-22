@@ -155,6 +155,18 @@ public final class UIContext {
     }
 
     /**
+     * Closes the inventory of a player.
+     * <p>
+     * If openParent is true, it will attempt to open the parent UIContext
+     * if one exists after closing the current context.
+     *
+     * @param openParent a boolean indicating whether to open the parent context
+     */
+    public void close(boolean openParent) {
+        this.manager().close(this.player(), openParent);
+    }
+
+    /**
      * Adds an element to the context.
      *
      * @param element the context to add

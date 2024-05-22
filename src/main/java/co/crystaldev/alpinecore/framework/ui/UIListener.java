@@ -21,16 +21,15 @@ final class UIListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        HumanEntity player = event.getPlayer();
-        if (this.manager.isManaged(player.getUniqueId())) {
-            this.manager.close(player.getUniqueId(), false);
+        if (this.manager.isManaged(event.getInventory())) {
+            this.manager.onClose(event.getInventory());
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         HumanEntity player = event.getWhoClicked();
-        if (!this.manager.isManaged(player.getUniqueId())) {
+        if (!this.manager.isManaged(event.getInventory())) {
             return;
         }
 
@@ -44,7 +43,7 @@ final class UIListener implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         HumanEntity player = event.getWhoClicked();
-        if (!this.manager.isManaged(player.getUniqueId())) {
+        if (!this.manager.isManaged(event.getInventory())) {
             return;
         }
 

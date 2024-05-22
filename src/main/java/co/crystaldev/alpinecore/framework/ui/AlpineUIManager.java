@@ -13,12 +13,12 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -32,7 +32,7 @@ public final class AlpineUIManager {
     @Getter
     private final AlpinePlugin plugin;
 
-    private final Map<UUID, UIContext> states = new ConcurrentHashMap<>();
+    private final Map<UUID, UIState> states = new ConcurrentHashMap<>();
 
     public AlpineUIManager(@NotNull AlpinePlugin plugin) {
         this.plugin = plugin;
@@ -46,71 +46,103 @@ public final class AlpineUIManager {
      * @param ui     the inventory user interface
      */
     public void open(@NotNull Player player, @NotNull InventoryUI ui) {
+        UIState state = this.states.computeIfAbsent(player.getUniqueId(), k -> new UIState(player));
+        UIHolder holder = new UIHolder(state);
         ConfigInventoryUI properties = ui.getProperties();
 
         // create the inventory
         Component title = this.plugin.getMiniMessage().deserialize(Formatting.placeholders(this.plugin, properties.getName()));
         Inventory inventory;
         if (ui.getType() == GuiType.CHEST) {
-            inventory = InventoryHelper.createInventory(player, properties.getSlots().length * 9, title);
+            inventory = InventoryHelper.createInventory(holder, properties.getSlots().length * 9, title);
         }
         else {
-            inventory = InventoryHelper.createInventory(player, ui.getType().getInventoryType(), title);
+            inventory = InventoryHelper.createInventory(holder, ui.getType().getInventoryType(), title);
         }
 
         // initialize the context
         UUID id = player.getUniqueId();
         UIContext context = new UIContext(id, ui, inventory);
-        this.states.put(id, context);
+        holder.setContext(context);
 
-        // initialize the gui
-        UIHandler handler = ui.getHandler();
-        handler.registerEvents(context.eventBus());
-        handler.init(context);
+        // push the context
+        state.push(context);
 
-        // fill the gui
-        handler.fill(context);
-        this.refresh(context);
-
-        // display to the player
-        player.openInventory(inventory);
+        // open the inventory
+        this.open(player, context, true);
     }
 
     /**
      * Closes the inventory of a player.
+     * <p>
+     * If openParent is true, it will attempt to open the parent UIContext
+     * if one exists after closing the current context.
      *
-     * @param player        the UUID of the player
-     * @param requiresClose determines whether the inventory should be closed
+     * @param player the UUID of the player
+     * @param openParent a boolean indicating whether to open the parent context
      */
-    public void close(@NotNull UUID player, boolean requiresClose) {
-        Player resolved = Bukkit.getPlayer(player);
-        if (resolved == null || !resolved.isOnline()) {
+    public void close(@NotNull Player player, boolean openParent) {
+        UUID playerId = player.getUniqueId();
+
+        UIState state = this.states.get(playerId);
+
+        // close the current context
+        this.closeContext(state.pop());
+
+        if (!openParent || state.isEmpty()) {
+            // unregister the contexts
+            this.states.remove(playerId);
+
+            // close active contexts
+            while (!state.isEmpty()) {
+                this.closeContext(state.pop());
+            }
+
+            // close the inventory
+            player.closeInventory();
+        }
+        else {
+            // open the parent screen
+            this.open(player, state.peek(), false);
+        }
+    }
+
+    /**
+     * Closes the given context.
+     *
+     * @param context the context to be closed
+     */
+    private void closeContext(@NotNull UIContext context) {
+        // notify the ui handler
+        context.ui().getHandler().closed(context);
+
+        // notify elements
+        for (Element element : context.getElements()) {
+            element.closed();
+        }
+
+        // mark the context as stale
+        context.setStale(true);
+    }
+
+    /**
+     * Called when the player closes a managed inventory.
+     *
+     * @param inventory the inventory to be closed
+     */
+    void onClose(@NotNull Inventory inventory) {
+        UIHolder holder = (UIHolder) inventory.getHolder();
+        UIState state = holder.getState();
+
+        Player player = state.getPlayer();
+        if (!player.isOnline() || state.isEmpty()) {
+            this.states.remove(player.getUniqueId());
             return;
         }
 
-        if (requiresClose) {
-            resolved.closeInventory();
+        if (holder.getContext().equals(state.peek())) {
+            this.close(player, true);
         }
-
-        UIContext context = this.states.remove(player);
-        if (context != null) {
-            context.ui().getHandler().closed(context);
-
-            for (Element element : context.getElements()) {
-                element.closed();
-            }
-
-            context.setStale(true);
-        }
-    }
-
-    /**
-     * Closes the inventory of a player.
-     *
-     * @param player the UUID of the player
-     */
-    public void close(@NotNull UUID player) {
-        this.close(player, true);
     }
 
     /**
@@ -121,51 +153,18 @@ public final class AlpineUIManager {
      */
     @Nullable
     public UIContext get(@NotNull UUID player) {
-        return this.states.get(player);
+        return Optional.ofNullable(this.states.get(player)).map(UIState::peek).orElse(null);
     }
 
     /**
-     * Retrieves the UIContext object associated with the given inventory.
-     *
-     * @param inventory the inventory to search for
-     * @return the UIContext object representing the state of the user interface, or null if the inventory is not found
-     */
-    @Nullable
-    public UIContext get(@NotNull Inventory inventory) {
-        for (Map.Entry<UUID, UIContext> entry : this.states.entrySet()) {
-            UIContext context = entry.getValue();
-            if (context.inventory().equals(inventory)) {
-                return context;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Checks if a player is managed by the AlpineUIManager.
+     * Retrieves the state of a user interface for a specific player.
      *
      * @param player the UUID of the player
-     * @return true if the player is managed, false otherwise
+     * @return the UIState object representing the state of the user interface, or null if the player has no state
      */
-    public boolean isManaged(@NotNull UUID player) {
-        Player resolved = Bukkit.getPlayer(player);
-        return resolved != null && this.states.containsKey(player);
-    }
-
-    /**
-     * Checks if an inventory is managed by the AlpineUIManager.
-     *
-     * @param inventory the inventory to check
-     * @return true if the inventory is managed, false otherwise
-     */
-    public boolean isManaged(@NotNull Inventory inventory) {
-        for (Map.Entry<UUID, UIContext> entry : this.states.entrySet()) {
-            UIContext context = entry.getValue();
-            if (context.inventory().equals(inventory)) {
-                return true;
-            }
-        }
-        return false;
+    @Nullable
+    public UIContext get(@NotNull Player player) {
+        return this.get(player.getUniqueId());
     }
 
     /**
@@ -192,5 +191,39 @@ public final class AlpineUIManager {
         if (openInventory != null && openInventory.getTopInventory().equals(inventory)) {
             player.updateInventory();
         }
+    }
+
+    private void open(@NotNull Player player, @NotNull UIContext context, boolean initialize) {
+        // initialize the gui
+        UIHandler handler = context.ui().getHandler();
+        if (initialize) {
+            handler.registerEvents(context.eventBus());
+        }
+        context.setStale(false);
+        handler.init(context);
+
+        // fill the gui
+        handler.fill(context);
+        this.refresh(context);
+
+        // display to the player
+        Bukkit.getScheduler().runTask(context.plugin(), () -> player.openInventory(context.inventory()));
+    }
+
+    /**
+     * Checks if an inventory is managed by the AlpineUIManager.
+     *
+     * @param inventory the inventory to check
+     * @return true if the inventory is managed, false otherwise
+     */
+    boolean isManaged(@NotNull Inventory inventory) {
+        InventoryHolder inventoryHolder = inventory.getHolder();
+        if (!(inventoryHolder instanceof UIHolder)) {
+            return false;
+        }
+
+        UIHolder holder = (UIHolder) inventoryHolder;
+        UIState state = this.states.get(holder.getPlayer().getUniqueId());
+        return state != null && state.contains(holder.getContext());
     }
 }

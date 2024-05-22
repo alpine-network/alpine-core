@@ -3,7 +3,6 @@ package dev.tomwmth.exampleplugin.command;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
-import co.crystaldev.alpinecore.framework.ui.type.InventoryUI;
 import co.crystaldev.alpinecore.util.Messaging;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.Key;
@@ -20,8 +19,6 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.tomwmth.exampleplugin.config.Config;
 import dev.tomwmth.exampleplugin.storage.Statistics;
 import dev.tomwmth.exampleplugin.storage.StatisticsStore;
-import dev.tomwmth.exampleplugin.ui.DemoUIHandler;
-import dev.tomwmth.exampleplugin.ui.MutableUIHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -80,30 +77,6 @@ public class ExampleCommand extends AlpineCommand {
         Messaging.send(sender,
                 config.actionMessage.build(this.plugin,
                         "action", message)
-        );
-    }
-
-    @Execute(name = "demoui")
-    public void executeDemoUI(@Context Player sender) {
-        Config config = this.plugin.getConfigManager().getConfig(Config.class);
-        InventoryUI ui = config.paginatedUI.build(this.plugin, DemoUIHandler.getInstance());
-        ui.view(sender);
-
-        Messaging.send(sender,
-                config.actionMessage.build(this.plugin,
-                        "action", "Opened Paginated Demo Inventory UI")
-        );
-    }
-
-    @Execute(name = "mutableui")
-    public void executeMutableUI(@Context Player sender) {
-        Config config = this.plugin.getConfigManager().getConfig(Config.class);
-        InventoryUI ui = config.mutableUI.build(this.plugin, MutableUIHandler.getInstance());
-        ui.view(sender);
-
-        Messaging.send(sender,
-                config.actionMessage.build(this.plugin,
-                        "action", "Opened Mutable Demo Inventory UI")
         );
     }
 
