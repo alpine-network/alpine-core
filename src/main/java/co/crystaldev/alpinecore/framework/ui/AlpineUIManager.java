@@ -224,6 +224,6 @@ public final class AlpineUIManager {
 
         UIHolder holder = (UIHolder) inventoryHolder;
         UIState state = this.states.get(holder.getPlayer().getUniqueId());
-        return state != null && state.contains(holder.getContext());
+        return state != null && holder.getContext().equals(state.peek());
     }
 }
