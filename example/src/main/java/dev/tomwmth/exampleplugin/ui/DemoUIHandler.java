@@ -20,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class DemoUIHandler extends GenericUIHandler {
 
-    private static final MappedMaterial BOATS_AND_DOORS = MappedMaterial.builder()
-            .add(materials -> materials.filter(type -> type.name().endsWith("_BOAT") || type.name().endsWith("_DOOR")))
+    private static final MappedMaterial BOATS_DOORS_AND_TRAPDOORS = MappedMaterial.builder()
+            .add(materials -> materials.filter(type -> type.name().endsWith("_BOAT") || type.name().endsWith("_DOOR") || type.name().endsWith("_TRAPDOOR")))
             .build();
 
     private static final DemoUIHandler INSTANCE = new DemoUIHandler();
@@ -34,7 +34,7 @@ public final class DemoUIHandler extends GenericUIHandler {
     private final ElementPaginator<XMaterial> paginator = ElementPaginator.<XMaterial>builder()
             .elementProvider(
                     ElementProvider.<XMaterial, Element>builder()
-                            .entries(BOATS_AND_DOORS.getMaterials())
+                            .entries(BOATS_DOORS_AND_TRAPDOORS.getMaterials())
                             .element((ctx, type) -> {
                                 AlpinePlugin plugin = ctx.plugin();
                                 Config config = plugin.getConfigManager().getConfig(Config.class);
