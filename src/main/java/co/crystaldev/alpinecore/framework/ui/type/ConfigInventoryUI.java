@@ -32,6 +32,37 @@ public final class ConfigInventoryUI {
 
     private LinkedHashMap<String, DefinedConfigItem> items;
 
+    /**
+     * Retrieves the number of occurrences for a symbol in the slots of the InventoryUI.
+     *
+     * @param key The symbol to search for.
+     * @return The number of occurrences for the symbol in the slots. Returns 0 if the symbol is not found.
+     */
+    public int countSymbol(@NotNull String key) {
+        String symbol = null;
+        for (Map.Entry<String, String> entry : this.dictionary.entrySet()) {
+            if (entry.getValue().equals(key)) {
+                symbol = entry.getKey();
+                break;
+            }
+        }
+
+        if (symbol == null) {
+            return 0;
+        }
+
+        int amount = 0;
+        for (String slot : this.slots) {
+            for (char ch : slot.toCharArray()) {
+                if (ch == symbol.charAt(0)) {
+                    amount++;
+                }
+            }
+        }
+
+        return amount;
+    }
+
     @NotNull
     public InventoryUI build(@NotNull AlpinePlugin plugin, @NotNull UIHandler handler) {
         return new InventoryUI(this, plugin, handler);
