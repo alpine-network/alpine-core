@@ -205,6 +205,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // Initialize the config manager
         this.configManager = new ConfigManager(this, this.serializerRegistry);
 
+        // Initialize the UI manager
+        this.uiManager = new AlpineUIManager(this);
+
         // Activate all activatables
         this.activateAll();
 
@@ -222,9 +225,6 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         TagResolver resolver = TagResolver.resolver(TagResolver.standard(), new StyleTagResolver(this));
         this.miniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver));
         this.strictMiniMessage = this.setupMiniMessage(MiniMessage.builder().tags(resolver).strict(true));
-
-        // Initialize the ui manager
-        this.uiManager = new AlpineUIManager(this);
 
         // Initialize the command manager
         this.setupCommandManager();
