@@ -45,10 +45,18 @@ public final class AlpineUIManager {
      * @param player the player to register
      * @param ui     the inventory user interface
      */
-    public void open(@NotNull Player player, @NotNull InventoryUI ui) {
+    public void open(@NotNull Player player, @NotNull InventoryUI ui, boolean force) {
         UIState state = this.states.computeIfAbsent(player.getUniqueId(), k -> new UIState(player));
         UIHolder holder = new UIHolder(state);
         ConfigInventoryUI properties = ui.getProperties();
+
+        // force close if requested
+        if (force) {
+            // close active contexts
+            while (!state.isEmpty()) {
+                this.closeContext(state.pop());
+            }
+        }
 
         // create the inventory
         Component title = this.plugin.getMiniMessage().deserialize(Formatting.placeholders(this.plugin, properties.getName()));
@@ -70,6 +78,16 @@ public final class AlpineUIManager {
 
         // open the inventory
         this.open(player, context, true);
+    }
+
+    /**
+     * Registers a player with a specified inventory user interface.
+     *
+     * @param player the player to register
+     * @param ui     the inventory user interface
+     */
+    public void open(@NotNull Player player, @NotNull InventoryUI ui) {
+        this.open(player, ui, false);
     }
 
     /**
