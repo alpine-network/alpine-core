@@ -53,6 +53,18 @@ public interface ConfigItem {
     /**
      * Retrieves the attribute associated with the given key.
      *
+     * @param key  The key of the attribute
+     * @param type The attribute type\
+     * @return The value associated with the key, or null if the key does not exist
+     */
+    @Nullable
+    default <T> T attribute(@NotNull String key, @NotNull Class<T> type) {
+        return this.getAttributes() == null ? null : type.cast(this.getAttributes().get(key));
+    }
+
+    /**
+     * Retrieves the attribute associated with the given key.
+     *
      * @param key The key of the attribute
      * @return The value associated with the key, or null if the key does not exist
      */
