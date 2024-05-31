@@ -74,6 +74,16 @@ public interface ConfigItem {
     }
 
     /**
+     * Checks if the given attribute key exists in the map of attributes.
+     *
+     * @param key The key of the attribute
+     * @return true if the attribute key exists in the map of attributes, false otherwise
+     */
+    default boolean hasAttribute(@NotNull String key) {
+        return this.getAttributes() != null && this.getAttributes().containsKey(key);
+    }
+
+    /**
      * Constructs an ItemStack based on the current configuration.
      * <br>
      * This method allows custom modifications via a function and supports placeholder replacement.
