@@ -58,7 +58,7 @@ public interface ConfigItem {
      * @return The value associated with the key, or null if the key does not exist
      */
     @Nullable
-    default <T> T attribute(@NotNull String key, @NotNull Class<T> type) {
+    default <T> T getAttribute(@NotNull String key, @NotNull Class<T> type) {
         return this.getAttributes() == null ? null : type.cast(this.getAttributes().get(key));
     }
 
@@ -69,7 +69,7 @@ public interface ConfigItem {
      * @return The value associated with the key, or null if the key does not exist
      */
     @Nullable
-    default <T> T attribute(@NotNull String key) {
+    default <T> T getAttribute(@NotNull String key) {
         return this.getAttributes() == null ? null : (T) this.getAttributes().get(key);
     }
 
