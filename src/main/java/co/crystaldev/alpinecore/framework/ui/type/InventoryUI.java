@@ -33,6 +33,16 @@ public final class InventoryUI {
      * Opens the inventory user interface for the specified player.
      *
      * @param player the player to open the inventory for
+     * @param force  whether to override displayed uis
+     */
+    public void view(@NotNull Player player, boolean force) {
+        this.manager.open(player, this, force);
+    }
+
+    /**
+     * Opens the inventory user interface for the specified player.
+     *
+     * @param player the player to open the inventory for
      */
     public void view(@NotNull Player player) {
         this.manager.open(player, this);

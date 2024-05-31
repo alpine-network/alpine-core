@@ -44,6 +44,7 @@ public final class AlpineUIManager {
      *
      * @param player the player to register
      * @param ui     the inventory user interface
+     * @param force  whether to override displayed ui
      */
     public void open(@NotNull Player player, @NotNull InventoryUI ui, boolean force) {
         UIState state = this.states.computeIfAbsent(player.getUniqueId(), k -> new UIState(player));
