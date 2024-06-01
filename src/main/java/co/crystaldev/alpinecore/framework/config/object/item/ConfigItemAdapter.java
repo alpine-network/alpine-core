@@ -47,9 +47,6 @@ abstract class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, O
         if (type != null) {
             type = XMaterial.matchXMaterial(type.toString()).orElse(null);
         }
-        else if (this.requiresType()) {
-            throw new IllegalStateException("material type is required for ConfigItem \"" + element + "\"");
-        }
 
         String name = element.getOrDefault("name", "").toString();
         Object lore = element.getOrDefault("lore", Collections.emptyList());
@@ -65,7 +62,7 @@ abstract class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, O
             attributes = null;
         }
 
-        if (this.requiresType() || type instanceof XMaterial) {
+        if (this.requiresType() || type != null) {
             return new DefinedConfigItem((XMaterial) type, name, (List<String>) lore, count, enchanted, (Map<String, Object>) attributes);
         }
         else {
