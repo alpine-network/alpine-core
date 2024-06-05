@@ -3,16 +3,12 @@ package co.crystaldev.alpinecore.util;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentIteratorType;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
