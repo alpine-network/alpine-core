@@ -46,7 +46,8 @@ public final class ElementProvider<S, T extends Element> {
     @Nullable
     public T nextElement(@NotNull UIContext context) {
         State<S> state = this.states.computeIfAbsent(context, ctx -> new State<>(this.entries.iterator()));
-        return state.hasNext() ? this.toElementFunction.apply(context, state.next()) : null;
+        S next = state.next();
+        return next != null ? this.toElementFunction.apply(context, next) : null;
     }
 
     /**
@@ -101,14 +102,10 @@ public final class ElementProvider<S, T extends Element> {
         private final Iterator<S> iterator;
         private int index;
 
-        @NotNull
+        @Nullable
         public S next() {
             this.index++;
-            return this.iterator.next();
-        }
-
-        public boolean hasNext() {
-            return this.iterator.hasNext();
+            return this.iterator.hasNext() ? this.iterator.next() : null;
         }
     }
 
