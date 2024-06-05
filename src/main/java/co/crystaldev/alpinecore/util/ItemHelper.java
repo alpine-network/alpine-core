@@ -3,6 +3,7 @@ package co.crystaldev.alpinecore.util;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentIteratorType;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -241,14 +243,7 @@ public final class ItemHelper {
         ItemMeta meta = item.getItemMeta();
 
         // since the lore does not allow newlines, we must split at each newline
-        MiniMessage miniMessage = MiniMessage.miniMessage();
-        List<Component> processedLore = new ArrayList<>();
-        for (Component component : lore) {
-            String serialized = miniMessage.serialize(component);
-            for (String line : serialized.split("[\r\n<br>]")) {
-                processedLore.add(miniMessage.deserialize(line));
-            }
-        }
+        List<Component> processedLore = lore.isEmpty() ? lore : Components.split(Components.joinNewLines(lore), "\n");
 
         if (ITEM_META_SET_LORE != null) {
             ReflectionHelper.invokeMethod(ITEM_META_SET_LORE, meta, processedLore);

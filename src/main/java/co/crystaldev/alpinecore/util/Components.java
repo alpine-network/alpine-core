@@ -10,13 +10,13 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.*;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Utility for interacting with Adventure {@link Component}
@@ -81,6 +81,8 @@ public final class Components {
 
         return PlainTextComponentSerializer.plainText().serialize(component).length();
     }
+
+    // region Join
 
     /**
      * Joins a variable number of components together
@@ -178,6 +180,10 @@ public final class Components {
         return Component.join(JoinConfiguration.newlines(), components);
     }
 
+    // endregion Join
+
+    // region Events
+
     /**
      * Add events to the given component.
      *
@@ -214,6 +220,10 @@ public final class Components {
     public static Component events(@NotNull Component component, @NotNull String both) {
         return events(component, Component.text(both), both);
     }
+
+    // endregion Events
+
+    // region Styling
 
     /**
      * Apply the given style to the given component.
@@ -299,4 +309,73 @@ public final class Components {
 
         return styles;
     }
+
+    // endregion Styling
+
+    // region Join
+
+    /**
+     * Splits a component and the underlying component tree by a regex.
+     * Styles are being preserved, so splitting {@code <green>line1\nline2</green>} by the regex "\n" will produce
+     * two {@link Component} with {@link TextColor} green.
+     * It matches the regex for all components and their content but not for a pattern that goes beyond one component.
+     * {@code line1<green>ab</green>cline2} can therefore not be split with the regex "abc", because only "ab" or "c" would
+     * match.
+     *
+     * @author <a href=https://github.com/CubBossa>CubBossa</a>
+     * @see <a href=https://gist.github.com/CubBossa/8bc84706b7e1e393bebb7dc9cf8a9ed5>Split components by their content and a regex</a>
+     *
+     * @param self A component to split at a regex.
+     * @param separator A regex to split the TextComponent content at.
+     * @return A list of new components
+     */
+    @NotNull
+    public static List<Component> split(@NotNull Component self, @NotNull @RegExp String separator) {
+        // First split component content
+        List<Component> lines = splitComponentContent(self, separator);
+
+        if (self.children().isEmpty()) {
+            return lines;
+        }
+
+        // Extract last split, which will contain all children of the same line
+        Component parent = lines.remove(lines.size() - 1);
+
+        // Process each child in order
+        for (Component child : self.children()) {
+            // Split child to List<Component>
+            List<? extends Component> childSegments = split(child, separator);
+
+            // each split will be a new row, except the first which will stick to the parent
+            parent = parent.append(childSegments.get(0));
+            for (int i = 1; i < childSegments.size(); i++) {
+                lines.add(parent);
+                parent = Component.empty().style(parent.style());
+                parent = parent.append(childSegments.get(i));
+            }
+        }
+        lines.add(parent);
+
+        return lines;
+    }
+
+    @NotNull
+    private static List<Component> splitComponentContent(@NotNull Component component, @RegExp String regex) {
+        if (!(component instanceof TextComponent)) {
+            return Collections.singletonList(component);
+        }
+
+        TextComponent textComponent = (TextComponent) component;
+        String[] segments = textComponent.content().split(regex);
+        if (segments.length == 0) {
+            // Special case if the split regex is equals to the content.
+            segments = new String[]{"", ""};
+        }
+        return Arrays.stream(segments)
+                .map(s -> Component.text(s).style(textComponent.style()))
+                .map(c -> (Component) c)
+                .collect(Collectors.toList());
+    }
+
+    // endregion Join
 }
