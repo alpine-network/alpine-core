@@ -59,20 +59,20 @@ public final class AlpineUIManager {
             }
         }
 
-        // create the inventory
-        Component title = this.plugin.getMiniMessage().deserialize(Formatting.placeholders(this.plugin, properties.getName()));
-        Inventory inventory;
-        if (ui.getType() == GuiType.CHEST) {
-            inventory = InventoryHelper.createInventory(holder, properties.getSlots().length * 9, title);
-        }
-        else {
-            inventory = InventoryHelper.createInventory(holder, ui.getType().getInventoryType(), title);
-        }
-
         // initialize the context
         UUID id = player.getUniqueId();
-        UIContext context = new UIContext(id, ui, inventory);
+        UIContext context = new UIContext(id, ui);
         holder.setContext(context);
+
+        // create the inventory
+        Component title = this.plugin.getMiniMessage().deserialize(Formatting.placeholders(this.plugin,
+                properties.getName(), ui.getHandler().getTitlePlaceholders(context)));
+        if (ui.getType() == GuiType.CHEST) {
+            context.setInventory(InventoryHelper.createInventory(holder, properties.getSlots().length * 9, title));
+        }
+        else {
+            context.setInventory(InventoryHelper.createInventory(holder, ui.getType().getInventoryType(), title));
+        }
 
         // push the context
         state.push(context);

@@ -55,6 +55,17 @@ public abstract class UIHandler implements UIEventSubscriber {
     }
 
     /**
+     * Handles formatting for title placeholders.
+     *
+     * @param context the UI context
+     * @return a map of placeholders for the provided context
+     */
+    @NotNull
+    public Map<String, Object> getTitlePlaceholders(@NotNull UIContext context) {
+        return Collections.emptyMap();
+    }
+
+    /**
      * Fills the UI context with elements.
      *
      * @param context the UI context to fill

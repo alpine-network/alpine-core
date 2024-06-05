@@ -28,8 +28,6 @@ public final class UIContext {
 
     private final InventoryUI ui;
 
-    private final Inventory inventory;
-
     private final UIEventBus eventBus = new UIEventBus();
 
     @Getter
@@ -38,10 +36,12 @@ public final class UIContext {
     @Getter @Setter(AccessLevel.PACKAGE)
     private boolean stale;
 
-    UIContext(@NotNull UUID playerId, @NotNull InventoryUI ui, @NotNull Inventory inventory) {
+    @Setter(AccessLevel.PACKAGE)
+    private Inventory inventory;
+
+    UIContext(@NotNull UUID playerId, @NotNull InventoryUI ui) {
         this.playerId = playerId;
         this.ui = ui;
-        this.inventory = inventory;
     }
 
     /**
