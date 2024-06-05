@@ -152,7 +152,7 @@ public interface ConfigItem {
     @NotNull
     default ItemStack build(
             @NotNull AlpinePlugin plugin,
-            @Nullable ItemStack stack,
+            @NotNull ItemStack stack,
             int count,
             @Nullable Function<ItemStack, ItemStack> function,
             @NotNull Object... placeholders
@@ -223,7 +223,7 @@ public interface ConfigItem {
     @NotNull
     default ItemStack build(
             @NotNull AlpinePlugin plugin,
-            @Nullable ItemStack stack,
+            @NotNull ItemStack stack,
             @Nullable Function<ItemStack, ItemStack> function,
             @NotNull Object... placeholders
     ) {
@@ -261,7 +261,7 @@ public interface ConfigItem {
     @NotNull
     default ItemStack build(
             @NotNull AlpinePlugin plugin,
-            @Nullable ItemStack stack,
+            @NotNull ItemStack stack,
             int count,
             @NotNull Object... placeholders
     ) {
@@ -296,7 +296,7 @@ public interface ConfigItem {
     @NotNull
     default ItemStack build(
             @NotNull AlpinePlugin plugin,
-            @Nullable ItemStack stack,
+            @NotNull ItemStack stack,
             @NotNull Object... placeholders
     ) {
         return this.build(plugin, stack, this.getCount(), null, placeholders);
