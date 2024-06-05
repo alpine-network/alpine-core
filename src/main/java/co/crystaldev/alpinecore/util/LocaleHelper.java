@@ -131,9 +131,4 @@ public final class LocaleHelper {
     public static Component getTranslation(@NotNull EntityType entity) {
         return Component.translatable(getTranslationKey(entity));
     }
-
-    @NotNull
-    public static LocaleManager getLocaleManager() {
-        return MANAGER;
-    }
 }
