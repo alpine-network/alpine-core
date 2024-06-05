@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -197,6 +198,10 @@ public final class ItemHelper {
     @NotNull
     public static List<Component> getLore(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
+
+        if (!meta.hasLore()) {
+            return Collections.emptyList();
+        }
 
         if (ITEM_META_GET_LORE != null) {
             return ReflectionHelper.invokeMethod(ITEM_META_GET_LORE, meta);
