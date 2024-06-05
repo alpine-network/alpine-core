@@ -143,6 +143,57 @@ public interface ConfigItem {
      * This method allows custom modifications via a function and supports placeholder replacement.
      *
      * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param count        The quantity of the item
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @NotNull
+    default ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable ItemStack stack,
+            int count,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @NotNull Object... placeholders
+    ) {
+        MiniMessage mm = plugin.getMiniMessage();
+        Component name = Components.reset().append(mm.deserialize(Formatting.placeholders(plugin, this.getName(), placeholders)));
+        List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
+                .map(v -> Formatting.placeholders(v, placeholders))
+                .map(v -> Components.reset().append(mm.deserialize(v)))
+                .collect(Collectors.toList());
+
+        stack = stack.clone();
+
+        if (count > 0) {
+            stack.setAmount(Math.max(Math.min(stack.getMaxStackSize(), count), 1));
+        }
+
+        ItemHelper.setDisplayName(stack, name);
+        ItemHelper.setLore(stack, lore);
+
+        if (this.isEnchanted()) {
+            stack.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 0);
+
+            ItemMeta meta = stack.getItemMeta();
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            stack.setItemMeta(meta);
+        }
+
+        if (function != null) {
+            function.apply(stack);
+        }
+
+        return stack;
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <br>
+     * This method allows custom modifications via a function and supports placeholder replacement.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
      * @param type         The material type of the item
      * @param function     A function that can apply additional modifications to the ItemStack
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
@@ -156,6 +207,27 @@ public interface ConfigItem {
             @NotNull Object... placeholders
     ) {
         return this.build(plugin, type, this.getCount(), function, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <br>
+     * This method allows custom modifications via a function and supports placeholder replacement.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @NotNull
+    default ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable ItemStack stack,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, this.getCount(), function, placeholders);
     }
 
     /**
@@ -181,6 +253,25 @@ public interface ConfigItem {
      * Constructs an ItemStack based on the current configuration.
      *
      * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param count        The quantity of the item
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @NotNull
+    default ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable ItemStack stack,
+            int count,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, count, null, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
      * @param type         The material type of the item
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
@@ -196,9 +287,26 @@ public interface ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @NotNull
+    default ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable ItemStack stack,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, this.getCount(), null, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
      * <br>
      * This method does not define a type by default. It is for internal use within
-     * plugins (i.e. dynamic guis which define a type based on a state)
+     * plugins (i.e., dynamic guis which define a type based on a state)
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param count        The quantity of the item
@@ -213,7 +321,7 @@ public interface ConfigItem {
             @Nullable Function<ItemStack, ItemStack> function,
             @NotNull Object... placeholders
     ) {
-        return this.build(plugin, null, count, function, placeholders);
+        return this.build(plugin, (XMaterial) null, count, function, placeholders);
     }
 
     /**
@@ -233,7 +341,7 @@ public interface ConfigItem {
             @Nullable Function<ItemStack, ItemStack> function,
             @NotNull Object... placeholders
     ) {
-        return this.build(plugin, null, this.getCount(), function, placeholders);
+        return this.build(plugin, (XMaterial) null, this.getCount(), function, placeholders);
     }
 
     /**
@@ -253,7 +361,7 @@ public interface ConfigItem {
             int count,
             @NotNull Object... placeholders
     ) {
-        return this.build(plugin, null, count, placeholders);
+        return this.build(plugin, (XMaterial) null, count, placeholders);
     }
 
     /**
@@ -271,7 +379,7 @@ public interface ConfigItem {
             @NotNull AlpinePlugin plugin,
             @NotNull Object... placeholders
     ) {
-        return this.build(plugin, null, this.getCount(), placeholders);
+        return this.build(plugin, (XMaterial) null, this.getCount(), placeholders);
     }
 
     /**
@@ -359,5 +467,4 @@ public interface ConfigItem {
     ) {
         this.give(plugin, type, player, this.getCount(), null, placeholders);
     }
-
 }
