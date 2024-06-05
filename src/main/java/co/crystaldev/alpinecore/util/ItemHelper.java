@@ -161,6 +161,10 @@ public final class ItemHelper {
     public static Component getDisplayName(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
 
+        if (!meta.hasDisplayName()) {
+            return LocaleHelper.getTranslation(item);
+        }
+
         if (ITEM_META_GET_DISPLAY_NAME != null) {
             return ReflectionHelper.invokeMethod(ITEM_META_GET_DISPLAY_NAME, meta);
         }
