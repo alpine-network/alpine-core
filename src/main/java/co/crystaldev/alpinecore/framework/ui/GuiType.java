@@ -12,10 +12,8 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor @Getter @ToString
 public enum GuiType {
     CHEST(InventoryType.CHEST, 9, 1, 6),
-    CRAFTING_TABLE(InventoryType.CRAFTING, 3, 3, 3),
     HOPPER(InventoryType.HOPPER, 5, 1, 1),
-    DISPENSER(InventoryType.DISPENSER, 3, 3, 3),
-    BREWING(InventoryType.BREWING, 4, 1, 1);
+    DISPENSER(InventoryType.DISPENSER, 3, 3, 3);
 
     private final InventoryType inventoryType;
 
