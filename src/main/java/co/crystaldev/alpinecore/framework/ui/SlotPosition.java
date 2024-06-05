@@ -26,6 +26,24 @@ public final class SlotPosition {
         return GuiType.fromType(this.inventory.getType());
     }
 
+    /**
+     * Retrieves the x-coordinate of the position in an inventory slot.
+     *
+     * @return The x-coordinate.
+     */
+    public int getX() {
+        return this.slot % this.getType().getRowLength();
+    }
+
+    /**
+     * Retrieves the y-coordinate of the position in an inventory slot.
+     *
+     * @return The y-coordinate.
+     */
+    public int getY() {
+        return this.slot / this.getType().getRowLength();
+    }
+
     @NotNull
     public static SlotPosition from(@NotNull Inventory inventory, int slot) {
         return new SlotPosition(inventory, slot);
