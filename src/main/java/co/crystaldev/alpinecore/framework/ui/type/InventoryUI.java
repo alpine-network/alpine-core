@@ -47,4 +47,13 @@ public final class InventoryUI {
     public void view(@NotNull Player player) {
         this.manager.open(player, this);
     }
+
+    /**
+     * Swaps the user interface for a player with a new one.
+     *
+     * @param player the player whose user interface is being swapped
+     */
+    public void swap(@NotNull Player player) {
+        this.manager.swap(player, this);
+    }
 }

@@ -92,6 +92,22 @@ public final class AlpineUIManager {
     }
 
     /**
+     * Swaps the user interface for a player with a new one.
+     *
+     * @param player the player whose user interface is being swapped
+     * @param ui     the new user interface to swap with
+     */
+    public void swap(@NotNull Player player, @NotNull InventoryUI ui) {
+        UIState state = this.states.computeIfAbsent(player.getUniqueId(), k -> new UIState(player));
+
+        if (!state.isEmpty()) {
+            this.closeContext(state.pop());
+        }
+
+        this.open(player, ui, false);
+    }
+
+    /**
      * Closes the inventory of a player.
      * <p>
      * If openParent is true, it will attempt to open the parent UIContext
