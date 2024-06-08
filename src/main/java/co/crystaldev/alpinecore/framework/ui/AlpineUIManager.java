@@ -75,7 +75,10 @@ public final class AlpineUIManager {
         }
 
         // push the context
-        state.push(context);
+        UIContext lastContext = state.push(context);
+        if (lastContext != null) {
+            this.closeContext(lastContext);
+        }
 
         // open the inventory
         this.open(player, context, true);

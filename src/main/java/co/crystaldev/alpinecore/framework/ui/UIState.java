@@ -19,8 +19,11 @@ final class UIState {
 
     private final Deque<UIContext> contextStack = new LinkedList<>();
 
-    public void push(@NotNull UIContext context) {
+    @Nullable
+    public UIContext push(@NotNull UIContext context) {
+        UIContext peek = this.peek();
         this.contextStack.push(context);
+        return this.peek();
     }
 
     @Nullable
