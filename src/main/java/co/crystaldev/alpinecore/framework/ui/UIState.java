@@ -23,7 +23,7 @@ final class UIState {
     public UIContext push(@NotNull UIContext context) {
         UIContext peek = this.peek();
         this.contextStack.push(context);
-        return this.peek();
+        return peek;
     }
 
     @Nullable
