@@ -113,7 +113,7 @@ public interface ConfigItem {
         MiniMessage mm = plugin.getMiniMessage();
         Component name = Components.reset().append(mm.deserialize(Formatting.placeholders(plugin, this.getName(), placeholders)));
         List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
-                .map(v -> Formatting.placeholders(v, placeholders))
+                .map(v -> Formatting.placeholders(plugin, v, placeholders))
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
@@ -160,7 +160,7 @@ public interface ConfigItem {
         MiniMessage mm = plugin.getMiniMessage();
         Component name = Components.reset().append(mm.deserialize(Formatting.placeholders(plugin, this.getName(), placeholders)));
         List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
-                .map(v -> Formatting.placeholders(v, placeholders))
+                .map(v -> Formatting.placeholders(plugin, v, placeholders))
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
