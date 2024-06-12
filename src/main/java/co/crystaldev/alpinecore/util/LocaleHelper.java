@@ -10,6 +10,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Utility for interacting with LocaleLib.
  *
@@ -29,7 +32,12 @@ public final class LocaleHelper {
      */
     @NotNull
     public static String getTranslationKey(@NotNull XMaterial material) {
-        return MANAGER.queryMaterial(material.parseMaterial());
+        try {
+            return MANAGER.queryMaterial(material.parseMaterial());
+        }
+        catch (Exception ex) {
+            return formatEnum(material.parseMaterial());
+        }
     }
 
     /**
@@ -40,7 +48,12 @@ public final class LocaleHelper {
      */
     @NotNull
     public static Component getTranslation(@NotNull XMaterial material) {
-        return Component.translatable(getTranslationKey(material));
+        try {
+            return Component.translatable(MANAGER.queryMaterial(material.parseMaterial()));
+        }
+        catch (Exception ex) {
+            return Component.text(formatEnum(material.parseMaterial()));
+        }
     }
 
     /**
@@ -51,7 +64,12 @@ public final class LocaleHelper {
      */
     @NotNull
     public static String getTranslationKey(@NotNull Material material) {
-        return MANAGER.queryMaterial(material);
+        try {
+            return MANAGER.queryMaterial(material);
+        }
+        catch (Exception ex) {
+            return formatEnum(material);
+        }
     }
 
     /**
@@ -62,7 +80,12 @@ public final class LocaleHelper {
      */
     @NotNull
     public static Component getTranslation(@NotNull Material material) {
-        return Component.translatable(getTranslationKey(material));
+        try {
+            return Component.translatable(MANAGER.queryMaterial(material));
+        }
+        catch (Exception ex) {
+            return Component.text(formatEnum(material));
+        }
     }
 
     /**
@@ -95,7 +118,12 @@ public final class LocaleHelper {
      */
     @NotNull
     public static String getTranslationKey(@NotNull Entity entity) {
-        return MANAGER.queryEntity(entity);
+        try {
+            return MANAGER.queryEntity(entity);
+        }
+        catch (Exception ex) {
+            return formatEnum(entity.getType());
+        }
     }
 
     /**
@@ -106,7 +134,12 @@ public final class LocaleHelper {
      */
     @NotNull
     public static Component getTranslation(@NotNull Entity entity) {
-        return Component.translatable(getTranslationKey(entity));
+        try {
+            return Component.translatable(MANAGER.queryEntity(entity));
+        }
+        catch (Exception ex) {
+            return Component.text(formatEnum(entity.getType()));
+        }
     }
 
     /**
@@ -117,7 +150,12 @@ public final class LocaleHelper {
      */
     @NotNull
     public static String getTranslationKey(@NotNull EntityType entity) {
-        return MANAGER.queryEntityType(entity, null);
+        try {
+            return MANAGER.queryEntityType(entity, null);
+        }
+        catch (Exception ex) {
+            return formatEnum(entity);
+        }
     }
 
     /**
@@ -129,6 +167,18 @@ public final class LocaleHelper {
      */
     @NotNull
     public static Component getTranslation(@NotNull EntityType entity) {
-        return Component.translatable(getTranslationKey(entity));
+        try {
+            return Component.translatable(MANAGER.queryEntityType(entity, null));
+        }
+        catch (Exception ex) {
+            return Component.text(formatEnum(entity));
+        }
+    }
+
+    @NotNull
+    private static String formatEnum(@NotNull Enum<?> value) {
+        return Stream.of(value.name().toLowerCase().split("_"))
+                .map(v -> v.isEmpty() ? v : Character.toUpperCase(v.charAt(0)) + (v.length() > 1  ? v.substring(1) : ""))
+                .collect(Collectors.joining(" "));
     }
 }
