@@ -96,18 +96,28 @@ public final class LocaleHelper {
      */
     @NotNull
     public static String getTranslationKey(@NotNull ItemStack itemStack) {
-        return MANAGER.queryMaterial(itemStack.getType(), itemStack.getDurability(), itemStack.getItemMeta());
+        try {
+            return MANAGER.queryMaterial(itemStack.getType(), itemStack.getDurability(), itemStack.getItemMeta());
+        }
+        catch (Exception ex) {
+            return getTranslationKey(XMaterial.matchXMaterial(itemStack));
+        }
     }
 
     /**
      * Retrieves the translated component for a given item stack.
      *
-     * @param item the item stack
+     * @param itemStack the item stack
      * @return the translated component
      */
     @NotNull
-    public static Component getTranslation(@NotNull ItemStack item) {
-        return Component.translatable(getTranslationKey(item));
+    public static Component getTranslation(@NotNull ItemStack itemStack) {
+        try {
+            return Component.translatable(MANAGER.queryMaterial(itemStack.getType(), itemStack.getDurability(), itemStack.getItemMeta()));
+        }
+        catch (Exception ex) {
+            return Component.text(getTranslationKey(XMaterial.matchXMaterial(itemStack)));
+        }
     }
 
     /**
