@@ -161,7 +161,7 @@ public final class ItemHelper {
     public static Component getDisplayName(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
 
-        if (!meta.hasDisplayName()) {
+        if (meta == null || !meta.hasDisplayName()) {
             return LocaleHelper.getTranslation(item);
         }
 
@@ -181,6 +181,10 @@ public final class ItemHelper {
      */
     public static void setDisplayName(@NotNull ItemStack item, @NotNull Component name) {
         ItemMeta meta = item.getItemMeta();
+
+        if (meta == null) {
+            return;
+        }
 
         if (ITEM_META_SET_DISPLAY_NAME != null) {
             ReflectionHelper.invokeMethod(ITEM_META_SET_DISPLAY_NAME, meta, name);
@@ -203,7 +207,7 @@ public final class ItemHelper {
     public static List<Component> getLore(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
 
-        if (!meta.hasLore()) {
+        if (meta == null || !meta.hasLore()) {
             return Collections.emptyList();
         }
 
@@ -237,6 +241,10 @@ public final class ItemHelper {
      */
     public static void setLore(@NotNull ItemStack item, @NotNull List<Component> lore) {
         ItemMeta meta = item.getItemMeta();
+
+        if (meta == null) {
+            return;
+        }
 
         // since the lore does not allow newlines, we must split at each newline
         List<Component> processedLore = lore.isEmpty() ? lore : Components.split(Components.joinNewLines(lore), "\n");
