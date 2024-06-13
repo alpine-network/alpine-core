@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
  * Represents a configurable item within the plugin framework.
  * Provides methods to build and manipulate item stacks based on dynamic configurations.
  *
+ * @see DefinedConfigItem
+ * @see VaryingConfigItem
  * @since 0.4.0
  */
 @Polymorphic

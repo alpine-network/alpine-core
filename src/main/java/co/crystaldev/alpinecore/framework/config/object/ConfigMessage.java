@@ -16,6 +16,17 @@ import java.util.stream.Collectors;
  * compatible with {@link co.crystaldev.alpinecore.framework.config.AlpineConfig}.
  * <p>
  * Utilizes the Adventure framework for formatting.
+ * </p>
+ * Example usage:
+ * <pre>{@code
+ * AlpinePlugin plugin = ; // your plugin instance
+ * ConfigMessage message = ConfigMessage.of(
+ *      "<info>PluginName:</info> This is the first part of the message",
+ *      "<notice> -</notice> This is the next line (%placeholder%)"
+ * );
+ * Component component = message.build(plugin, "placeholder", 20);
+ * Messaging.send(player, component);
+ * }</pre>
  *
  * @see <a href="https://docs.advntr.dev/index.html">Adventure Documentation</a>
  * @author Thomas Wearmouth
