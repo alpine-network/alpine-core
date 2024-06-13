@@ -128,8 +128,8 @@ public final class ConfigLoader<T> {
     }
 
     @NotNull
-    public static <T> Builder<T> builder(@NotNull AlpinePlugin plugin, @NotNull Class<T> configClass, @NotNull String rootDirectory) {
-        return new Builder<>(plugin, configClass, rootDirectory);
+    public static <T> Builder<T> builder(@NotNull AlpinePlugin plugin, @NotNull Class<T> configClass, @NotNull String directory) {
+        return new Builder<>(plugin, configClass, directory);
     }
 
     /**
