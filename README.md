@@ -66,7 +66,7 @@ Keep in mind that using this library will require it to be added as a plugin on 
 ### For Server Admins
 Any plugin built using this library will require you to add it as a plugin to your server. On its own it does nothing.
 
-The plugin has been explicitly verified to work on releases ranging from `1.8.8` to `1.20.5`.
+The plugin has been explicitly verified to work on releases ranging from `1.8.8` to `1.21`.
 
 ### License
 This library is licensed under the Mozilla Public License v2.0. For information regarding your requirements in the use of this library, please see [Mozilla's FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/).
