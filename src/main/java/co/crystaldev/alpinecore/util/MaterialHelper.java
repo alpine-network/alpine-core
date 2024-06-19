@@ -102,4 +102,25 @@ public final class MaterialHelper {
                     .orElse(resolved == null ? XMaterial.AIR : XMaterial.matchXMaterial(resolved));
         });
     }
+
+    public static void setType(@NotNull Block block, @NotNull XMaterial type, boolean applyPhysics) {
+        if (XMaterial.supports(13)) {
+            block.setType(type.parseMaterial(), applyPhysics);
+        }
+        else {
+            block.setTypeIdAndData(type.getId(), type.getData(), applyPhysics);
+        }
+    }
+
+    public static void setType(@NotNull Block block, @NotNull XMaterial type) {
+        setType(block, type, true);
+    }
+
+    public static void setType(@NotNull Location location, @NotNull XMaterial type, boolean applyPhysics) {
+        setType(location.getBlock(), type, applyPhysics);
+    }
+
+    public static void setType(@NotNull Location location, @NotNull XMaterial type) {
+        setType(location.getBlock(), type, true);
+    }
 }
