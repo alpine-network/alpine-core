@@ -362,10 +362,10 @@ public final class Formatting {
         // create the title
         Component previous = currentPage == 0
                 ? config.previousDisabled.build(plugin)
-                : Components.events(config.previous.build(plugin), Formatting.placeholders(command, humanPage - 1));
+                : Components.events(config.previous.build(plugin), Formatting.placeholders(command, "page", humanPage - 1));
         Component next = currentPage == totalPages - 1
                 ? config.nextDisabled.build(plugin)
-                : Components.events(config.next.build(plugin), Formatting.placeholders(command, humanPage + 1));
+                : Components.events(config.next.build(plugin), Formatting.placeholders(command, "page", humanPage + 1));
 
         // build the title
         Component center = config.paginatorTitleFormat.build(
