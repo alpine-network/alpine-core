@@ -9,6 +9,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Utility for interoperability with XMaterials
  *
@@ -19,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 public final class MaterialHelper {
 
     private static final short MAX_ID = 2267;
+
+    private static final Map<Integer, XMaterial> LEGACY_MATERIALS = new HashMap<>();
 
     /**
      * Get the {@link XMaterial} equivalent of the given material.
@@ -82,8 +87,17 @@ public final class MaterialHelper {
         }
     }
 
-    @NotNull
-    private static XMaterial getType(int id, byte data) {
+    /**
+     * Get the XMaterial equivalent of the given material ID and data.
+     *
+     * @param id   The material ID.
+     * @param data The material data.
+     * @return The wrapped material.
+     *
+     * @deprecated Minecraft dropped support for item ids after version 1.12.
+     */
+    @NotNull @Deprecated
+    public static XMaterial getType(int id, byte data) {
         // MAX_ID is inaccessible in XMaterial
         if (id < 0 || id > MAX_ID || data < 0) {
             return XMaterial.AIR;
@@ -91,16 +105,15 @@ public final class MaterialHelper {
 
         Material resolved = Material.getMaterial(id);
         int resolvedId = resolved == null ? id : resolved.getId();
-        for (XMaterial material : XMaterial.VALUES) {
-            if (material.getId() == resolvedId && material.getData() == data) {
-                return material;
-            }
-        }
 
-        return XMaterial.matchXMaterial(resolvedId, (byte) (data % 8)).orElseGet(() -> {
-            return XMaterial.matchXMaterial(resolvedId, (byte) 0)
-                    .orElse(resolved == null ? XMaterial.AIR : XMaterial.matchXMaterial(resolved));
-        });
+        XMaterial resolvedMaterial = LEGACY_MATERIALS.get(resolvedId << 8 | data);
+        if (resolvedMaterial == null) {
+            resolvedMaterial = LEGACY_MATERIALS.get(resolvedId << 8);
+            return resolvedMaterial == null ? XMaterial.AIR : resolvedMaterial;
+        }
+        else {
+            return resolvedMaterial;
+        }
     }
 
     public static void setType(@NotNull Block block, @NotNull XMaterial type, boolean applyPhysics) {
@@ -122,5 +135,18 @@ public final class MaterialHelper {
 
     public static void setType(@NotNull Location location, @NotNull XMaterial type) {
         setType(location.getBlock(), type, true);
+    }
+
+    static {
+        for (XMaterial value : XMaterial.values()) {
+            int id = value.getId();
+            byte data = value.getData();
+
+            if (id != -1) {
+                // create a hash of the combined id and data to put in the legacy materials
+                int key = id << 8 | data;
+                LEGACY_MATERIALS.put(key, value);
+            }
+        }
     }
 }
