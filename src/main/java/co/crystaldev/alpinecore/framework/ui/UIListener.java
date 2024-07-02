@@ -17,7 +17,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 @RequiredArgsConstructor
 final class UIListener implements Listener {
 
-    private final AlpineUIManager manager;
+    private final UIManager manager;
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {

@@ -49,7 +49,7 @@ public final class UIContext {
      *
      * @return the AlpineUIManager instance
      */
-    public @NotNull AlpineUIManager manager() {
+    public @NotNull UIManager manager() {
         return this.ui.getManager();
     }
 

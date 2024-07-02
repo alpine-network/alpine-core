@@ -27,14 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 0.4.0
  */
 @Beta
-public final class AlpineUIManager {
+public final class UIManager {
 
     @Getter
     private final AlpinePlugin plugin;
 
     private final Map<UUID, UIState> states = new ConcurrentHashMap<>();
 
-    public AlpineUIManager(@NotNull AlpinePlugin plugin) {
+    public UIManager(@NotNull AlpinePlugin plugin) {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(new UIListener(this), plugin);
     }

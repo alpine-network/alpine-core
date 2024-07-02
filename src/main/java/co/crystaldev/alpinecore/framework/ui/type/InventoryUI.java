@@ -3,7 +3,7 @@ package co.crystaldev.alpinecore.framework.ui.type;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.ui.GuiType;
 import co.crystaldev.alpinecore.framework.ui.handler.UIHandler;
-import co.crystaldev.alpinecore.framework.ui.AlpineUIManager;
+import co.crystaldev.alpinecore.framework.ui.UIManager;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ public final class InventoryUI {
 
     private final ConfigInventoryUI properties;
 
-    private final AlpineUIManager manager;
+    private final UIManager manager;
 
     private final UIHandler handler;
 

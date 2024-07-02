@@ -12,7 +12,7 @@ import co.crystaldev.alpinecore.framework.engine.AlpineEngine;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
-import co.crystaldev.alpinecore.framework.ui.AlpineUIManager;
+import co.crystaldev.alpinecore.framework.ui.UIManager;
 import co.crystaldev.alpinecore.handler.CommandInvalidUsageHandler;
 import co.crystaldev.alpinecore.util.ChatColor;
 import co.crystaldev.alpinecore.util.SimpleTimer;
@@ -72,7 +72,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     private final SerializerRegistry serializerRegistry = new SerializerRegistry();
 
     /** Manager for handling inventory UIs. */
-    private AlpineUIManager uiManager;
+    private UIManager uiManager;
 
     /** MiniMessage curated by this plugin. */
     private MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -205,7 +205,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.configManager = new ConfigManager(this, this.serializerRegistry);
 
         // Initialize the UI manager
-        this.uiManager = new AlpineUIManager(this);
+        this.uiManager = new UIManager(this);
 
         // Activate all activatables
         this.activateAll();
