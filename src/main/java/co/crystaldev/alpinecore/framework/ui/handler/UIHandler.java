@@ -55,6 +55,16 @@ public abstract class UIHandler implements UIEventSubscriber {
     }
 
     /**
+     * Whether the parent screen should be opened on inventory close.
+     *
+     * @param context the UI context
+     * @return whether the parent screen should be opened
+     */
+    public boolean openParentOnClose(@NotNull UIContext context) {
+        return false;
+    }
+
+    /**
      * Handles formatting for title placeholders.
      *
      * @param context the UI context

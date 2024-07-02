@@ -178,8 +178,10 @@ public final class UIManager {
             return;
         }
 
-        if (holder.getContext().equals(state.peek())) {
-            this.close(player, true);
+        UIContext context = holder.getContext();
+        if (context.equals(state.peek())) {
+            UIHandler handler = context.ui().getHandler();
+            this.close(player, handler.openParentOnClose(context));
         }
     }
 

@@ -6,14 +6,13 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents the context for an item drop event.
  *
  * @since 0.4.0
  */
-public final class DropContext {
+public final class DropContext extends InteractContext {
 
     private final ClickType type;
 
@@ -21,13 +20,11 @@ public final class DropContext {
 
     private final ItemStack item;
 
-    private ActionResult result;
-
     public DropContext(@NotNull ClickType type, @NotNull InventoryAction action, @NotNull ItemStack item, @NotNull ActionResult result) {
+        super(result);
         this.type = type;
         this.action = action;
         this.item = item;
-        this.result = result;
     }
 
     /**
@@ -78,23 +75,5 @@ public final class DropContext {
         else {
             return this.item.getAmount();
         }
-    }
-
-    /**
-     * Retrieves the result of the item drop.
-     *
-     * @return the {@link ActionResult} of the action
-     */
-    public @NotNull ActionResult result() {
-        return this.result;
-    }
-
-    /**
-     * Sets the result of the item drop.
-     *
-     * @param result the {@link ActionResult} to set
-     */
-    public void result(@NotNull ActionResult result) {
-        this.result = result;
     }
 }

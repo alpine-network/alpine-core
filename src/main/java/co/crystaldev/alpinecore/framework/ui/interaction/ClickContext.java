@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @since 0.4.0
  */
-public final class ClickContext {
+public final class ClickContext extends InteractContext {
 
     private final ClickType type;
 
@@ -21,15 +21,13 @@ public final class ClickContext {
 
     private final ItemStack item;
 
-    private ActionResult result;
-
     private boolean consumedItem;
 
     public ClickContext(@NotNull ClickType type, @NotNull InventoryAction action, @Nullable ItemStack item, @NotNull ActionResult result) {
+        super(result);
         this.type = type;
         this.action = action;
         this.item = item;
-        this.result = result;
     }
 
     /**
@@ -87,23 +85,5 @@ public final class ClickContext {
      */
     public boolean consumedItem() {
         return this.consumedItem;
-    }
-
-    /**
-     * Retrieves the result of the click.
-     *
-     * @return the {@link ActionResult} of the action
-     */
-    public @NotNull ActionResult result() {
-        return this.result;
-    }
-
-    /**
-     * Sets the result of the click.
-     *
-     * @param result the {@link ActionResult} to set
-     */
-    public void result(@NotNull ActionResult result) {
-        this.result = result;
     }
 }
