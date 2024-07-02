@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class EmptyElement extends Element {
 
-    private static final EmptyElement EMPTY = new EmptyElement();
+    public static final EmptyElement INSTANCE = new EmptyElement();
 
     private static final ItemStack EMPTY_ITEM_STACK = new ItemStack(Material.AIR, 1);
 
@@ -21,10 +21,5 @@ public final class EmptyElement extends Element {
     @Override
     public @NotNull ItemStack buildItemStack() {
         return EMPTY_ITEM_STACK;
-    }
-
-    @NotNull
-    public static EmptyElement empty() {
-        return EMPTY;
     }
 }

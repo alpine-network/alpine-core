@@ -49,8 +49,7 @@ public final class SerializerRegistry {
      * @param dataType The data type for which to retrieve the key serializer.
      * @return The key serializer associated with the data type, or null if not found.
      */
-    @Nullable
-    public KeySerializer<?, ?> getKeySerializer(@NotNull Class<?> dataType) {
+    public @Nullable KeySerializer<?, ?> getKeySerializer(@NotNull Class<?> dataType) {
         return this.keySerializers.get(dataType);
     }
 }

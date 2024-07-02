@@ -21,8 +21,7 @@ public final class SlotPosition {
      *
      * @return The type of the GUI.
      */
-    @NotNull
-    public GuiType getType() {
+    public @NotNull GuiType getType() {
         return GuiType.fromType(this.inventory.getType());
     }
 
@@ -44,13 +43,11 @@ public final class SlotPosition {
         return this.slot / this.getType().getRowLength();
     }
 
-    @NotNull
-    public static SlotPosition from(@NotNull Inventory inventory, int slot) {
+    public static @NotNull SlotPosition from(@NotNull Inventory inventory, int slot) {
         return new SlotPosition(inventory, slot);
     }
 
-    @NotNull
-    public static SlotPosition from(@NotNull Inventory inventory, int x, int y) {
+    public static @NotNull SlotPosition from(@NotNull Inventory inventory, int x, int y) {
         GuiType type = GuiType.fromType(inventory.getType());
         return new SlotPosition(inventory, y * type.getRowLength() + x);
     }

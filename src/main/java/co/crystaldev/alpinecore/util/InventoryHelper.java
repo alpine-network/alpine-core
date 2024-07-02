@@ -30,8 +30,7 @@ public final class InventoryHelper {
      * @param title the title of the inventory
      * @return the created inventory
      */
-    @NotNull
-    public static Inventory createInventory(@NotNull InventoryHolder holder, int slots, @NotNull Component title) {
+    public static @NotNull Inventory createInventory(@NotNull InventoryHolder holder, int slots, @NotNull Component title) {
         if (BUKKIT_CREATE_CHEST_INVENTORY != null) {
             return ReflectionHelper.invokeMethod(Inventory.class, null, holder, slots, title);
         }
@@ -48,8 +47,7 @@ public final class InventoryHelper {
      * @param title the title of the inventory
      * @return the created inventory
      */
-    @NotNull
-    public static Inventory createInventory(@NotNull InventoryHolder holder, @NotNull InventoryType type, @NotNull Component title) {
+    public static @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull InventoryType type, @NotNull Component title) {
         if (BUKKIT_CREATE_VARYING_INVENTORY != null) {
             return ReflectionHelper.invokeMethod(Inventory.class, null, holder, type, title);
         }

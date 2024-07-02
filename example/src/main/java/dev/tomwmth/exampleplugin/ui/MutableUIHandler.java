@@ -22,8 +22,7 @@ public final class MutableUIHandler extends GenericUIHandler {
 
     private static final MutableUIHandler INSTANCE = new MutableUIHandler();
 
-    @NotNull
-    public static MutableUIHandler getInstance() {
+    public static @NotNull MutableUIHandler getInstance() {
         return INSTANCE;
     }
 

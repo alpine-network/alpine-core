@@ -45,8 +45,7 @@ public abstract class Element implements UIEventSubscriber {
      *
      * @return the ItemStack representing this UI element, or null if there is no item stack
      */
-    @Nullable
-    public abstract ItemStack buildItemStack();
+    public abstract @Nullable ItemStack buildItemStack();
 
     /**
      * Initializes the UI element.
@@ -81,8 +80,7 @@ public abstract class Element implements UIEventSubscriber {
      * @param key the key of the attribute to retrieve
      * @return the attribute value associated with the key, or null if the attribute does not exist
      */
-    @Nullable
-    public <T> T getAttribute(@NotNull String key) {
+    public <T> @Nullable T getAttribute(@NotNull String key) {
         return this.attributes == null ? null : (T) this.attributes.get(key);
     }
 
@@ -104,8 +102,7 @@ public abstract class Element implements UIEventSubscriber {
      *
      * @return a map of attribute keys to attribute values
      */
-    @NotNull
-    public Map<String, Object> getAttributes() {
+    public @NotNull Map<String, Object> getAttributes() {
         return this.attributes == null ? Collections.emptyMap() : this.attributes;
     }
 
@@ -130,18 +127,15 @@ public abstract class Element implements UIEventSubscriber {
         return element == null || element instanceof EmptyElement;
     }
 
-    @NotNull
-    public static GenericElement of(@NotNull UIContext context, @NotNull ItemStack itemStack) {
+    public static @NotNull GenericElement of(@NotNull UIContext context, @NotNull ItemStack itemStack) {
         return new GenericElement(context, itemStack);
     }
 
-    @NotNull
-    public static Element fromNullable(@Nullable Element element) {
+    public static @NotNull Element fromNullable(@Nullable Element element) {
         return element == null ? empty() : element;
     }
 
-    @NotNull
-    public static Element empty() {
-        return EmptyElement.empty();
+    public static @NotNull Element empty() {
+        return EmptyElement.INSTANCE;
     }
 }

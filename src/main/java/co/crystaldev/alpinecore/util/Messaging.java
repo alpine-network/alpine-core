@@ -202,8 +202,7 @@ public final class Messaging {
      * @param sender the CommandSender to wrap
      * @return an Audience representing the wrapped CommandSender
      */
-    @NotNull
-    public static Audience wrap(@NotNull CommandSender sender) {
+    public static @NotNull Audience wrap(@NotNull CommandSender sender) {
         if (sender instanceof Audience) {
             return (Audience) sender;
         }

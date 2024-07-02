@@ -34,12 +34,14 @@ public final class Formatting {
      * @param placeholders The placeholders used to format the text
      * @return The formatted text
      */
-    @NotNull
-    public static String placeholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Object... placeholders) {
-        if (text == null)
+    public static @NotNull String placeholders(@NotNull MiniMessage miniMessage, @Nullable String text,
+                                               @NotNull Object... placeholders) {
+        if (text == null) {
             return "";
-        if (placeholders == null || placeholders.length < 2)
+        }
+        if (placeholders == null || placeholders.length < 2) {
             return text;
+        }
 
         for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
             String placeholder = (String) placeholders[i];
@@ -71,9 +73,9 @@ public final class Formatting {
     /**
      * @deprecated Renamed. Use {@link Formatting#placeholders(MiniMessage, String, Object...)}
      */
-    @NotNull
     @Deprecated
-    public static String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Object... placeholders) {
+    public static @NotNull String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text,
+                                                     @NotNull Object... placeholders) {
         return placeholders(miniMessage, text, placeholders);
     }
 
@@ -87,8 +89,8 @@ public final class Formatting {
      * @param placeholders The placeholders used to format the text
      * @return The formatted text
      */
-    @NotNull
-    public static String placeholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Object... placeholders) {
+    public static @NotNull String placeholders(@NotNull AlpinePlugin plugin, @Nullable String text,
+                                               @NotNull Object... placeholders) {
         if (text != null) {
             HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
             for (Map.Entry<String, String> entry : variables.entrySet()) {
@@ -103,9 +105,9 @@ public final class Formatting {
      * @see Formatting#placeholders(AlpinePlugin, String, Object...)
      * @deprecated Renamed. Use {@link Formatting#placeholders(AlpinePlugin, String, Object...)}
      */
-    @NotNull
     @Deprecated
-    public static String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Object... placeholders) {
+    public static @NotNull String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text,
+                                                     @NotNull Object... placeholders) {
         return placeholders(plugin, text, placeholders);
     }
 
@@ -118,8 +120,7 @@ public final class Formatting {
      * @param placeholders The placeholders used to format the text
      * @return The formatted text
      */
-    @NotNull
-    public static String placeholders(@Nullable String text, @NotNull Object... placeholders) {
+    public static @NotNull String placeholders(@Nullable String text, @NotNull Object... placeholders) {
         return placeholders(MiniMessage.miniMessage(), text, placeholders);
     }
 
@@ -127,9 +128,8 @@ public final class Formatting {
      * @see Formatting#placeholders(String, Object...)
      * @deprecated Renamed. Use {@link Formatting#placeholders(String, Object...)}
      */
-    @NotNull
     @Deprecated
-    public static String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
+    public static @NotNull String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
         return placeholders(text, placeholders);
     }
 
@@ -143,12 +143,14 @@ public final class Formatting {
      * @param placeholders The placeholders used to format the text
      * @return The formatted text
      */
-    @NotNull
-    public static String placeholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Map<String, Object> placeholders) {
-        if (text == null)
+    public static @NotNull String placeholders(@NotNull MiniMessage miniMessage, @Nullable String text,
+                                               @NotNull Map<String, Object> placeholders) {
+        if (text == null) {
             return "";
-        if (placeholders.isEmpty())
+        }
+        if (placeholders.isEmpty()) {
             return text;
+        }
 
         for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
             String placeholder = "%" + entry.getKey() + "%";
@@ -181,9 +183,9 @@ public final class Formatting {
      * @see Formatting#placeholders(MiniMessage, String, Map)
      * @deprecated Renamed. Use {@link Formatting#placeholders(MiniMessage, String, Map)}
      */
-    @NotNull
     @Deprecated
-    public static String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+    public static @NotNull String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text,
+                                                     @NotNull Map<String, Object> placeholders) {
         return placeholders(miniMessage, text, placeholders);
     }
 
@@ -197,8 +199,8 @@ public final class Formatting {
      * @param placeholders The placeholders used to format the text
      * @return The formatted text
      */
-    @NotNull
-    public static String placeholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+    public static @NotNull String placeholders(@NotNull AlpinePlugin plugin, @Nullable String text,
+                                               @NotNull Map<String, Object> placeholders) {
         if (text != null) {
             HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
             for (Map.Entry<String, String> entry : variables.entrySet()) {
@@ -213,9 +215,9 @@ public final class Formatting {
      * @see Formatting#placeholders(AlpinePlugin, String, Map)
      * @deprecated Renamed. Use {@link Formatting#placeholders(AlpinePlugin, String, Map)}
      */
-    @NotNull
     @Deprecated
-    public static String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text, @NotNull Map<String, Object> placeholders) {
+    public static @NotNull String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text,
+                                                     @NotNull Map<String, Object> placeholders) {
         return placeholders(plugin, text, placeholders);
     }
 
@@ -228,8 +230,7 @@ public final class Formatting {
      * @param placeholders The placeholders used to format the text
      * @return The formatted text
      */
-    @NotNull
-    public static String placeholders(@Nullable String text, @NotNull Map<String, Object> placeholders) {
+    public static @NotNull String placeholders(@Nullable String text, @NotNull Map<String, Object> placeholders) {
         return placeholders(MiniMessage.miniMessage(), text, placeholders);
     }
 
@@ -237,9 +238,8 @@ public final class Formatting {
      * @see Formatting#placeholders(String, Map)
      * @deprecated Renamed. Use {@link Formatting#placeholders(String, Map)}
      */
-    @NotNull
     @Deprecated
-    public static String formatPlaceholders(@Nullable String text, @NotNull Map<String, Object> placeholders) {
+    public static @NotNull String formatPlaceholders(@Nullable String text, @NotNull Map<String, Object> placeholders) {
         return placeholders(text, placeholders);
     }
 
@@ -250,8 +250,7 @@ public final class Formatting {
      * @param component The component
      * @return The padded component
      */
-    @NotNull
-    public static Component applyTitlePadding(@NotNull AlpinePlugin plugin, @NotNull Component component) {
+    public static @NotNull Component applyTitlePadding(@NotNull AlpinePlugin plugin, @NotNull Component component) {
         AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
         if (!config.titleUsesPadding) {
             return component;
@@ -272,8 +271,7 @@ public final class Formatting {
      * @param component The component
      * @return The formatted title component
      */
-    @NotNull
-    public static Component title(@NotNull AlpinePlugin plugin, @NotNull Component component) {
+    public static @NotNull Component title(@NotNull AlpinePlugin plugin, @NotNull Component component) {
         AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
         component = config.titleFormat.build(plugin, "content", component);
         return applyTitlePadding(plugin, component);
@@ -287,8 +285,7 @@ public final class Formatting {
      * @param toComponentFn The function to convert each element into a component
      * @return The displayed components
      */
-    @NotNull
-    public static <T> Component elements(@NotNull AlpinePlugin plugin, @NotNull Collection<T> elements,
+    public static <T> @NotNull Component elements(@NotNull AlpinePlugin plugin, @NotNull Collection<T> elements,
                                          @NotNull Function<@NotNull T, Component> toComponentFn) {
         AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
         List<Component> pageElements = new LinkedList<>();
@@ -323,8 +320,7 @@ public final class Formatting {
      * @param toComponentFn   The function to convert each element into a component
      * @return The paginated components
      */
-    @NotNull
-    public static <T> Component page(@NotNull AlpinePlugin plugin,
+    public static <T> @NotNull Component page(@NotNull AlpinePlugin plugin,
                                      @NotNull Component title, @NotNull Collection<T> elements,
                                      @NotNull String command, int currentPage, int elementsPerPage,
                                      @NotNull Function<@NotNull T, Component> toComponentFn) {
@@ -391,23 +387,23 @@ public final class Formatting {
      * @param progress The progress value
      * @return The progress bar
      */
-    @NotNull
-    public static Component progress(@NotNull AlpinePlugin plugin, double progress) {
+    public static @NotNull Component progress(@NotNull AlpinePlugin plugin, double progress) {
         progress = Math.max(0.0, Math.min(1.0, progress));
 
         AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
 
         int fillLength = (int) (config.progressLength * progress);
         Component progressComponent = Components.join(
-                Components.stylize(config.progressIndicatorStyle, Component.text(repeat(config.progressIndicatorCharacter, fillLength))),
-                Components.stylize(config.progressRemainingStyle, Component.text(repeat(config.progressRemainingCharacter, config.progressLength - fillLength)))
+                Components.stylize(config.progressIndicatorStyle,
+                        Component.text(repeat(config.progressIndicatorCharacter, fillLength))),
+                Components.stylize(config.progressRemainingStyle,
+                        Component.text(repeat(config.progressRemainingCharacter, config.progressLength - fillLength)))
         );
 
         return config.progressBarFormat.build(plugin, "progress", progressComponent);
     }
 
-    @NotNull
-    private static String repeat(@NotNull String string, int count) {
+    private static @NotNull String repeat(@NotNull String string, int count) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < count; i++) {
             stringBuilder.append(string);

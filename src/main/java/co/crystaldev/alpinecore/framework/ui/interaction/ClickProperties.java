@@ -47,8 +47,7 @@ public final class ClickProperties {
         return this.allowedTypes.contains(type);
     }
 
-    @NotNull
-    public static Builder builder() {
+    public static @NotNull Builder builder() {
         return new Builder();
     }
 
@@ -60,38 +59,33 @@ public final class ClickProperties {
         private final Set<InventoryAction> allowedActions = new HashSet<>();
         private final Set<ClickType> allowedTypes = new HashSet<>();
 
-        @NotNull
-        public Builder action(@NotNull InventoryAction action) {
+        public @NotNull Builder action(@NotNull InventoryAction action) {
             Validate.notNull(action, "action cannot be null");
             this.allowedActions.add(action);
             return this;
         }
 
-        @NotNull
-        public Builder actions(@NotNull InventoryAction... actions) {
+        public @NotNull Builder actions(@NotNull InventoryAction... actions) {
             for (InventoryAction action : actions) {
                 this.action(action);
             }
             return this;
         }
 
-        @NotNull
-        public Builder type(@NotNull ClickType type) {
+        public @NotNull Builder type(@NotNull ClickType type) {
             Validate.notNull(type, "type cannot be null");
             this.allowedTypes.add(type);
             return this;
         }
 
-        @NotNull
-        public Builder types(@NotNull ClickType... types) {
+        public @NotNull Builder types(@NotNull ClickType... types) {
             for (ClickType type : types) {
                 this.type(type);
             }
             return this;
         }
 
-        @NotNull
-        public ClickProperties build() {
+        public @NotNull ClickProperties build() {
             return new ClickProperties(this.allowedActions, this.allowedTypes);
         }
     }

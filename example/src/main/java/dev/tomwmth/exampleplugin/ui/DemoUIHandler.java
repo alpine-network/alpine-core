@@ -26,8 +26,7 @@ public final class DemoUIHandler extends GenericUIHandler {
 
     private static final DemoUIHandler INSTANCE = new DemoUIHandler();
 
-    @NotNull
-    public static DemoUIHandler getInstance() {
+    public static @NotNull DemoUIHandler getInstance() {
         return INSTANCE;
     }
 

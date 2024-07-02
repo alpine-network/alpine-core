@@ -55,13 +55,11 @@ public class VaryingConfigItem implements ConfigItem {
 
     protected Map<String, Object> attributes;
 
-    @NotNull
-    public DefinedConfigItem define(@NotNull XMaterial type) {
+    public @NotNull DefinedConfigItem define(@NotNull XMaterial type) {
         return new DefinedConfigItem(type, this.name, this.lore, this.count, this.enchanted, this.attributes);
     }
 
-    @NotNull
-    public static Builder builder() {
+    public static @NotNull Builder builder() {
         return new Builder();
     }
 
@@ -76,15 +74,13 @@ public class VaryingConfigItem implements ConfigItem {
         private boolean enchanted;
         private Map<String, Object> attributes;
 
-        @NotNull
-        public Builder name(@NotNull String name) {
+        public @NotNull Builder name(@NotNull String name) {
             Validate.notNull(name, "name cannot be null");
             this.name = name;
             return this;
         }
 
-        @NotNull
-        public Builder lore(@NotNull String... lore) {
+        public @NotNull Builder lore(@NotNull String... lore) {
             Validate.notNull(lore, "lore cannot be null");
             List<String> processedLore = new LinkedList<>();
             for (String s : lore) {
@@ -94,8 +90,7 @@ public class VaryingConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder lore(@NotNull Iterable<String> lore) {
+        public @NotNull Builder lore(@NotNull Iterable<String> lore) {
             Validate.notNull(lore, "lore cannot be null");
             List<String> processedLore = new LinkedList<>();
             for (String s : lore) {
@@ -105,8 +100,7 @@ public class VaryingConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder lore(@NotNull Component lore) {
+        public @NotNull Builder lore(@NotNull Component lore) {
             Validate.notNull(lore, "lore cannot be null");
             PlainTextComponentSerializer serializer = PlainTextComponentSerializer.plainText();
             String serialized = serializer.serialize(lore);
@@ -114,20 +108,17 @@ public class VaryingConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder count(int count) {
+        public @NotNull Builder count(int count) {
             this.count = count;
             return this;
         }
 
-        @NotNull
-        public Builder enchanted() {
+        public @NotNull Builder enchanted() {
             this.enchanted = true;
             return this;
         }
 
-        @NotNull
-        public Builder attribute(@NotNull String key, @Nullable Object value) {
+        public @NotNull Builder attribute(@NotNull String key, @Nullable Object value) {
             if (this.attributes == null) {
                 if (value == null) {
                     return this;
@@ -140,14 +131,12 @@ public class VaryingConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder attributes(@NotNull Map<String, Object> attributes) {
+        public @NotNull Builder attributes(@NotNull Map<String, Object> attributes) {
             this.attributes = attributes;
             return this;
         }
 
-        @NotNull
-        public VaryingConfigItem build() {
+        public @NotNull VaryingConfigItem build() {
             String name = this.name == null ? "" : this.name;
             List<String> lore = this.lore == null ? Collections.emptyList() : this.lore ;
             return new VaryingConfigItem(name, lore, this.count, this.enchanted, this.attributes);

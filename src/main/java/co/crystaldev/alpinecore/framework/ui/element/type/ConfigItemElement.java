@@ -24,7 +24,8 @@ public final class ConfigItemElement extends Element {
 
     private final Object[] placeholders;
 
-    public ConfigItemElement(@NotNull UIContext context, @NotNull DefinedConfigItem configItem, @Nullable Object[] placeholders) {
+    public ConfigItemElement(@NotNull UIContext context, @NotNull DefinedConfigItem configItem,
+                             @Nullable Object[] placeholders) {
         super(context);
         this.configItem = configItem;
         this.placeholders = placeholders;
@@ -40,8 +41,7 @@ public final class ConfigItemElement extends Element {
         return this.configItem.build(this.context.plugin(), this.placeholders);
     }
 
-    @NotNull
-    public static Builder builder() {
+    public static @NotNull Builder builder() {
         return new Builder();
     }
 
@@ -68,29 +68,25 @@ public final class ConfigItemElement extends Element {
         private DefinedConfigItem item;
         private final Map<String, Object> placeholders = new HashMap<>();
 
-        @NotNull
-        public Builder type(@NotNull DefinedConfigItem item) {
+        public @NotNull Builder type(@NotNull DefinedConfigItem item) {
             Validate.notNull(item, "item cannot be null");
             this.item = item;
             return this;
         }
 
-        @NotNull
-        public Builder placeholder(@NotNull String key, @NotNull Object value) {
+        public @NotNull Builder placeholder(@NotNull String key, @NotNull Object value) {
             Validate.notNull(key, "key cannot be null");
             this.placeholders.put(key, value);
             return this;
         }
 
-        @NotNull
-        public Builder placeholder(@NotNull String key, @NotNull Supplier<?> value) {
+        public @NotNull Builder placeholder(@NotNull String key, @NotNull Supplier<?> value) {
             Validate.notNull(key, "key cannot be null");
             this.placeholders.put(key, value);
             return this;
         }
 
-        @NotNull
-        public Builder placeholders(@NotNull Object... placeholders) {
+        public @NotNull Builder placeholders(@NotNull Object... placeholders) {
             Validate.notNull(placeholders, "placeholders cannot be null");
             Validate.isTrue(placeholders.length % 2 == 0, "placeholders must be even");
             for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
@@ -101,14 +97,12 @@ public final class ConfigItemElement extends Element {
             return this;
         }
 
-        @NotNull
-        public Builder placeholders(@NotNull Map<String, Object> placeholders) {
+        public @NotNull Builder placeholders(@NotNull Map<String, Object> placeholders) {
             this.placeholders.putAll(placeholders);
             return this;
         }
 
-        @NotNull
-        public ConfigItemElement build(@NotNull UIContext context) {
+        public @NotNull ConfigItemElement build(@NotNull UIContext context) {
             Object[] placeholders = new Object[this.placeholders.size() * 2];
             AtomicInteger index = new AtomicInteger();
             this.placeholders.forEach((key, value) -> {

@@ -59,8 +59,7 @@ public interface ConfigItem {
      * @param type The attribute type\
      * @return The value associated with the key, or null if the key does not exist
      */
-    @Nullable
-    default <T> T getAttribute(@NotNull String key, @NotNull Class<T> type) {
+    default <T> @Nullable T getAttribute(@NotNull String key, @NotNull Class<T> type) {
         return this.getAttributes() == null ? null : type.cast(this.getAttributes().get(key));
     }
 
@@ -70,8 +69,7 @@ public interface ConfigItem {
      * @param key The key of the attribute
      * @return The value associated with the key, or null if the key does not exist
      */
-    @Nullable
-    default <T> T getAttribute(@NotNull String key) {
+    default <T> @Nullable T getAttribute(@NotNull String key) {
         return this.getAttributes() == null ? null : (T) this.getAttributes().get(key);
     }
 
@@ -97,8 +95,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @Nullable XMaterial type,
             int count,
@@ -151,8 +148,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @NotNull ItemStack stack,
             int count,
@@ -201,8 +197,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @Nullable XMaterial type,
             @Nullable Function<ItemStack, ItemStack> function,
@@ -222,8 +217,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @NotNull ItemStack stack,
             @Nullable Function<ItemStack, ItemStack> function,
@@ -241,8 +235,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @Nullable XMaterial type,
             int count,
@@ -260,8 +253,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @NotNull ItemStack stack,
             int count,
@@ -278,8 +270,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @Nullable XMaterial type,
             @NotNull Object... placeholders
@@ -295,8 +286,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @NotNull ItemStack stack,
             @NotNull Object... placeholders
@@ -316,8 +306,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             int count,
             @Nullable Function<ItemStack, ItemStack> function,
@@ -337,8 +326,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @Nullable Function<ItemStack, ItemStack> function,
             @NotNull Object... placeholders
@@ -357,8 +345,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             int count,
             @NotNull Object... placeholders
@@ -376,8 +363,7 @@ public interface ConfigItem {
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
      * @return A fully constructed and optionally modified ItemStack
      */
-    @NotNull
-    default ItemStack build(
+    default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
             @NotNull Object... placeholders
     ) {

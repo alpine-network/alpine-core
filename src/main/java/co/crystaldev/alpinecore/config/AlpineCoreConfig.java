@@ -5,6 +5,7 @@ import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -125,7 +126,7 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
     public String progressRemainingStyle = "light_gray";
 
     @Override
-    public String getFileName() {
+    public @NotNull String getFileName() {
         return "alpinecore.yml";
     }
 

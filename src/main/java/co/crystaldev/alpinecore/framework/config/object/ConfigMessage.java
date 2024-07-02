@@ -50,13 +50,11 @@ public class ConfigMessage {
         this(Arrays.asList(message.split("(<br>|\n|\r)")));
     }
 
-    @NotNull
-    public static ConfigMessage of(@NotNull String component) {
+    public static @NotNull ConfigMessage of(@NotNull String component) {
         return new ConfigMessage(Collections.singletonList(component));
     }
 
-    @NotNull
-    public static ConfigMessage of(@NotNull String... components) {
+    public static @NotNull ConfigMessage of(@NotNull String... components) {
         return new ConfigMessage(Arrays.asList(components));
     }
 
@@ -73,8 +71,7 @@ public class ConfigMessage {
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      */
-    @NotNull
-    public Component build(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
         String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
         return plugin.getMiniMessage().deserialize(formatted);
     }
@@ -92,8 +89,7 @@ public class ConfigMessage {
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      */
-    @NotNull
-    public Component build(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
         String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
         return plugin.getMiniMessage().deserialize(formatted);
     }
@@ -105,8 +101,7 @@ public class ConfigMessage {
      * @param placeholders The placeholders for formatting the message
      * @return The string
      */
-    @NotNull
-    public String buildString(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
         return Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
     }
 
@@ -117,8 +112,7 @@ public class ConfigMessage {
      * @param placeholders The placeholders for formatting the message
      * @return The string
      */
-    @NotNull
-    public String buildString(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
         return Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
     }
 

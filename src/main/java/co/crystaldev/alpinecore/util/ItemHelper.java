@@ -157,8 +157,7 @@ public final class ItemHelper {
      * @param item The item.
      * @return the display name.
      */
-    @NotNull
-    public static Component getDisplayName(@NotNull ItemStack item) {
+    public static @NotNull Component getDisplayName(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
 
         if (meta == null || !meta.hasDisplayName()) {
@@ -203,8 +202,7 @@ public final class ItemHelper {
      * @param item The item.
      * @return the lore.
      */
-    @NotNull
-    public static List<Component> getLore(@NotNull ItemStack item) {
+    public static @NotNull List<Component> getLore(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
 
         if (meta == null || !meta.hasLore()) {
@@ -228,8 +226,7 @@ public final class ItemHelper {
      * @param item The item.
      * @return the lore.
      */
-    @NotNull
-    public static Component getJoinedLore(@NotNull ItemStack item) {
+    public static @NotNull Component getJoinedLore(@NotNull ItemStack item) {
         return Components.joinNewLines(getLore(item));
     }
 

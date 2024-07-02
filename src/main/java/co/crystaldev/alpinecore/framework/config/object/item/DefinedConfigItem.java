@@ -219,8 +219,7 @@ public class DefinedConfigItem implements ConfigItem {
      * @param itemStack The ItemStack to convert
      * @return The converted DefinedConfigItem
      */
-    @NotNull
-    public static DefinedConfigItem fromItem(@NotNull ItemStack itemStack) {
+    public static @NotNull DefinedConfigItem fromItem(@NotNull ItemStack itemStack) {
         PlainTextComponentSerializer serializer = PlainTextComponentSerializer.plainText();
         return DefinedConfigItem.builder(XMaterial.matchXMaterial(itemStack))
                 .name(serializer.serialize(ItemHelper.getDisplayName(itemStack)))
@@ -228,8 +227,7 @@ public class DefinedConfigItem implements ConfigItem {
                 .build();
     }
 
-    @NotNull
-    public static Builder builder(@NotNull XMaterial material) {
+    public static @NotNull Builder builder(@NotNull XMaterial material) {
         return new Builder(material);
     }
 
@@ -247,15 +245,13 @@ public class DefinedConfigItem implements ConfigItem {
         private boolean enchanted;
         private Map<String, Object> attributes;
 
-        @NotNull
-        public Builder name(@NotNull String name) {
+        public @NotNull Builder name(@NotNull String name) {
             Validate.notNull(name, "name cannot be null");
             this.name = name;
             return this;
         }
 
-        @NotNull
-        public Builder lore(@NotNull String... lore) {
+        public @NotNull Builder lore(@NotNull String... lore) {
             Validate.notNull(lore, "lore cannot be null");
             List<String> processedLore = new LinkedList<>();
             for (String s : lore) {
@@ -265,8 +261,7 @@ public class DefinedConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder lore(@NotNull Iterable<String> lore) {
+        public @NotNull Builder lore(@NotNull Iterable<String> lore) {
             Validate.notNull(lore, "lore cannot be null");
             List<String> processedLore = new LinkedList<>();
             for (String s : lore) {
@@ -276,8 +271,7 @@ public class DefinedConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder lore(@NotNull Component lore) {
+        public @NotNull Builder lore(@NotNull Component lore) {
             Validate.notNull(lore, "lore cannot be null");
             PlainTextComponentSerializer serializer = PlainTextComponentSerializer.plainText();
             String serialized = serializer.serialize(lore);
@@ -285,20 +279,17 @@ public class DefinedConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder count(int count) {
+        public @NotNull Builder count(int count) {
             this.count = count;
             return this;
         }
 
-        @NotNull
-        public Builder enchanted() {
+        public @NotNull Builder enchanted() {
             this.enchanted = true;
             return this;
         }
 
-        @NotNull
-        public Builder attribute(@NotNull String key, @Nullable Object value) {
+        public @NotNull Builder attribute(@NotNull String key, @Nullable Object value) {
             if (this.attributes == null) {
                 if (value == null) {
                     return this;
@@ -311,14 +302,12 @@ public class DefinedConfigItem implements ConfigItem {
             return this;
         }
 
-        @NotNull
-        public Builder attributes(@NotNull Map<String, Object> attributes) {
+        public @NotNull Builder attributes(@NotNull Map<String, Object> attributes) {
             this.attributes = attributes;
             return this;
         }
 
-        @NotNull
-        public DefinedConfigItem build() {
+        public @NotNull DefinedConfigItem build() {
             String name = this.name == null ? "" : this.name;
             List<String> lore = this.lore == null ? Collections.emptyList() : this.lore ;
             return new DefinedConfigItem(this.material, name, lore, this.count, this.enchanted, this.attributes);

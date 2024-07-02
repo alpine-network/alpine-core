@@ -31,8 +31,7 @@ public final class MaterialHelper {
      * @param type The Bukkit material.
      * @return The wrapped material.
      */
-    @NotNull
-    public static XMaterial getType(@Nullable Material type) {
+    public static @NotNull XMaterial getType(@Nullable Material type) {
         if (type == null) {
             return XMaterial.AIR;
         }
@@ -45,8 +44,7 @@ public final class MaterialHelper {
      * @param item The item stack.
      * @return The wrapped material.
      */
-    @NotNull
-    public static XMaterial getType(@Nullable ItemStack item) {
+    public static @NotNull XMaterial getType(@Nullable ItemStack item) {
         if (item == null) {
             return XMaterial.AIR;
         }
@@ -59,8 +57,7 @@ public final class MaterialHelper {
      * @param location The block location.
      * @return The wrapped material.
      */
-    @NotNull
-    public static XMaterial getType(@Nullable Location location) {
+    public static @NotNull XMaterial getType(@Nullable Location location) {
         if (location == null) {
             return XMaterial.AIR;
         }
@@ -73,8 +70,7 @@ public final class MaterialHelper {
      * @param block The block.
      * @return The wrapped material.
      */
-    @NotNull
-    public static XMaterial getType(@Nullable Block block) {
+    public static @NotNull XMaterial getType(@Nullable Block block) {
         if (block == null) {
             return XMaterial.AIR;
         }
@@ -96,8 +92,8 @@ public final class MaterialHelper {
      *
      * @deprecated Minecraft dropped support for item ids after version 1.12.
      */
-    @NotNull @Deprecated
-    public static XMaterial getType(int id, byte data) {
+    @Deprecated
+    public static @NotNull XMaterial getType(int id, byte data) {
         // MAX_ID is inaccessible in XMaterial
         if (id < 0 || id > MAX_ID || data < 0) {
             return XMaterial.AIR;

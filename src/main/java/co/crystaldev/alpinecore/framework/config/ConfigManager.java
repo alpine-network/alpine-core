@@ -80,8 +80,7 @@ public final class ConfigManager {
         return this.registeredConfigurations.containsKey(clazz);
     }
 
-    @NotNull
-    public <T extends AlpineConfig> T getConfig(@NotNull Class<T> clazz) {
+    public <T extends AlpineConfig> @NotNull T getConfig(@NotNull Class<T> clazz) {
         AlpineConfig config = this.registeredConfigurations.get(clazz);
         if (config != null) {
             return (T) config;

@@ -15,8 +15,7 @@ import java.lang.reflect.Method;
 @SuppressWarnings("unchecked")
 public final class ReflectionHelper {
 
-    @Nullable
-    public static Field findField(@NotNull Class<?> clazz, @NotNull String... fieldNames) {
+    public static @Nullable Field findField(@NotNull Class<?> clazz, @NotNull String... fieldNames) {
         for (String fieldName : fieldNames) {
             try {
                 Field f = clazz.getDeclaredField(fieldName);
@@ -30,8 +29,7 @@ public final class ReflectionHelper {
         return null;
     }
 
-    @Nullable
-    public static <T, E> T getPrivateValue(@NotNull Class<? super E> classToAccess, @NotNull E instance, @NotNull String... fieldNames) {
+    public static <T, E> @Nullable T getPrivateValue(@NotNull Class<? super E> classToAccess, @NotNull E instance, @NotNull String... fieldNames) {
         try {
             Field field = findField(classToAccess, fieldNames);
             if (field != null) {
@@ -56,13 +54,11 @@ public final class ReflectionHelper {
         }
     }
 
-    @NotNull
-    public static ClassLoader getContextClassLoader() {
+    public static @NotNull ClassLoader getContextClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 
-    @Nullable
-    public static Class<? super Object> getClass(@NotNull ClassLoader loader, @NotNull String... classNames) {
+    public static @Nullable Class<? super Object> getClass(@NotNull ClassLoader loader, @NotNull String... classNames) {
         for (String className : classNames) {
             try {
                 return (Class<? super Object>) Class.forName(className, false, loader);
@@ -74,8 +70,7 @@ public final class ReflectionHelper {
         return null;
     }
 
-    @Nullable
-    public static Class<? super Object> getClass(@NotNull ClassLoader loader, @NotNull String className) {
+    public static @Nullable Class<? super Object> getClass(@NotNull ClassLoader loader, @NotNull String className) {
         try {
             return (Class<? super Object>) Class.forName(className, false, loader);
         }
@@ -84,8 +79,7 @@ public final class ReflectionHelper {
         }
     }
 
-    @Nullable
-    public static Method findMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?>... parameterTypes) {
+    public static @Nullable Method findMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?>... parameterTypes) {
         try {
             Method m = clazz.getDeclaredMethod(methodName, parameterTypes);
             m.setAccessible(true);
@@ -97,8 +91,7 @@ public final class ReflectionHelper {
         return null;
     }
 
-    @Nullable
-    public static Method findMethod(@NotNull Class<?> clazz, @NotNull String[] methodNames, @NotNull Class<?>... parameterTypes) {
+    public static @Nullable Method findMethod(@NotNull Class<?> clazz, @NotNull String[] methodNames, @NotNull Class<?>... parameterTypes) {
         for (String name : methodNames) {
             try {
                 Method m = clazz.getDeclaredMethod(name, parameterTypes);
@@ -112,8 +105,7 @@ public final class ReflectionHelper {
         return null;
     }
 
-    @Nullable
-    public static <R> R invokeMethod(@NotNull Method method, @Nullable Object source, @Nullable Object... parameters) {
+    public static <R> @Nullable R invokeMethod(@NotNull Method method, @Nullable Object source, @Nullable Object... parameters) {
         try {
             return (R) method.invoke(source, parameters);
         }
@@ -122,8 +114,7 @@ public final class ReflectionHelper {
         }
     }
 
-    @Nullable
-    public static <R> R invokeMethod(@NotNull Class<R> returnType, @NotNull Method method, @Nullable Object source, @Nullable Object... parameters) {
+    public static <R> @Nullable R invokeMethod(@NotNull Class<R> returnType, @NotNull Method method, @Nullable Object source, @Nullable Object... parameters) {
         try {
             Object returnedValue = method.invoke(source, parameters);
             if (returnedValue != null && returnedValue.getClass().isInstance(returnType)) {

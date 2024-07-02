@@ -143,7 +143,7 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
         return ImmutableList.copyOf(values);
     }
 
-    private File getFileForKey(K key) {
+    private @NotNull File getFileForKey(K key) {
         SerializerRegistry registry = this.plugin.getSerializerRegistry();
         KeySerializer<K, ?> serializer = null;
         for (Class<?> clazz : registry.getKeySerializers().keySet()) {
@@ -167,7 +167,7 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
      * @see Builder
      * @return New builder for this class
      */
-    public static <K, D> FlatfileDriver.Builder<K, D> builder() {
+    public static <K, D> @NotNull Builder<K, D> builder() {
         return new Builder<>();
     }
 
@@ -181,8 +181,8 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
         private Gson gson = Reference.GSON_PRETTY;
         private Class<D> dataType;
 
-        @NotNull @Contract("_ -> this")
-        public Builder<K, D> directory(@NotNull File directory) {
+        @Contract("_ -> this")
+        public @NotNull Builder<K, D> directory(@NotNull File directory) {
             if (!directory.exists()) {
                 directory.mkdirs();
             }
@@ -191,28 +191,26 @@ public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
             return this;
         }
 
-        @NotNull @Contract("_ -> this")
-        public Builder<K, D> gson(@NotNull Gson gson) {
+        @Contract("_ -> this")
+        public @NotNull Builder<K, D> gson(@NotNull Gson gson) {
             this.gson = gson;
             return this;
         }
 
-        @NotNull @Contract("_ -> this")
-        public Builder<K, D> dataType(@NotNull Class<D> dataType) {
+        @Contract("_ -> this")
+        public @NotNull Builder<K, D> dataType(@NotNull Class<D> dataType) {
             this.dataType = dataType;
             return this;
         }
 
-        @NotNull
-        public FlatfileDriver<K, D> build(@NotNull AlpinePlugin plugin) {
+        public @NotNull FlatfileDriver<K, D> build(@NotNull AlpinePlugin plugin) {
             Validate.notNull(this.directory, "Directory must not be null");
             Validate.notNull(this.dataType, "Data type must not be null");
             return new FlatfileDriver<>(plugin, this.directory, this.gson, this.dataType);
         }
 
-        @NotNull
         @Deprecated
-        public FlatfileDriver<K, D> build() {
+        public @NotNull FlatfileDriver<K, D> build() {
             return this.build(AlpineCore.getInstance());
         }
     }

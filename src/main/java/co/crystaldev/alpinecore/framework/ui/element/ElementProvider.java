@@ -43,8 +43,7 @@ public final class ElementProvider<S, T extends Element> {
      * @param context the UI context
      * @return the next element from the paginator
      */
-    @Nullable
-    public T nextElement(@NotNull UIContext context) {
+    public @Nullable T nextElement(@NotNull UIContext context) {
         State<S> state = this.states.computeIfAbsent(context, ctx -> new State<>(this.entries.iterator()));
         S next = state.next();
         return next != null ? this.toElementFunction.apply(context, next) : null;
@@ -57,8 +56,7 @@ public final class ElementProvider<S, T extends Element> {
      * @param index the index of the element to retrieve
      * @return the element at the specified index
      */
-    @NotNull
-    public T getElement(@NotNull UIContext context, int index) {
+    public @NotNull T getElement(@NotNull UIContext context, int index) {
         Validate.isTrue(index >= 0 && index < this.entries.size(), "index out of bounds");
         return this.toElementFunction.apply(context, this.entries.stream().skip(index).findFirst().orElse(null));
     }
@@ -92,8 +90,7 @@ public final class ElementProvider<S, T extends Element> {
         this.states.entrySet().removeIf(e -> e.getKey().isStale() || e.getKey().playerId().equals(context.playerId()));
     }
 
-    @NotNull
-    public static <S, T extends Element> Builder<S, T> builder() {
+    public static <S, T extends Element> @NotNull Builder<S, T> builder() {
         return new Builder<>();
     }
 
@@ -102,8 +99,7 @@ public final class ElementProvider<S, T extends Element> {
         private final Iterator<S> iterator;
         private int index;
 
-        @Nullable
-        public S next() {
+        public @Nullable S next() {
             this.index++;
             return this.iterator.hasNext() ? this.iterator.next() : null;
         }
@@ -121,36 +117,31 @@ public final class ElementProvider<S, T extends Element> {
         private Collection<S> entries;
         private BiFunction<UIContext, S, T> toElementFunction;
 
-        @NotNull
-        public Builder<S, T> entries(@NotNull Collection<S> entries) {
+        public @NotNull Builder<S, T> entries(@NotNull Collection<S> entries) {
             Validate.notNull(entries, "entries cannot be null");
             Validate.isTrue(!entries.isEmpty(), "entries cannot be empty");
             this.entries = entries;
             return this;
         }
 
-        @NotNull
-        public Builder<S, T> entries(@NotNull S... entries) {
+        public @NotNull Builder<S, T> entries(@NotNull S... entries) {
             Validate.notNull(entries, "entries cannot be null");
             Validate.isTrue(entries.length > 0, "entries cannot be empty");
             this.entries = ImmutableList.copyOf(entries);
             return this;
         }
 
-        @NotNull
-        public Builder<S, T> element(@NotNull BiFunction<UIContext, S, T> toElementFunction) {
+        public @NotNull Builder<S, T> element(@NotNull BiFunction<UIContext, S, T> toElementFunction) {
             Validate.notNull(toElementFunction, "toElementFunction cannot be null");
             this.toElementFunction = toElementFunction;
             return this;
         }
 
-        @NotNull
-        public ElementPaginator<S> createPaginator() {
+        public @NotNull ElementPaginator<S> createPaginator() {
             return ElementPaginator.from(this.build());
         }
 
-        @NotNull
-        public ElementProvider<S, T> build() {
+        public @NotNull ElementProvider<S, T> build() {
             Validate.notNull(this.entries, "entries cannot be null");
             Validate.notNull(this.toElementFunction, "toElementFunction cannot be null");
             return new ElementProvider<>(this.entries, this.toElementFunction);

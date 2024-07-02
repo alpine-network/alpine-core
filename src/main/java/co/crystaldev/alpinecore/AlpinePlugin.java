@@ -180,8 +180,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @return The MiniMessage instance.
      * @see MiniMessage
      */
-    @NotNull
-    public MiniMessage setupMiniMessage(@NotNull MiniMessage.Builder builder) {
+    public @NotNull MiniMessage setupMiniMessage(@NotNull MiniMessage.Builder builder) {
         return builder.build();
     }
     // endregion
@@ -260,8 +259,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @param clazz The configuration class
      * @return The configuration instance
      */
-    @NotNull
-    public final <T extends AlpineConfig> T getConfiguration(@NotNull Class<T> clazz) {
+    public final <T extends AlpineConfig> @NotNull T getConfiguration(@NotNull Class<T> clazz) {
         return this.configManager.getConfig(clazz);
     }
 

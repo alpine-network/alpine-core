@@ -82,8 +82,7 @@ public final class ConfigLoader<T> {
      *
      * @return A set containing all the configuration keys.
      */
-    @NotNull
-    public Set<String> getConfigKeys() {
+    public @NotNull Set<String> getConfigKeys() {
         return this.configRegistry.keySet();
     }
 
@@ -92,8 +91,7 @@ public final class ConfigLoader<T> {
      *
      * @return A collection containing all the configurations.
      */
-    @NotNull
-    public Collection<T> getConfigs() {
+    public @NotNull Collection<T> getConfigs() {
         return this.configRegistry.values();
     }
 
@@ -113,8 +111,7 @@ public final class ConfigLoader<T> {
      * @param name The name of the configuration to retrieve.
      * @return The configuration object associated with the name, or null if it doesn't exist.
      */
-    @Nullable
-    public T getConfig(@NotNull String name) {
+    public @Nullable T getConfig(@NotNull String name) {
         return this.configRegistry.get(name);
     }
 
@@ -127,8 +124,8 @@ public final class ConfigLoader<T> {
         return this.configRegistry.isEmpty();
     }
 
-    @NotNull
-    public static <T> Builder<T> builder(@NotNull AlpinePlugin plugin, @NotNull Class<T> configClass, @NotNull String directory) {
+    public static <T> @NotNull Builder<T> builder(@NotNull AlpinePlugin plugin, @NotNull Class<T> configClass,
+                                                  @NotNull String directory) {
         return new Builder<>(plugin, configClass, directory);
     }
 
@@ -152,24 +149,21 @@ public final class ConfigLoader<T> {
             this.rootDirectory = new File(plugin.getDataFolder(), rootDirectory);
         }
 
-        @NotNull
-        public Builder<T> addConfiguration(@NotNull String name, @NotNull Supplier<T> configSupplier) {
+        public @NotNull Builder<T> addConfiguration(@NotNull String name, @NotNull Supplier<T> configSupplier) {
             Validate.notNull(name, "name cannot be null");
             Validate.notNull(configSupplier, "configSupplier cannot be null");
             this.defaultConfigs.put(name, configSupplier);
             return this;
         }
 
-        @NotNull
-        public Builder<T> addConfiguration(@NotNull String name, @NotNull T config) {
+        public @NotNull Builder<T> addConfiguration(@NotNull String name, @NotNull T config) {
             Validate.notNull(name, "name cannot be null");
             Validate.notNull(config, "config cannot be null");
             this.defaultConfigs.put(name, () -> config);
             return this;
         }
 
-        @NotNull
-        public ConfigLoader<T> build() {
+        public @NotNull ConfigLoader<T> build() {
             return new ConfigLoader<>(this.plugin, this.configClass, this.rootDirectory, this.defaultConfigs);
         }
     }

@@ -37,8 +37,7 @@ public final class ClickContext {
      *
      * @return the click type
      */
-    @NotNull
-    public ClickType type() {
+    public @NotNull ClickType type() {
         return this.type;
     }
 
@@ -47,8 +46,7 @@ public final class ClickContext {
      *
      * @return the action
      */
-    @NotNull
-    public InventoryAction action() {
+    public @NotNull InventoryAction action() {
         return this.action;
     }
 
@@ -66,8 +64,7 @@ public final class ClickContext {
      *
      * @return the item, or null if there is no item
      */
-    @Nullable
-    public ItemStack item() {
+    public @Nullable ItemStack item() {
         return this.item;
     }
 
@@ -78,8 +75,7 @@ public final class ClickContext {
      *
      * @return the item, or null if there is no item
      */
-    @Nullable
-    public ItemStack consumeItem() {
+    public @Nullable ItemStack consumeItem() {
         this.consumedItem = true;
         return this.item;
     }
@@ -98,8 +94,7 @@ public final class ClickContext {
      *
      * @return the {@link ActionResult} of the action
      */
-    @NotNull
-    public ActionResult result() {
+    public @NotNull ActionResult result() {
         return this.result;
     }
 

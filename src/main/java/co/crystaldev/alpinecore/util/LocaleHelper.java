@@ -30,8 +30,7 @@ public final class LocaleHelper {
      * @param material the material
      * @return the translation key
      */
-    @NotNull
-    public static String getTranslationKey(@NotNull XMaterial material) {
+    public static @NotNull String getTranslationKey(@NotNull XMaterial material) {
         try {
             return MANAGER.queryMaterial(material.parseMaterial());
         }
@@ -46,8 +45,7 @@ public final class LocaleHelper {
      * @param material the material
      * @return the translated component
      */
-    @NotNull
-    public static Component getTranslation(@NotNull XMaterial material) {
+    public static @NotNull Component getTranslation(@NotNull XMaterial material) {
         try {
             return Component.translatable(MANAGER.queryMaterial(material.parseMaterial()));
         }
@@ -62,8 +60,7 @@ public final class LocaleHelper {
      * @param material the material
      * @return the translation key
      */
-    @NotNull
-    public static String getTranslationKey(@NotNull Material material) {
+    public static @NotNull String getTranslationKey(@NotNull Material material) {
         try {
             return MANAGER.queryMaterial(material);
         }
@@ -78,8 +75,7 @@ public final class LocaleHelper {
      * @param material the material
      * @return the translated component
      */
-    @NotNull
-    public static Component getTranslation(@NotNull Material material) {
+    public static @NotNull Component getTranslation(@NotNull Material material) {
         try {
             return Component.translatable(MANAGER.queryMaterial(material));
         }
@@ -94,8 +90,7 @@ public final class LocaleHelper {
      * @param itemStack the item stack
      * @return the translation key
      */
-    @NotNull
-    public static String getTranslationKey(@NotNull ItemStack itemStack) {
+    public static @NotNull String getTranslationKey(@NotNull ItemStack itemStack) {
         try {
             return MANAGER.queryMaterial(itemStack.getType(), itemStack.getDurability(), itemStack.getItemMeta());
         }
@@ -110,8 +105,7 @@ public final class LocaleHelper {
      * @param itemStack the item stack
      * @return the translated component
      */
-    @NotNull
-    public static Component getTranslation(@NotNull ItemStack itemStack) {
+    public static @NotNull Component getTranslation(@NotNull ItemStack itemStack) {
         try {
             return Component.translatable(MANAGER.queryMaterial(itemStack.getType(), itemStack.getDurability(), itemStack.getItemMeta()));
         }
@@ -126,8 +120,7 @@ public final class LocaleHelper {
      * @param entity the entity
      * @return the translation key
      */
-    @NotNull
-    public static String getTranslationKey(@NotNull Entity entity) {
+    public static @NotNull String getTranslationKey(@NotNull Entity entity) {
         try {
             return MANAGER.queryEntity(entity);
         }
@@ -142,8 +135,7 @@ public final class LocaleHelper {
      * @param entity the entity
      * @return the translated component
      */
-    @NotNull
-    public static Component getTranslation(@NotNull Entity entity) {
+    public static @NotNull Component getTranslation(@NotNull Entity entity) {
         try {
             return Component.translatable(MANAGER.queryEntity(entity));
         }
@@ -158,8 +150,7 @@ public final class LocaleHelper {
      * @param entity the entity
      * @return the translation key
      */
-    @NotNull
-    public static String getTranslationKey(@NotNull EntityType entity) {
+    public static @NotNull String getTranslationKey(@NotNull EntityType entity) {
         try {
             return MANAGER.queryEntityType(entity, null);
         }
@@ -175,8 +166,7 @@ public final class LocaleHelper {
      * @return the translated component
      * @throws NullPointerException if the entity is null
      */
-    @NotNull
-    public static Component getTranslation(@NotNull EntityType entity) {
+    public static @NotNull Component getTranslation(@NotNull EntityType entity) {
         try {
             return Component.translatable(MANAGER.queryEntityType(entity, null));
         }
@@ -185,8 +175,7 @@ public final class LocaleHelper {
         }
     }
 
-    @NotNull
-    private static String formatEnum(@NotNull Enum<?> value) {
+    private static @NotNull String formatEnum(@NotNull Enum<?> value) {
         return Stream.of(value.name().toLowerCase().split("_"))
                 .map(v -> v.isEmpty() ? v : Character.toUpperCase(v.charAt(0)) + (v.length() > 1  ? v.substring(1) : ""))
                 .collect(Collectors.joining(" "));

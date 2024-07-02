@@ -30,8 +30,7 @@ public final class UIEventBus {
      * @param event   the UIEvent object
      * @return the ActionResult object representing the result of the event callback methods
      */
-    @NotNull
-    public <T extends UIEvent> ActionResult call(@NotNull UIContext context, @NotNull T event) {
+    public <T extends UIEvent> @NotNull ActionResult call(@NotNull UIContext context, @NotNull T event) {
         List<RegisteredEventCallback<T>> callbacks = (List) this.subscribers.get(event.getClass());
         if (callbacks != null) {
             for (RegisteredEventCallback<T> callback : callbacks) {

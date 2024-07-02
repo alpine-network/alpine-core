@@ -35,8 +35,7 @@ public final class DropContext {
      *
      * @return the click type
      */
-    @NotNull
-    public ClickType type() {
+    public @NotNull ClickType type() {
         return this.type;
     }
 
@@ -45,8 +44,7 @@ public final class DropContext {
      *
      * @return the action
      */
-    @NotNull
-    public InventoryAction action() {
+    public @NotNull InventoryAction action() {
         return this.action;
     }
 
@@ -64,8 +62,7 @@ public final class DropContext {
      *
      * @return the item, or null if there is no item
      */
-    @NotNull
-    public ItemStack item() {
+    public @NotNull ItemStack item() {
         return this.item;
     }
 
@@ -88,8 +85,7 @@ public final class DropContext {
      *
      * @return the {@link ActionResult} of the action
      */
-    @NotNull
-    public ActionResult result() {
+    public @NotNull ActionResult result() {
         return this.result;
     }
 

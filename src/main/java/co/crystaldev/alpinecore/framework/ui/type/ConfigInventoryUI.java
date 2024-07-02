@@ -63,13 +63,11 @@ public final class ConfigInventoryUI {
         return amount;
     }
 
-    @NotNull
-    public InventoryUI build(@NotNull AlpinePlugin plugin, @NotNull UIHandler handler) {
+    public @NotNull InventoryUI build(@NotNull AlpinePlugin plugin, @NotNull UIHandler handler) {
         return new InventoryUI(this, plugin, handler);
     }
 
-    @NotNull
-    public static Builder builder() {
+    public static @NotNull Builder builder() {
         return new Builder();
     }
 
@@ -80,52 +78,45 @@ public final class ConfigInventoryUI {
         private LinkedHashMap<String, String> dictionary;
         private final LinkedHashMap<String, DefinedConfigItem> items = new LinkedHashMap<>();
 
-        @NotNull
-        public Builder name(@NotNull String name) {
+        public @NotNull Builder name(@NotNull String name) {
             Validate.notNull(name, "name cannot be null");
             this.name = name;
             return this;
         }
 
-        @NotNull
-        public Builder slots(@NotNull String... slots) {
+        public @NotNull Builder slots(@NotNull String... slots) {
             Validate.notNull(slots, "slots cannot be null");
             this.slots = slots;
             return this;
         }
 
-        @NotNull
-        public Builder dictionary(@NotNull String... dictionary) {
+        public @NotNull Builder dictionary(@NotNull String... dictionary) {
             Validate.notNull(dictionary, "dictionary cannot be null");
             Validate.isTrue(dictionary.length >= 2, "dictionary must have at least 2 entries");
             this.dictionary = CollectionUtils.linkedMap(dictionary);
             return this;
         }
 
-        @NotNull
-        public Builder dictionary(@NotNull Map<String, String> dictionary) {
+        public @NotNull Builder dictionary(@NotNull Map<String, String> dictionary) {
             Validate.notNull(dictionary, "dictionary cannot be null");
             this.dictionary = new LinkedHashMap<>(dictionary);
             return this;
         }
 
-        @NotNull
-        public Builder item(@NotNull String key, @NotNull DefinedConfigItem item) {
+        public @NotNull Builder item(@NotNull String key, @NotNull DefinedConfigItem item) {
             Validate.notNull(key, "key cannot be null");
             Validate.notNull(item, "item cannot be null");
             this.items.put(key, item);
             return this;
         }
 
-        @NotNull
-        public Builder item(@NotNull String key, @NotNull ItemStack item) {
+        public @NotNull Builder item(@NotNull String key, @NotNull ItemStack item) {
             Validate.notNull(key, "key cannot be null");
             Validate.notNull(item, "item cannot be null");
             return this.item(key, DefinedConfigItem.fromItem(item));
         }
 
-        @NotNull
-        public ConfigInventoryUI build() {
+        public @NotNull ConfigInventoryUI build() {
             Validate.notNull(this.name, "name cannot be null");
             Validate.notNull(this.slots, "slots cannot be null");
             Validate.notNull(this.dictionary, "dictionary cannot be null");

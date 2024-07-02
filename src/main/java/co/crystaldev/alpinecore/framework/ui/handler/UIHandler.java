@@ -60,8 +60,7 @@ public abstract class UIHandler implements UIEventSubscriber {
      * @param context the UI context
      * @return a map of placeholders for the provided context
      */
-    @NotNull
-    public Map<String, Object> getTitlePlaceholders(@NotNull UIContext context) {
+    public @NotNull Map<String, Object> getTitlePlaceholders(@NotNull UIContext context) {
         return Collections.emptyMap();
     }
 
@@ -102,8 +101,7 @@ public abstract class UIHandler implements UIEventSubscriber {
      *
      * @return the created Element instance, or null if the entry cannot be created
      */
-    @Nullable
-    public abstract Element createElement(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition);
+    public abstract @Nullable Element createElement(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition);
 
     /**
      * Populates an element in the UI context with the given key.
@@ -112,8 +110,7 @@ public abstract class UIHandler implements UIEventSubscriber {
      * @param key     the key for the entry to populate
      * @return the populated Element instance, or null if the entry cannot be populated
      */
-    @NotNull
-    public final Element populateElement(@NotNull UIContext context, @NotNull String key) {
+    public final @NotNull Element populateElement(@NotNull UIContext context, @NotNull String key) {
         ConfigInventoryUI properties = context.ui().getProperties();
         Map<String, DefinedConfigItem> dictionary = properties.getItems();
 

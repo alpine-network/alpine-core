@@ -28,8 +28,7 @@ public class GenericUIHandler extends UIHandler {
 
     private static final GenericUIHandler INSTANCE = new GenericUIHandler();
 
-    @NotNull
-    public static GenericUIHandler getInstance() {
+    public static @NotNull GenericUIHandler getInstance() {
         return INSTANCE;
     }
 
@@ -140,8 +139,7 @@ public class GenericUIHandler extends UIHandler {
         });
     }
 
-    @NotNull
-    private static ActionResult handleClick(@NotNull UIContext context, @NotNull InventoryClickEvent event, int slot) {
+    private static @NotNull ActionResult handleClick(@NotNull UIContext context, @NotNull InventoryClickEvent event, int slot) {
         ClickContext clickContext = handleClick(context, slot, event.getClick(), event.getAction(), event.getCursor());
         if (clickContext == null) {
             return ActionResult.PASS;
@@ -154,8 +152,7 @@ public class GenericUIHandler extends UIHandler {
         return clickContext.result();
     }
 
-    @Nullable
-    private static ClickContext handleClick(@NotNull UIContext context, int slot, @NotNull ClickType type,
+    private static @Nullable ClickContext handleClick(@NotNull UIContext context, int slot, @NotNull ClickType type,
                                             @NotNull InventoryAction action, @Nullable ItemStack clicked) {
         ActionResult result = ActionResult.PASS;
 
@@ -177,8 +174,7 @@ public class GenericUIHandler extends UIHandler {
         return null;
     }
 
-    @NotNull
-    private static ActionResult handleCollectClick(@NotNull UIContext ctx, @NotNull InventoryClickEvent event,
+    private static @NotNull ActionResult handleCollectClick(@NotNull UIContext ctx, @NotNull InventoryClickEvent event,
                                                    @NotNull Inventory top, @NotNull ClickType type,
                                                    @NotNull InventoryAction action, @NotNull ActionResult result) {
         ItemStack moving = event.getCursor();
@@ -217,8 +213,7 @@ public class GenericUIHandler extends UIHandler {
         return result;
     }
 
-    @NotNull
-    private static ActionResult handleShiftClick(@NotNull UIContext context, @NotNull InventoryClickEvent event,
+    private static @NotNull ActionResult handleShiftClick(@NotNull UIContext context, @NotNull InventoryClickEvent event,
                                                  @NotNull Inventory top, @NotNull ClickType type,
                                                  @NotNull InventoryAction action, @NotNull ActionResult result) {
         ItemStack moving = event.getCurrentItem();

@@ -49,8 +49,7 @@ public final class UIContext {
      *
      * @return the AlpineUIManager instance
      */
-    @NotNull
-    public AlpineUIManager manager() {
+    public @NotNull AlpineUIManager manager() {
         return this.ui.getManager();
     }
 
@@ -59,8 +58,7 @@ public final class UIContext {
      *
      * @return the AlpinePlugin instance
      */
-    @NotNull
-    public AlpinePlugin plugin() {
+    public @NotNull AlpinePlugin plugin() {
         return this.manager().getPlugin();
     }
 
@@ -69,8 +67,7 @@ public final class UIContext {
      *
      * @return the event handler for the user interface
      */
-    @NotNull
-    public UIEventBus eventBus() {
+    public @NotNull UIEventBus eventBus() {
         return this.eventBus;
     }
 
@@ -79,8 +76,7 @@ public final class UIContext {
      *
      * @return the UUID of the player
      */
-    @NotNull
-    public UUID playerId() {
+    public @NotNull UUID playerId() {
         return this.playerId;
     }
 
@@ -89,8 +85,7 @@ public final class UIContext {
      *
      * @return the Player object
      */
-    @NotNull
-    public Player player() {
+    public @NotNull Player player() {
         return Bukkit.getPlayer(this.playerId);
     }
 
@@ -99,8 +94,7 @@ public final class UIContext {
      *
      * @return the InventoryUI object
      */
-    @NotNull
-    public InventoryUI ui() {
+    public @NotNull InventoryUI ui() {
         return this.ui;
     }
 
@@ -109,8 +103,7 @@ public final class UIContext {
      *
      * @return the inventory associated with this context
      */
-    @NotNull
-    public Inventory inventory() {
+    public @NotNull Inventory inventory() {
         return this.inventory;
     }
 
@@ -120,8 +113,7 @@ public final class UIContext {
      * @param slot The slot representing the position of the item in the inventory
      * @return the item at the specified position
      */
-    @NotNull
-    public ItemStack getItem(int slot) {
+    public @NotNull ItemStack getItem(int slot) {
         return this.inventory.getItem(slot);
     }
 
@@ -131,8 +123,7 @@ public final class UIContext {
      * @param slot The slot representing the position of the item in the inventory
      * @return the item at the specified position
      */
-    @NotNull
-    public ItemStack getItem(@NotNull SlotPosition slot) {
+    public @NotNull ItemStack getItem(@NotNull SlotPosition slot) {
         return this.inventory.getItem(slot.getSlot());
     }
 
@@ -142,8 +133,7 @@ public final class UIContext {
      * @param element the Element representing the position of the item in the inventory
      * @return the item at the specified position
      */
-    @NotNull
-    public ItemStack getItem(@NotNull Element element) {
+    public @NotNull ItemStack getItem(@NotNull Element element) {
         return this.inventory.getItem(element.getPosition().getSlot());
     }
 

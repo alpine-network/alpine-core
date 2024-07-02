@@ -39,8 +39,7 @@ public final class DatabaseConnection {
         this.dataSource.setPoolPreparedStatements(true);
     }
 
-    @NotNull
-    public Connection getConnection() throws SQLException {
+    public @NotNull Connection getConnection() throws SQLException {
         return this.dataSource.getConnection();
     }
 

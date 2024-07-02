@@ -18,13 +18,12 @@ public final class UIHolder implements InventoryHolder {
 
     private UIContext context;
 
-    @NotNull
-    public Player getPlayer() {
+    public @NotNull Player getPlayer() {
         return this.context.player();
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return this.context.inventory();
     }
 }

@@ -189,8 +189,7 @@ public final class AlpineUIManager {
      * @param player the UUID of the player
      * @return the UIState object representing the state of the user interface, or null if the player has no state
      */
-    @Nullable
-    public UIContext get(@NotNull UUID player) {
+    public @Nullable UIContext get(@NotNull UUID player) {
         return Optional.ofNullable(this.states.get(player)).map(UIState::peek).orElse(null);
     }
 
@@ -200,8 +199,7 @@ public final class AlpineUIManager {
      * @param player the UUID of the player
      * @return the UIState object representing the state of the user interface, or null if the player has no state
      */
-    @Nullable
-    public UIContext get(@NotNull Player player) {
+    public @Nullable UIContext get(@NotNull Player player) {
         return this.get(player.getUniqueId());
     }
 

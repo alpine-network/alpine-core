@@ -41,8 +41,7 @@ public final class ElementPaginator<T> {
      * @param context the UI context
      * @return the next element from the paginator
      */
-    @NotNull
-    public PaginatorElement<T> buildNextSlot(@NotNull UIContext context) {
+    public @NotNull PaginatorElement<T> buildNextSlot(@NotNull UIContext context) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.size()));
         this.elementProvider.nextElement(context);
@@ -60,8 +59,7 @@ public final class ElementPaginator<T> {
      * @param item the defined config item
      * @return the previous navigation element
      */
-    @NotNull
-    public Element buildPreviousNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
+    public @NotNull Element buildPreviousNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
@@ -79,8 +77,7 @@ public final class ElementPaginator<T> {
      * @param item the defined config item
      * @return the next navigation element
      */
-    @NotNull
-    public Element buildNextNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
+    public @NotNull Element buildNextNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
@@ -98,8 +95,7 @@ public final class ElementPaginator<T> {
      * @param item    the defined config item
      * @return the navigation info element
      */
-    @NotNull
-    public Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
+    public @NotNull Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
         return new PaginatorNavigationElement(context, state, item);
@@ -115,13 +111,11 @@ public final class ElementPaginator<T> {
         this.states.entrySet().removeIf(e -> e.getKey().isStale() || e.getKey().playerId().equals(context.playerId()));
     }
 
-    @NotNull
-    public static <S> ElementPaginator<S> from(@NotNull ElementProvider<S, ?> elementProvider) {
+    public static <S> @NotNull ElementPaginator<S> from(@NotNull ElementProvider<S, ?> elementProvider) {
         return new ElementPaginator<>(elementProvider, null);
     }
 
-    @NotNull
-    public static <T> Builder<T> builder() {
+    public static <T> @NotNull Builder<T> builder() {
         return new Builder<>();
     }
 
@@ -161,20 +155,17 @@ public final class ElementPaginator<T> {
 
         private Function<UIContext, ItemStack> emptySlotProvider;
 
-        @NotNull
-        public Builder<T> elementProvider(@NotNull ElementProvider<T, ?> elementProvider) {
+        public @NotNull Builder<T> elementProvider(@NotNull ElementProvider<T, ?> elementProvider) {
             this.elementProvider = elementProvider;
             return this;
         }
 
-        @NotNull
-        public Builder<T> emptySlotProvider(@Nullable Function<UIContext, ItemStack> emptySlotProvider) {
+        public @NotNull Builder<T> emptySlotProvider(@Nullable Function<UIContext, ItemStack> emptySlotProvider) {
             this.emptySlotProvider = emptySlotProvider;
             return this;
         }
 
-        @NotNull
-        public ElementPaginator<T> build() {
+        public @NotNull ElementPaginator<T> build() {
             Validate.notNull(this.elementProvider, "elementProvider cannot be null");
             return new ElementPaginator<>(this.elementProvider, this.emptySlotProvider);
         }

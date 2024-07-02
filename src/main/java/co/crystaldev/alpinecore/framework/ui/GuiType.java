@@ -41,8 +41,7 @@ public enum GuiType {
         return excessRows + deficientRows;
     }
 
-    @NotNull
-    public static GuiType resolveType(@NotNull String[] slots) {
+    public static @NotNull GuiType resolveType(@NotNull String[] slots) {
         GuiType bestMatch = null;
         int minWaste = Integer.MAX_VALUE;
 
@@ -58,8 +57,7 @@ public enum GuiType {
         return bestMatch != null ? bestMatch : GuiType.CHEST;
     }
 
-    @NotNull
-    public static GuiType fromType(@NotNull InventoryType inventoryType) {
+    public static @NotNull GuiType fromType(@NotNull InventoryType inventoryType) {
         for (GuiType type : values()) {
             if (type.inventoryType == inventoryType) {
                 return type;

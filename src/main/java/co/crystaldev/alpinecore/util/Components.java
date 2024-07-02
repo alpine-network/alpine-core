@@ -60,12 +60,12 @@ public final class Components {
      *
      * @return The reset component
      */
-    @NotNull
-    public static Component reset() {
-        Style.Builder style = Style.style().color(TextColor.color(-1));
-        for (TextDecoration value : TextDecoration.values())
+    public static @NotNull Component reset() {
+        Style.Builder style = Style.style().color(NamedTextColor.WHITE);
+        for (TextDecoration value : TextDecoration.values()) {
             style.decoration(value, TextDecoration.State.FALSE);
-        return Component.text("").color(TextColor.color(-1)).style(style.build());
+        }
+        return Component.text("").color(NamedTextColor.WHITE).style(style.build());
     }
 
     /**
@@ -91,8 +91,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component join(@NotNull Component... components) {
+    public static @NotNull Component join(@NotNull Component... components) {
         return Component.join(JoinConfiguration.noSeparators(), components);
     }
 
@@ -103,8 +102,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component join(@NotNull Iterable<Component> components) {
+    public static @NotNull Component join(@NotNull Iterable<Component> components) {
         return Component.join(JoinConfiguration.noSeparators(), components);
     }
 
@@ -115,8 +113,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component joinSpaces(@NotNull Component... components) {
+    public static @NotNull Component joinSpaces(@NotNull Component... components) {
         return Component.join(JoinConfiguration.separator(Component.space()), components);
     }
 
@@ -127,8 +124,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component joinSpaces(@NotNull Iterable<Component> components) {
+    public static @NotNull Component joinSpaces(@NotNull Iterable<Component> components) {
         return Component.join(JoinConfiguration.separator(Component.space()), components);
     }
 
@@ -139,8 +135,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component joinCommas(@NotNull Component... components) {
+    public static @NotNull Component joinCommas(@NotNull Component... components) {
         return Component.join(JoinConfiguration.commas(true), components);
     }
 
@@ -151,8 +146,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component joinCommas(@NotNull Iterable<Component> components) {
+    public static @NotNull Component joinCommas(@NotNull Iterable<Component> components) {
         return Component.join(JoinConfiguration.commas(true), components);
     }
 
@@ -163,8 +157,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component joinNewLines(@NotNull Component... components) {
+    public static @NotNull Component joinNewLines(@NotNull Component... components) {
         return Component.join(JoinConfiguration.newlines(), components);
     }
 
@@ -175,8 +168,7 @@ public final class Components {
      * @param components The components to join
      * @return The joined component
      */
-    @NotNull
-    public static Component joinNewLines(@NotNull Iterable<Component> components) {
+    public static @NotNull Component joinNewLines(@NotNull Iterable<Component> components) {
         return Component.join(JoinConfiguration.newlines(), components);
     }
 
@@ -192,8 +184,7 @@ public final class Components {
      * @param command The command to execute when the component is clicked.
      * @return The component.
      */
-    @NotNull
-    public static Component events(@NotNull Component component, @NotNull Component hover, @NotNull String command) {
+    public static @NotNull Component events(@NotNull Component component, @NotNull Component hover, @NotNull String command) {
         return component.hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.runCommand(command));
     }
 
@@ -204,8 +195,7 @@ public final class Components {
      * @param both The text to display while hovering and command to execute when clicked.
      * @return The component.
      */
-    @NotNull
-    public static Component events(@NotNull Component component, @NotNull Component both) {
+    public static @NotNull Component events(@NotNull Component component, @NotNull Component both) {
         return events(component, both, PlainTextComponentSerializer.plainText().serialize(both));
     }
 
@@ -216,8 +206,7 @@ public final class Components {
      * @param both The text to display while hovering and command to execute when clicked.
      * @return The component.
      */
-    @NotNull
-    public static Component events(@NotNull Component component, @NotNull String both) {
+    public static @NotNull Component events(@NotNull Component component, @NotNull String both) {
         return events(component, Component.text(both), both);
     }
 
@@ -232,8 +221,7 @@ public final class Components {
      * @param component The component.
      * @return The stylized component.
      */
-    @NotNull
-    public static Component stylize(@Nullable String style, @NotNull Component component, boolean force) {
+    public static @NotNull Component stylize(@Nullable String style, @NotNull Component component, boolean force) {
         if (style == null) {
             return component;
         }
@@ -260,8 +248,7 @@ public final class Components {
      * @param component The component.
      * @return The stylized component.
      */
-    @NotNull
-    public static Component stylize(@Nullable String style, @NotNull Component component) {
+    public static @NotNull Component stylize(@Nullable String style, @NotNull Component component) {
         if (style == null) {
             return component;
         }
@@ -279,8 +266,8 @@ public final class Components {
         return builder.asComponent();
     }
 
-    @NotNull @ApiStatus.Internal
-    public static List<StyleBuilderApplicable> processStyle(@NotNull String style) {
+    @ApiStatus.Internal
+    public static @NotNull List<StyleBuilderApplicable> processStyle(@NotNull String style) {
         List<StyleBuilderApplicable> styles = new ArrayList<>();
         for (String component : style.split(" +")) {
             StyleBuilderApplicable parsedComponent = null;
@@ -329,8 +316,7 @@ public final class Components {
      * @param separator A regex to split the TextComponent content at.
      * @return A list of new components
      */
-    @NotNull
-    public static List<Component> split(@NotNull Component self, @NotNull @RegExp String separator) {
+    public static @NotNull List<Component> split(@NotNull Component self, @NotNull @RegExp String separator) {
         // First split component content
         List<Component> lines = splitComponentContent(self, separator);
 
@@ -359,8 +345,7 @@ public final class Components {
         return lines;
     }
 
-    @NotNull
-    private static List<Component> splitComponentContent(@NotNull Component component, @RegExp String regex) {
+    private static @NotNull List<Component> splitComponentContent(@NotNull Component component, @RegExp String regex) {
         if (!(component instanceof TextComponent)) {
             return Collections.singletonList(component);
         }

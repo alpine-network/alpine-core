@@ -28,9 +28,9 @@ public final class CollectionUtils {
      *
      * @see java.util.ArrayList
      */
-    @SafeVarargs @NotNull @Contract("null -> fail")
-    public static <T> List<T> list(@NotNull T... items) {
-        List<T> list = new ArrayList<>(items.length);
+    @SafeVarargs @Contract("null -> fail")
+    public static <T> @NotNull List<T> list(@NotNull T... items) {
+        ArrayList<T> list = new ArrayList<>(items.length);
         Collections.addAll(list, items);
         return list;
     }
@@ -45,8 +45,8 @@ public final class CollectionUtils {
      *
      * @see java.util.LinkedList
      */
-    @SafeVarargs @NotNull @Contract("null -> fail")
-    public static <T> LinkedList<T> linkedList(@NotNull T... items) {
+    @SafeVarargs @Contract("null -> fail")
+    public static <T> @NotNull LinkedList<T> linkedList(@NotNull T... items) {
         LinkedList<T> list = new LinkedList<>();
         Collections.addAll(list, items);
         return list;
@@ -65,9 +65,9 @@ public final class CollectionUtils {
      *
      * @see java.util.HashSet
      */
-    @SafeVarargs @NotNull @Contract("null -> fail")
-    public static <T> Set<T> set(@NotNull T... items) {
-        Set<T> set = new HashSet<>(items.length);
+    @SafeVarargs @Contract("null -> fail")
+    public static <T> @NotNull Set<T> set(@NotNull T... items) {
+        HashSet<T> set = new HashSet<>(items.length);
         Collections.addAll(set, items);
         return set;
     }
@@ -82,8 +82,8 @@ public final class CollectionUtils {
      *
      * @see java.util.LinkedHashSet
      */
-    @SafeVarargs @NotNull @Contract("null -> fail")
-    public static <T> LinkedHashSet<T> linkedSet(@NotNull T... items) {
+    @SafeVarargs @Contract("null -> fail")
+    public static <T> @NotNull LinkedHashSet<T> linkedSet(@NotNull T... items) {
         LinkedHashSet<T> set = new LinkedHashSet<>(items.length);
         Collections.addAll(set, items);
         return set;
@@ -108,10 +108,9 @@ public final class CollectionUtils {
      *
      * @see java.util.HashMap
      */
-    @NotNull
-    public static <K, V> Map<K, V> map(@NotNull K firstKey, @NotNull V firstValue, @NotNull Object... items) {
+    public static <K, V> @NotNull Map<K, V> map(@NotNull K firstKey, @NotNull V firstValue, @NotNull Object... items) {
         int initialCapacity = (items.length / 2) + 1;
-        Map<K, V> map = new HashMap<>(initialCapacity);
+        HashMap<K, V> map = new HashMap<>(initialCapacity);
         map.put(firstKey, firstValue);
 
         if (items.length > 1 || items.length % 2 != 0) {
@@ -136,9 +135,8 @@ public final class CollectionUtils {
      *
      * @see HashMap
      */
-    @NotNull
-    public static <T> Map<T, T> map(@NotNull T... items) {
-        Map<T, T> map = new HashMap<>(items.length / 2);
+    public static <T> @NotNull Map<T, T> map(@NotNull T... items) {
+        HashMap<T, T> map = new HashMap<>(items.length / 2);
         for (int i = 0; i < items.length; i += 2) {
             map.put(items[i], items[i + 1]);
         }
@@ -161,8 +159,7 @@ public final class CollectionUtils {
      *
      * @see java.util.LinkedHashMap
      */
-    @NotNull
-    public static <K, V> LinkedHashMap<K, V> linkedMap(@NotNull K firstKey, @NotNull V firstValue, @NotNull Object... items) {
+    public static <K, V> @NotNull LinkedHashMap<K, V> linkedMap(@NotNull K firstKey, @NotNull V firstValue, @NotNull Object... items) {
         int initialCapacity = (items.length / 2) + 1;
         LinkedHashMap<K, V> map = new LinkedHashMap<>(initialCapacity);
         map.put(firstKey, firstValue);
@@ -192,8 +189,7 @@ public final class CollectionUtils {
      *
      * @see java.util.LinkedHashMap
      */
-    @NotNull
-    public static <T> LinkedHashMap<T, T> linkedMap(@NotNull T... items) {
+    public static <T> @NotNull LinkedHashMap<T, T> linkedMap(@NotNull T... items) {
         LinkedHashMap<T, T> map = new LinkedHashMap<>(items.length / 2);
         for (int i = 0; i < items.length; i += 2) {
             map.put(items[i], items[i + 1]);
