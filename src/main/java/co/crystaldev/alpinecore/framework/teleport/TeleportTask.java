@@ -38,9 +38,21 @@ public final class TeleportTask {
 
     private final TeleportCallbacks callbacks;
 
+    private final int delay;
+
     private int ticksToTeleport;
 
     private double movementThreshold;
+
+    /**
+     * Retrieves the time remaining until teleportation in the specified time unit.
+     *
+     * @param unit the time unit to convert the result to
+     * @return the time remaining until teleportation in the specified time unit
+     */
+    public long getTimeUntilTeleport(@NotNull TimeUnit unit) {
+        return unit.convert(this.delay, TimeUnit.MILLISECONDS);
+    }
 
     int tick() {
         return this.ticksToTeleport--;
@@ -75,22 +87,24 @@ public final class TeleportTask {
 
         private final TeleportCallbacks callbacks = new TeleportCallbacks();
 
-        private int delay;
+        private int delayTicks, delayMs;
 
         private double movementThreshold = 0.1;
 
         public @NotNull Builder delay(int ticks) {
-            this.delay = ticks;
+            this.delayTicks = ticks;
+            this.delayMs = ticks * 50;
             return this;
         }
 
         public @NotNull Builder delay(int time, @NotNull TimeUnit unit) {
-            this.delay = Math.toIntExact(unit.toMillis(time) / 50L);
+            this.delayMs = (int) unit.toMillis(time);
+            this.delayTicks = this.delayMs / 50;
             return this;
         }
 
         public @NotNull Builder instant() {
-            this.delay = -1;
+            this.delayTicks = -1;
             return this;
         }
 
@@ -141,7 +155,7 @@ public final class TeleportTask {
         }
 
         public @NotNull TeleportTask build() {
-            return new TeleportTask(this.player, this.player.getLocation(), this.destination, this.callbacks, this.delay, this.movementThreshold);
+            return new TeleportTask(this.player, this.player.getLocation(), this.destination, this.callbacks, this.delayTicks, this.delayMs, this.movementThreshold);
         }
     }
 }
