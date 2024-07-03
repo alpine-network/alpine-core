@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
+ * The TeleportManager class manages teleportation tasks and handlers.
+ *
  * @since 0.4.0
  */
 public final class TeleportManager {
