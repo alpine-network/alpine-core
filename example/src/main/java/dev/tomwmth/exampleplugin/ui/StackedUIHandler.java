@@ -110,6 +110,11 @@ public final class StackedUIHandler extends GenericUIHandler {
     }
 
     @Override
+    public boolean openParentOnClose(@NotNull UIContext context) {
+        return true;
+    }
+
+    @Override
     public @Nullable Element createElement(@NotNull UIContext context, @NotNull String key, @Nullable DefinedConfigItem definition) {
         Element element = null;
 
