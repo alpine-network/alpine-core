@@ -1,5 +1,6 @@
 package co.crystaldev.alpinecore.framework.teleport;
 
+import co.crystaldev.alpinecore.AlpinePlugin;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -156,6 +157,12 @@ public final class TeleportTask {
 
         public @NotNull TeleportTask build() {
             return new TeleportTask(this.player, this.player.getLocation(), this.destination, this.callbacks, this.delayTicks, this.delayMs, this.movementThreshold);
+        }
+
+        public @NotNull TeleportTask initiate(@NotNull AlpinePlugin plugin) {
+            TeleportTask task = this.build();
+            plugin.getTeleportManager().initiateTeleport(task);
+            return task;
         }
     }
 }
