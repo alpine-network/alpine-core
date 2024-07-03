@@ -28,7 +28,72 @@ public final class Messaging {
     /**
      * Sends a message to the specified CommandSender.
      *
-     * @param sender the recipient of the message
+     * @param sender      the recipient of the message
+     * @param messageType the type of the message
+     * @param component   the message to send
+     */
+    public static void send(@NotNull CommandSender sender, @NotNull MessageType messageType, @Nullable Component component) {
+        if (component == null) {
+            return;
+        }
+
+        switch (messageType) {
+            case CHAT:
+                send(sender, component);
+                break;
+
+            case ACTION_BAR:
+                actionBar(sender, component);
+        }
+    }
+
+    /**
+     * Sends a message to the specified CommandSender.
+     *
+     * @param sender      the recipient of the message
+     * @param messageType the type of the message
+     * @param components  the message to send
+     */
+    public static void send(@NotNull CommandSender sender, @NotNull MessageType messageType, @NotNull Component... components) {
+        if (components == null || components.length == 0) {
+            return;
+        }
+
+        switch (messageType) {
+            case CHAT:
+                send(sender, components);
+                break;
+
+            case ACTION_BAR:
+                actionBar(sender, components);
+        }
+    }
+
+    /**
+     * Sends messages to a collection of CommandSenders, each customized by a function.
+     *
+     * @param senders           the recipients of the messages
+     * @param messageType       the type of the message
+     * @param componentFunction a function that supplies the message for each sender
+     */
+    public static void send(@NotNull Collection<CommandSender> senders, @NotNull MessageType messageType,
+                            @NotNull Function<@NotNull CommandSender, @Nullable Component> componentFunction) {
+        if (messageType == MessageType.DISABLED) {
+            return;
+        }
+
+        for (CommandSender sender : senders) {
+            Component component = componentFunction.apply(sender);
+            if (component != null) {
+                send(sender, messageType, component);
+            }
+        }
+    }
+
+    /**
+     * Sends a message to the specified CommandSender.
+     *
+     * @param sender    the recipient of the message
      * @param component the message to send
      */
     public static void send(@NotNull CommandSender sender, @Nullable Component component) {
@@ -47,20 +112,21 @@ public final class Messaging {
     /**
      * Sends a message consisting of multiple components to the specified CommandSender.
      *
-     * @param sender the recipient of the message
+     * @param sender     the recipient of the message
      * @param components the components to send
      */
     public static void send(@NotNull CommandSender sender, @NotNull Component... components) {
-        send(sender, Components.joinSpaces(components));
+        send(sender, Components.joinNewLines(components));
     }
 
     /**
      * Sends messages to a collection of CommandSenders, each customized by a function.
      *
-     * @param senders the recipients of the messages
+     * @param senders           the recipients of the messages
      * @param componentFunction a function that supplies the message for each sender
      */
-    public static void send(@NotNull Collection<CommandSender> senders, @NotNull Function<@NotNull CommandSender, @Nullable Component> componentFunction) {
+    public static void send(@NotNull Collection<CommandSender> senders,
+                            @NotNull Function<@NotNull CommandSender, @Nullable Component> componentFunction) {
         for (CommandSender sender : senders) {
             Component component = componentFunction.apply(sender);
             if (component != null) {
@@ -72,7 +138,7 @@ public final class Messaging {
     /**
      * Sends a message to an OfflinePlayer if they are currently online.
      *
-     * @param sender the intended recipient of the message
+     * @param sender    the intended recipient of the message
      * @param component the message to send; can be null
      */
     public static void attemptSend(@NotNull OfflinePlayer sender, @Nullable Component component) {
@@ -91,23 +157,21 @@ public final class Messaging {
     /**
      * Sends a message consisting of multiple components to an OfflinePlayer if they are currently online.
      *
-     * @param sender the intended recipient of the message
+     * @param sender     the intended recipient of the message
      * @param components the components to send
      */
     public static void attemptSend(@NotNull OfflinePlayer sender, @NotNull Component... components) {
-        attemptSend(sender, Components.joinSpaces(components));
+        attemptSend(sender, Components.joinNewLines(components));
     }
 
     /**
      * Sends messages to a collection of OfflinePlayers, each customized by a function, if they are currently online.
      *
-     * @param players the intended recipients of the messages
+     * @param players           the intended recipients of the messages
      * @param componentFunction a function that supplies the message for each player
      */
-    public static void attemptSend(
-            @NotNull Collection<OfflinePlayer> players,
-            @NotNull Function<@NotNull Player, @Nullable Component> componentFunction
-    ) {
+    public static void attemptSend(@NotNull Collection<OfflinePlayer> players,
+                                   @NotNull Function<@NotNull Player, @Nullable Component> componentFunction) {
         for (OfflinePlayer offlinePlayer : players) {
             if (!offlinePlayer.isOnline())
                 continue;
@@ -118,27 +182,6 @@ public final class Messaging {
                 wrap(player).sendMessage(component);
             }
         }
-    }
-
-    /**
-     * Sends a title and subtitle to a CommandSender.
-     *
-     * @param sender the recipient of the title and subtitle
-     * @param title the title component
-     * @param subtitle the subtitle component
-     */
-    public static void title(@NotNull CommandSender sender, @NotNull Component title, @NotNull Component subtitle) {
-        wrap(sender).showTitle(Title.title(title, subtitle));
-    }
-
-    /**
-     * Sends an action bar message to a CommandSender.
-     *
-     * @param sender the recipient of the action bar message
-     * @param component the message to send
-     */
-    public static void actionBar(@NotNull CommandSender sender, @NotNull Component component) {
-        wrap(sender).sendActionBar(component);
     }
 
     /**
@@ -163,13 +206,13 @@ public final class Messaging {
      * @param components the components to broadcast
      */
     public static void broadcast(@NotNull Component... components) {
-        broadcast(Components.joinSpaces(components));
+        broadcast(Components.joinNewLines(components));
     }
 
     /**
      * Broadcasts a message to all online players and the console, with an option to filter recipients.
      *
-     * @param component the message to broadcast
+     * @param component       the message to broadcast
      * @param playerPredicate a predicate to determine which players should receive the message
      */
     public static void broadcast(@NotNull Component component, @NotNull Predicate<Player> playerPredicate) {
@@ -187,12 +230,59 @@ public final class Messaging {
     /**
      * Broadcasts a message to a specified collection of CommandSenders.
      *
-     * @param senders the recipients of the message
+     * @param senders   the recipients of the message
      * @param component the message to broadcast
      */
     public static void broadcast(@NotNull Collection<CommandSender> senders, @NotNull Component component) {
         for (CommandSender sender : senders) {
             wrap(sender).sendMessage(component);
+        }
+    }
+
+    /**
+     * Sends a title and subtitle to a CommandSender.
+     *
+     * @param sender   the recipient of the title and subtitle
+     * @param title    the title component
+     * @param subtitle the subtitle component
+     */
+    public static void title(@NotNull CommandSender sender, @NotNull Component title, @NotNull Component subtitle) {
+        wrap(sender).showTitle(Title.title(title, subtitle));
+    }
+
+    /**
+     * Sends an action bar message to a CommandSender.
+     *
+     * @param sender    the recipient of the action bar message
+     * @param component the message to send
+     */
+    public static void actionBar(@NotNull CommandSender sender, @NotNull Component component) {
+        wrap(sender).sendActionBar(component);
+    }
+
+    /**
+     * Sends an action bar message to a CommandSender.
+     *
+     * @param sender     the recipient of the action bar message
+     * @param components the message to send
+     */
+    public static void actionBar(@NotNull CommandSender sender, @NotNull Component... components) {
+        wrap(sender).sendActionBar(Components.joinNewLines(components));
+    }
+
+    /**
+     * Sends an action bar message to a collection of CommandSenders, each customized by a function.
+     *
+     * @param senders           the recipients of the action bar message
+     * @param componentFunction a function that supplies the message for each sender
+     */
+    public static void actionBar(@NotNull Collection<CommandSender> senders,
+                                 @NotNull Function<@NotNull CommandSender, @Nullable Component> componentFunction) {
+        for (CommandSender sender : senders) {
+            Component component = componentFunction.apply(sender);
+            if (component != null) {
+                wrap(sender).sendActionBar(component);
+            }
         }
     }
 
