@@ -12,6 +12,7 @@ import co.crystaldev.alpinecore.framework.engine.AlpineEngine;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
+import co.crystaldev.alpinecore.framework.teleport.TeleportManager;
 import co.crystaldev.alpinecore.framework.ui.UIManager;
 import co.crystaldev.alpinecore.handler.CommandInvalidUsageHandler;
 import co.crystaldev.alpinecore.util.ChatColor;
@@ -73,6 +74,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
     /** Manager for handling inventory UIs. */
     private UIManager uiManager;
+
+    /** Manager for handling deferred teleportation tasks */
+    private TeleportManager teleportManager;
 
     /** MiniMessage curated by this plugin. */
     private MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -201,11 +205,10 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.serializerRegistry.putConfigSerializer(ConfigMessage.class, new ConfigMessage.Adapter());
         this.registerSerializers(this.serializerRegistry);
 
-        // Initialize the config manager
+        // Initialize plugin managers
         this.configManager = new ConfigManager(this, this.serializerRegistry);
-
-        // Initialize the UI manager
         this.uiManager = new UIManager(this);
+        this.teleportManager = new TeleportManager(this);
 
         // Activate all activatables
         this.activateAll();
@@ -402,9 +405,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.setupCommandManager(builder);
 
         // Register all argument resolvers
-        for (AlpineArgumentResolver resolver : AlpineCore.getInstance().getArgumentResolvers()) {
+        AlpineCore.getInstance().forEachResolver(resolver -> {
             builder.argument(resolver.getType(), ArgumentKey.of(resolver.getKey()), resolver);
-        }
+        });
 
         // Let individual plugin commands mutate the command manager
         for (AlpineCommand command : commands) {

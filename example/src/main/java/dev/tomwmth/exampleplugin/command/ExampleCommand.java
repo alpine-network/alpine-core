@@ -3,6 +3,8 @@ package dev.tomwmth.exampleplugin.command;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
+import co.crystaldev.alpinecore.framework.teleport.TeleportTask;
+import co.crystaldev.alpinecore.util.Components;
 import co.crystaldev.alpinecore.util.Messaging;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.argument.Key;
@@ -19,7 +21,10 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import dev.tomwmth.exampleplugin.config.Config;
 import dev.tomwmth.exampleplugin.storage.Statistics;
 import dev.tomwmth.exampleplugin.storage.StatisticsStore;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -27,6 +32,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -78,6 +84,36 @@ public class ExampleCommand extends AlpineCommand {
                 config.actionMessage.build(this.plugin,
                         "action", message)
         );
+    }
+
+    @Execute(name = "move")
+    public void move(@Context Player sender, @Arg("offset_x") int x, @Arg("offset_y") int y, @Arg("offset_z") int z) {
+
+        Location destination = sender.getLocation().clone().add(x, y, z);
+        TeleportTask teleport = TeleportTask.builder(sender, destination)
+                .delay(5, TimeUnit.SECONDS)
+                .resetPitchAndYaw()
+                .onInit(ctx -> {
+                    ctx.message(Components.joinSpaces(
+                            Component.text("Teleporting to").color(TextColor.color(0xA6D1FD)),
+                            Component.text(destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ()).color(TextColor.color(0x56CAFF))
+                    ));
+                })
+                .onCountdown(ctx -> {
+                    ctx.message(Components.joinSpaces(
+                            Component.text("Teleporting in:").color(TextColor.color(0xA6D1FD)),
+                            Component.text(ctx.timeUntilTeleport(TimeUnit.SECONDS) + " second(s)").color(TextColor.color(0x56CAFF))
+                    ));
+                })
+                .onTeleport(ctx -> {
+                    ctx.message(Component.text("Teleporting...").color(TextColor.color(0xA6D1FD)));
+                })
+                .onMove(ctx -> {
+                    ctx.message(Component.text("Cancelled Teleportation due to movement").color(TextColor.color(0xFD3115)));
+                })
+                .build();
+
+        this.plugin.getTeleportManager().initiateTeleport(teleport);
     }
 
     private enum ExampleAction {

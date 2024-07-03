@@ -23,12 +23,12 @@ public abstract class AlpineArgumentResolver<T> extends ArgumentResolver<Command
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
         // ArgumentResolvers should be shared across plugin instances
-        AlpineCore.getInstance().getArgumentResolvers().add(this);
+        AlpineCore.getInstance().registerArgumentResolver(context, this);
     }
 
     @Override
     public final void deactivate(@NotNull AlpinePlugin context) {
-        // NO-OP
+        AlpineCore.getInstance().unregisterArgumentResolvers(context);
     }
 
     @Override
