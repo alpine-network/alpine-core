@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender;
 
 /**
  * @author BestBearr
- * @since 01/19/2024
+ * @since 0.2.0
  */
 @RequiredArgsConstructor
 public final class CommandInvalidUsageHandler implements InvalidUsageHandler<CommandSender> {

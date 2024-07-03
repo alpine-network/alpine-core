@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author BestBearr
- * @since 02/24/2024
+ * @since 0.3.0
  */
 @Getter
 public final class ServerTickEvent extends AlpineEvent {
