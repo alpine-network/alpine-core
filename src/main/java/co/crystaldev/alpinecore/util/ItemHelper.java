@@ -259,5 +259,26 @@ public final class ItemHelper {
         item.setItemMeta(meta);
     }
 
+    /**
+     * Creates a hover component for the given item stack.
+     *
+     * @param itemStack The item stack.
+     * @return The hover component.
+     */
+    @NotNull
+    public Component createHoverComponent(@NotNull ItemStack itemStack) {
+        Component displayName = getDisplayName(itemStack);
+
+        Component hover = Component.text("").append(displayName);
+        List<Component> lore = getLore(itemStack);
+        if (!lore.isEmpty()) {
+            hover = hover.appendNewline().append(Components.joinNewLines(lore));
+        }
+
+        return Component.text("")
+                .append(displayName)
+                .hoverEvent(hover);
+    }
+
     // endregion Meta
 }
