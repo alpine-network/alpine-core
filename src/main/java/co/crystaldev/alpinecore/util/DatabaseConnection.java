@@ -1,7 +1,8 @@
 package co.crystaldev.alpinecore.util;
 
 import co.crystaldev.alpinecore.AlpineCore;
-import org.apache.commons.dbcp2.BasicDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,20 +24,22 @@ public final class DatabaseConnection {
             "useUnicode=true"
     );
 
-    private final BasicDataSource dataSource;
+    private final HikariDataSource dataSource;
 
     public DatabaseConnection(@Nullable String table, @NotNull String url, @NotNull String uid, @NotNull String secret) {
-        this.dataSource = new BasicDataSource();
-        this.dataSource.setUrl(url + (table == null ? "" : table) + PARAMS);
-        this.dataSource.setUsername(uid);
-        this.dataSource.setPassword(secret);
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url + (table == null ? "" : table) + PARAMS);
+        config.setUsername(uid);
+        config.setPassword(secret);
 
-        this.dataSource.setMinIdle(5);
-        this.dataSource.setMaxIdle(10);
-        this.dataSource.setMaxWait(Duration.of(30L, ChronoUnit.SECONDS));
+        config.setMinimumIdle(5);
+        config.setMaximumPoolSize(10);
+        config.setConnectionTimeout(Duration.of(30L, ChronoUnit.SECONDS).toMillis());
 
-        this.dataSource.setMaxOpenPreparedStatements(100);
-        this.dataSource.setPoolPreparedStatements(true);
+        config.setMaxLifetime(Duration.ofMinutes(30).toMillis());
+        config.setPoolName("AlpineCore-HikariCP-Pool");
+
+        this.dataSource = new HikariDataSource(config);
     }
 
     public @NotNull Connection getConnection() throws SQLException {
@@ -47,7 +50,7 @@ public final class DatabaseConnection {
         try {
             this.dataSource.close();
         }
-        catch (SQLException ex) {
+        catch (Exception ex) {
             AlpineCore.getInstance().getLogger().log(Level.SEVERE, "Unable to close data source", ex);
         }
     }

@@ -398,6 +398,11 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
             return this;
         }
 
+        public @NotNull Builder<K, D> table(@NotNull String table) {
+            this.table = table;
+            return this;
+        }
+
         public @NotNull Builder<K, D> host(@NotNull String host, int port, @NotNull String database, @NotNull String table) {
             this.table = table;
             if (port < 0) {
