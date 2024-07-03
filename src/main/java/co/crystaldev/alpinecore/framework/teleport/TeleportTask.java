@@ -39,7 +39,7 @@ public final class TeleportTask {
 
     private final TeleportCallbacks callbacks;
 
-    private final int delay;
+    private final long delay;
 
     private int ticksToTeleport;
 
@@ -88,19 +88,21 @@ public final class TeleportTask {
 
         private final TeleportCallbacks callbacks = new TeleportCallbacks();
 
-        private int delayTicks, delayMs;
+        private int delayTicks;
+
+        private long delayMs;
 
         private double movementThreshold = 0.1;
 
         public @NotNull Builder delay(int ticks) {
             this.delayTicks = ticks;
-            this.delayMs = ticks * 50;
+            this.delayMs = ticks * 50L;
             return this;
         }
 
         public @NotNull Builder delay(int time, @NotNull TimeUnit unit) {
-            this.delayMs = (int) unit.toMillis(time);
-            this.delayTicks = this.delayMs / 50;
+            this.delayMs = unit.toMillis(time);
+            this.delayTicks = Math.toIntExact(this.delayMs / 50L);
             return this;
         }
 
@@ -156,7 +158,7 @@ public final class TeleportTask {
         }
 
         public @NotNull TeleportTask build() {
-            return new TeleportTask(this.player, this.player.getLocation(), this.destination, this.callbacks, this.delayTicks, this.delayMs, this.movementThreshold);
+            return new TeleportTask(this.player, this.player.getLocation(), this.destination, this.callbacks, this.delayMs, this.delayTicks, this.movementThreshold);
         }
 
         public @NotNull TeleportTask initiate(@NotNull AlpinePlugin plugin) {
