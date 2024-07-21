@@ -45,22 +45,28 @@ public final class ConfigManager {
         this.properties = builder.build();
     }
 
-    public void registerConfig(@NotNull AlpineConfig config) {
+    public @NotNull AlpineConfig registerConfig(@NotNull AlpineConfig config) {
         Class<? extends AlpineConfig> clazz = config.getClass();
-        if (!this.registeredConfigurations.containsKey(clazz)) {
-            File configFile = new File(this.rootDirectory, config.getFileName());
-            if (configFile.exists()) {
-                AlpineConfig existingConfig = YamlConfigurations.load(configFile.toPath(), clazz, this.properties);
-                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, existingConfig, this.properties);
-                this.registeredConfigurations.put(clazz, existingConfig);
-            }
-            else {
-                YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, config, this.properties);
-                this.registeredConfigurations.put(clazz, config);
-            }
+        if (this.registeredConfigurations.containsKey(clazz)) {
+            throw new IllegalStateException("That type has already been registered as a configuration");
+        }
+
+        config = this.loadConfig(config);
+        this.registeredConfigurations.put(clazz, config);
+        return config;
+    }
+
+    public @NotNull AlpineConfig loadConfig(@NotNull AlpineConfig config) {
+        Class<? extends AlpineConfig> clazz = config.getClass();
+        File configFile = new File(this.rootDirectory, config.getFileName());
+        if (configFile.exists()) {
+            AlpineConfig existingConfig = YamlConfigurations.load(configFile.toPath(), clazz, this.properties);
+            YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, existingConfig, this.properties);
+            return existingConfig;
         }
         else {
-            throw new IllegalStateException("That type has already been registered as a configuration");
+            YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, config, this.properties);
+            return config;
         }
     }
 

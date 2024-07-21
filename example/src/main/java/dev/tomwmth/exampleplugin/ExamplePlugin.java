@@ -19,7 +19,7 @@ public class ExamplePlugin extends AlpinePlugin {
     }
 
     @Override
-    public void setupDefaultVariables(@NotNull VariableConsumer variableConsumer) {
+    public void setupVariables(@NotNull VariableConsumer variableConsumer) {
         variableConsumer.addVariable("prefix", "<dark_gray>[</dark_gray><gradient:#e81cff:#40c9ff>Example</gradient><dark_gray>]</dark_gray>");
     }
 }

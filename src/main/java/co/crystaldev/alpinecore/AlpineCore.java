@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  * @since 0.1.0
  */
 @ApiStatus.Internal
-public final class AlpineCore extends AlpinePlugin implements Listener {
+public final class AlpineCore extends AlpinePlugin {
     // This is how we prefer singletons be created, but nothing will force you to do it like this
     @Getter
     private static AlpineCore instance;
@@ -42,7 +42,6 @@ public final class AlpineCore extends AlpinePlugin implements Listener {
             Bukkit.getPluginManager().callEvent(event);
             event.setTick(TICK_COUNTER.incrementAndGet());
         }, 0L, 1L);
-        Bukkit.getPluginManager().registerEvents(this, this);
 
         this.getTeleportManager().registerHandler(new AlpineTeleportHandler());
     }

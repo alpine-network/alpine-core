@@ -1,7 +1,7 @@
 package co.crystaldev.alpinecore.util;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
-import co.crystaldev.alpinecore.config.AlpineCoreConfig;
+import co.crystaldev.alpinecore.framework.config.AlpinePluginConfig;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -92,7 +92,7 @@ public final class Formatting {
     public static @NotNull String placeholders(@NotNull AlpinePlugin plugin, @Nullable String text,
                                                @NotNull Object... placeholders) {
         if (text != null) {
-            HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
+            HashMap<String, String> variables = plugin.getAlpineConfig().variables;
             for (Map.Entry<String, String> entry : variables.entrySet()) {
                 text = text.replace("%" + entry.getKey() + "%", entry.getValue());
             }
@@ -202,7 +202,7 @@ public final class Formatting {
     public static @NotNull String placeholders(@NotNull AlpinePlugin plugin, @Nullable String text,
                                                @NotNull Map<String, Object> placeholders) {
         if (text != null) {
-            HashMap<String, String> variables = plugin.getConfiguration(AlpineCoreConfig.class).variables;
+            HashMap<String, String> variables = plugin.getAlpineConfig().variables;
             for (Map.Entry<String, String> entry : variables.entrySet()) {
                 text = text.replace("%" + entry.getKey() + "%", entry.getValue());
             }
@@ -251,7 +251,7 @@ public final class Formatting {
      * @return The padded component
      */
     public static @NotNull Component applyTitlePadding(@NotNull AlpinePlugin plugin, @NotNull Component component) {
-        AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
+        AlpinePluginConfig config = plugin.getAlpineConfig();
         if (!config.titleUsesPadding) {
             return component;
         }
@@ -272,7 +272,7 @@ public final class Formatting {
      * @return The formatted title component
      */
     public static @NotNull Component title(@NotNull AlpinePlugin plugin, @NotNull Component component) {
-        AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
+        AlpinePluginConfig config = plugin.getAlpineConfig();
         component = config.titleFormat.build(plugin, "content", component);
         return applyTitlePadding(plugin, component);
     }
@@ -287,7 +287,7 @@ public final class Formatting {
      */
     public static <T> @NotNull Component elements(@NotNull AlpinePlugin plugin, @NotNull Collection<T> elements,
                                          @NotNull Function<@NotNull T, Component> toComponentFn) {
-        AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
+        AlpinePluginConfig config = plugin.getAlpineConfig();
         List<Component> pageElements = new LinkedList<>();
 
         // collect page elements
@@ -324,7 +324,7 @@ public final class Formatting {
                                      @NotNull Component title, @NotNull Collection<T> elements,
                                      @NotNull String command, int currentPage, int elementsPerPage,
                                      @NotNull Function<@NotNull T, Component> toComponentFn) {
-        AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
+        AlpinePluginConfig config = plugin.getAlpineConfig();
         List<Component> pageElements = new LinkedList<>();
         int totalPages = (int) Math.ceil((double) elements.size() / elementsPerPage);
 
@@ -390,7 +390,7 @@ public final class Formatting {
     public static @NotNull Component progress(@NotNull AlpinePlugin plugin, double progress) {
         progress = Math.max(0.0, Math.min(1.0, progress));
 
-        AlpineCoreConfig config = plugin.getConfiguration(AlpineCoreConfig.class);
+        AlpinePluginConfig config = plugin.getAlpineConfig();
 
         int fillLength = (int) (config.progressLength * progress);
         Component progressComponent = Components.join(

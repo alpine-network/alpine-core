@@ -1,6 +1,6 @@
 package co.crystaldev.alpinecore;
 
-import co.crystaldev.alpinecore.config.AlpineCoreConfig;
+import co.crystaldev.alpinecore.framework.config.AlpinePluginConfig;
 import co.crystaldev.alpinecore.framework.Activatable;
 import co.crystaldev.alpinecore.framework.Initializable;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
@@ -33,12 +33,18 @@ import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -56,12 +62,15 @@ import java.util.stream.Collectors;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@SuppressWarnings({"UnstableApiUsage", "unchecked", "rawtypes", "unused"})
+@SuppressWarnings({"UnstableApiUsage", "unchecked", "unused"})
 @Getter
 public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
     /** Manages any {@link co.crystaldev.alpinecore.framework.config.AlpineConfig}s for the plugin */
     protected ConfigManager configManager;
+
+    /** The configuration for the plugin */
+    protected AlpinePluginConfig pluginConfig;
 
     /** Manages any {@link co.crystaldev.alpinecore.framework.command.AlpineCommand}s for the plugin */
     protected LiteCommands<CommandSender> commandManager;
@@ -85,18 +94,19 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     private MiniMessage strictMiniMessage = MiniMessage.builder().strict(true).build();
 
     // region Abstract methods
+
     /**
      * Called when the plugin is enabling.
      */
     public void onStart() {
-        // NO-OP
+        // NO OP
     }
 
     /**
      * Called when the plugin is disabling.
      */
     public void onStop() {
-        // NO-OP
+        // NO OP
     }
 
     /**
@@ -111,7 +121,6 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         return true;
     }
 
-
     /**
      * Register custom serializers with the provided {@code SerializerRegistry}.
      * <br>
@@ -121,7 +130,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @param serializerRegistry The {@code SerializerRegistry} where custom serializers should be registered.
      */
     public void registerSerializers(@NotNull SerializerRegistry serializerRegistry) {
-        // NO-OP
+        // NO OP
     }
 
     /**
@@ -135,7 +144,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @see dev.rollczi.litecommands.bukkit.LiteBukkitFactory#builder(String)
      */
     public void setupCommandManager(@NotNull LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder) {
-        // NO-OP
+        // NO OP
     }
 
     /**
@@ -147,8 +156,8 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      *
      * @param styleConsumer The consumer that accepts style definitions.
      */
-    public void setupDefaultStyles(@NotNull StyleConsumer styleConsumer) {
-        // NO-OP
+    public void setupStyles(@NotNull StyleConsumer styleConsumer) {
+        // NO OP
     }
 
     /**
@@ -160,20 +169,20 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      *
      * @param variableConsumer The consumer that accepts variable definitions.
      */
-    public void setupDefaultVariables(@NotNull VariableConsumer variableConsumer) {
-        // NO-OP
+    public void setupVariables(@NotNull VariableConsumer variableConsumer) {
+        // NO OP
     }
 
     /**
-     * Configures the default configuration settings for this AlpineCore plugin.
+     * Configures the default configuration settings for this {@link AlpinePlugin}.
      * <br>
      * Implementations can override this method to apply custom configurations or adjust the existing ones.
      *
      * @param config the configuration.
-     * @see AlpineCoreConfig
+     * @see AlpinePluginConfig
      */
-    public void setupDefaultConfiguration(@NotNull AlpineCoreConfig config) {
-        // NO-OP
+    public void setupAlpineConfig(@NotNull AlpinePluginConfig config) {
+        // NO OP
     }
 
     /**
@@ -187,10 +196,12 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     public @NotNull MiniMessage setupMiniMessage(@NotNull MiniMessage.Builder builder) {
         return builder.build();
     }
+
     // endregion
 
     // region Override methods
-    @Override
+
+    @Override @ApiStatus.Internal
     public final void onEnable() {
         this.log("&e=== ENABLE START ===");
         // Start a timer
@@ -213,15 +224,8 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // Activate all activatables
         this.activateAll();
 
-        // Register command config
-        if (!this.configManager.isRegistered(AlpineCoreConfig.class)) {
-            AlpineCoreConfig config = new AlpineCoreConfig();
-            this.setupDefaultStyles((tag, style) -> config.styles.put(tag, style));
-            this.setupDefaultVariables((name, variable) -> config.variables.put(name, variable));
-            this.setupDefaultConfiguration(config);
-
-            this.configManager.registerConfig(config);
-        }
+        // Register plugin config
+        this.setupAlpinePluginConfig();
 
         // Setup plugin MiniMessage instances
         TagResolver resolver = TagResolver.resolver(TagResolver.standard(), new StyleTagResolver(this));
@@ -231,6 +235,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // Initialize the command manager
         this.setupCommandManager();
 
+        // Register this plugin with the EventBus
+        this.getServer().getPluginManager().registerEvents(this, this);
+
         // Hand off to the plugin
         this.onStart();
 
@@ -238,7 +245,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.log(String.format("&e=== ENABLE &aCOMPLETE&e (&d%dms&e) ===", startupTime));
     }
 
-    @Override
+    @Override @ApiStatus.Internal
     public final void onDisable() {
         // Hand off to the plugin
         this.onStop();
@@ -251,9 +258,21 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             this.commandManager.unregister();
         }
     }
+
     // endregion
 
     // region Unique methods
+
+    /**
+     * Retrieves the configuration for this {@link AlpinePlugin}.
+     *
+     * @return The configuration.
+     * @see AlpinePluginConfig
+     */
+    public final @NotNull AlpinePluginConfig getAlpineConfig() {
+        return this.pluginConfig;
+    }
+
     /**
      * Retrieves a configuration instance from the manager.
      *
@@ -263,6 +282,10 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * @return The configuration instance
      */
     public final <T extends AlpineConfig> @NotNull T getConfiguration(@NotNull Class<T> clazz) {
+        if (AlpinePluginConfig.class.equals(clazz)) {
+            return (T) this.getAlpineConfig();
+        }
+
         return this.configManager.getConfig(clazz);
     }
 
@@ -327,8 +350,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     /**
-     * Locates all {@link co.crystaldev.alpinecore.framework.Activatable}s on the classpath in the
-     * plugins package and activates them.
+     * Locates all {@link co.crystaldev.alpinecore.framework.Activatable}s within the classpath and activates them.
      */
     private void activateAll() {
         String packageName = this.getClass().getPackage().getName();
@@ -344,12 +366,12 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             this.log("&cError scanning classpath", ex);
         }
 
-        this.activate(classes, AlpineConfig.class::isAssignableFrom);
+        this.activate(classes, c -> AlpineConfig.class.isAssignableFrom(c) && !AlpinePluginConfig.class.isAssignableFrom(c));
         this.activate(classes, AlpineIntegration.class::isAssignableFrom);
         this.activate(classes, AlpineEngine.class::isAssignableFrom);
         this.activate(classes, AlpineCommand.class::isAssignableFrom);
         this.activate(classes, AlpineArgumentResolver.class::isAssignableFrom);
-        this.activate(classes, v -> true);
+        this.activate(classes, c ->  !AlpinePluginConfig.class.isAssignableFrom(c));
     }
 
     /**
@@ -370,7 +392,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     private void setupCommandManager() {
-        AlpineCoreConfig messages = this.getConfigManager().getConfig(AlpineCoreConfig.class);
+        AlpinePluginConfig messages = this.getAlpineConfig();
         AlpineCommand[] commands = this.activatables.stream()
                 .filter(v -> v instanceof AlpineCommand)
                 .filter(Activatable::isActive)
@@ -423,8 +445,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             if (!Activatable.class.isAssignableFrom(clazz) || Modifier.isAbstract(clazz.getModifiers()))
                 continue;
 
-            if (!classPredicate.test(clazz))
+            if (!classPredicate.test(clazz)) {
                 continue;
+            }
 
             try {
                 Activatable activatable;
@@ -461,6 +484,41 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             classes.remove(clazz);
         }
     }
+
+    private void setupAlpinePluginConfig() {
+        // Initialize the config
+        AlpinePluginConfig config = new AlpinePluginConfig();
+        this.setupStyles((tag, style) -> config.styles.put(tag, style));
+        this.setupVariables((name, variable) -> config.variables.put(name, variable));
+        this.setupAlpineConfig(config);
+
+        // Register with the config manager
+        this.pluginConfig = (AlpinePluginConfig) this.configManager.loadConfig(config);
+
+        // Override the config if defined
+        if (this.pluginConfig.overrideWith != null && !this.pluginConfig.overrideWith.equals(this.getName())) {
+            Plugin plugin = Bukkit.getPluginManager().getPlugin(this.pluginConfig.overrideWith);
+            if (plugin instanceof AlpinePlugin) {
+                AlpinePlugin other = (AlpinePlugin) plugin;
+                this.log(String.format("&aReplacing AlpinePlugin config with &d%s", other.getName()));
+                this.pluginConfig = other.pluginConfig;
+            }
+        }
+    }
+
+    @EventHandler
+    private void onPluginLoad(PluginEnableEvent event) {
+        if (!(event.getPlugin() instanceof AlpinePlugin)) {
+            return;
+        }
+
+        AlpinePlugin other = (AlpinePlugin) event.getPlugin();
+        if (other.getName().equalsIgnoreCase(this.pluginConfig.overrideWith)) {
+            this.log(String.format("&aReplacing AlpinePlugin config with &d%s", other.getName()));
+            this.pluginConfig = other.pluginConfig;
+        }
+    }
+
     // endregion
 
     @FunctionalInterface
