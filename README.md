@@ -1,5 +1,5 @@
 # Alpine Core
-> Current version: 0.3.6
+> Current version: 0.4.0
 
 A lightweight library for creating modern yet widely compatible Minecraft server plugins.
 
@@ -37,6 +37,16 @@ The project consists of the following core systems:
   - A server command that is automatically registered
     - Includes a more convenient API for registering completions and conditions
   - Utilizes [LiteCommands](https://github.com/Rollczi/LiteCommands) to enable the efficient creation of complex command structures
+- User Interfaces
+  - Provides an advanced inventory GUI framework designed for simplicity, with recipe-like slot mask configuration for element placement
+  - Allows the efficient creation of interactive user interfaces in the plugin
+  - Utilizes `UIHandler` to initialize the menu to handle user interactions
+- Teleportation
+  - Managed by `TeleportManager`
+  - Provides a centralized system for point-to-point teleportation
+    - Curate a teleportation sequence with the `TeleportTask` builder
+    - Handle the lifecycle of a teleportation request, from initialization to the execution
+    - Add a countdown, event handlers, & cancellation policies
 - Events
   - Extended from `AlpineEvent`
   - A generic Bukkit event, minus the boilerplate
@@ -53,7 +63,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'co.crystaldev:alpinecore:0.3.6'
+    compileOnly 'co.crystaldev:alpinecore:0.4.0'
 }
 ```
 
