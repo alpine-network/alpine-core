@@ -35,7 +35,7 @@ public final class CachingStrategy {
      * @see CachingStrategy.Builder
      * @return New builder for this class
      */
-    public static Builder builder() {
+    public static @NotNull Builder builder() {
         return new Builder();
     }
 
@@ -54,7 +54,7 @@ public final class CachingStrategy {
          * @see com.google.common.cache.CacheBuilder#maximumSize(long)
          */
         @Contract("_ -> this")
-        public Builder maximumSize(long maximumSize) {
+        public @NotNull Builder maximumSize(long maximumSize) {
             Validate.isTrue(maximumSize >= -1);
             this.maximumSize = maximumSize;
             return this;
@@ -64,7 +64,7 @@ public final class CachingStrategy {
          * @see com.google.common.cache.CacheBuilder#expireAfterAccess(long, TimeUnit)
          */
         @Contract("_, _ -> this")
-        public Builder expireTime(long expireTimeValue, TimeUnit expireTimeUnit) {
+        public @NotNull Builder expireTime(long expireTimeValue, TimeUnit expireTimeUnit) {
             return this.expireTimeValue(expireTimeValue).expireTimeUnit(expireTimeUnit);
         }
 
@@ -72,7 +72,7 @@ public final class CachingStrategy {
          * @see com.google.common.cache.CacheBuilder#expireAfterAccess(long, TimeUnit) 
          */
         @Contract("_ -> this")
-        public Builder expireTimeValue(long expireTimeValue) {
+        public @NotNull Builder expireTimeValue(long expireTimeValue) {
             Validate.isTrue(this.expireTimeValue > 0);
             this.expireTimeValue = expireTimeValue;
             return this;
@@ -82,7 +82,7 @@ public final class CachingStrategy {
          * @see com.google.common.cache.CacheBuilder#expireAfterAccess(long, TimeUnit)
          */
         @Contract("null -> fail; _ -> this")
-        public Builder expireTimeUnit(TimeUnit expireTimeUnit) {
+        public @NotNull Builder expireTimeUnit(TimeUnit expireTimeUnit) {
             Validate.notNull(this.expireTimeUnit);
             this.expireTimeUnit = expireTimeUnit;
             return this;
@@ -92,7 +92,7 @@ public final class CachingStrategy {
          * @see com.google.common.cache.CacheBuilder#concurrencyLevel(int) 
          */
         @Contract("_ -> this")
-        public Builder concurrencyLevel(int concurrencyLevel) {
+        public @NotNull Builder concurrencyLevel(int concurrencyLevel) {
             Validate.isTrue(this.concurrencyLevel > 0);
             this.concurrencyLevel = concurrencyLevel;
             return this;
@@ -101,8 +101,7 @@ public final class CachingStrategy {
         /**
          * @return The newly constructed {@link CachingStrategy}
          */
-        @NotNull
-        public CachingStrategy build() {
+        public @NotNull CachingStrategy build() {
             return new CachingStrategy(this.maximumSize, this.expireTimeValue, this.expireTimeUnit, this.concurrencyLevel);
         }
     }

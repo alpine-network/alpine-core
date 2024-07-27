@@ -45,23 +45,24 @@ dependencies {
     testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
     testImplementation("commons-lang:commons-lang:2.6")
 
-    shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
+    shade(this, "com.zaxxer:HikariCP:5.1.0")
 
     shade(this, "org.jetbrains:annotations:24.1.0")
     shade(this, "de.exlll:configlib-spigot:4.2.0")
-    shade(this, "com.github.cryptomorin:XSeries:9.9.0")
+    shade(this, "com.github.cryptomorin:XSeries:11.2.0.1")
+    shade(this, "com.github.PikaMug:LocaleLib:60b38e1fbe") // TODO: unpin version
 
-    val liteCommands = "3.4.0"
+    val liteCommands = "3.4.2"
     shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
-    val adventure = "4.16.0"
+    val adventure = "4.17.0"
     shade(this, "net.kyori:adventure-platform-bukkit:4.3.0")
     shade(this, "net.kyori:adventure-api:$adventure")
     shade(this, "net.kyori:adventure-text-minimessage:$adventure")
     shade(this, "net.kyori:adventure-text-serializer-plain:$adventure")
 
-    val lombok = "org.projectlombok:lombok:1.18.30"
+    val lombok = "org.projectlombok:lombok:1.18.34"
     compileOnly(lombok)
     annotationProcessor(lombok)
 }
@@ -168,11 +169,13 @@ publishing {
                     val dependenciesNode = asNode().appendNode("dependencies")
 
                     project.configurations["api"].allDependencies.forEach { dependency ->
-                        val dependencyNode = dependenciesNode.appendNode("dependency")
-                        dependencyNode.appendNode("groupId", dependency.group)
-                        dependencyNode.appendNode("artifactId", dependency.name)
-                        dependencyNode.appendNode("version", dependency.version)
-                        dependencyNode.appendNode("scope", "compile")
+                        if (dependency.name != "LocaleLib") {
+                            val dependencyNode = dependenciesNode.appendNode("dependency")
+                            dependencyNode.appendNode("groupId", dependency.group)
+                            dependencyNode.appendNode("artifactId", dependency.name)
+                            dependencyNode.appendNode("version", dependency.version)
+                            dependencyNode.appendNode("scope", "compile")
+                        }
                     }
                 }
             }

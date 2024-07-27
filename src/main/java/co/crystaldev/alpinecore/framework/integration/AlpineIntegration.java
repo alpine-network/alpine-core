@@ -39,7 +39,7 @@ public abstract class AlpineIntegration implements Listener, Activatable {
      * Integrations are reflectively instantiated by
      * the framework automatically.
      */
-    protected AlpineIntegration(AlpinePlugin plugin) {
+    protected AlpineIntegration(@NotNull AlpinePlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -53,8 +53,7 @@ public abstract class AlpineIntegration implements Listener, Activatable {
     /**
      * @return The class of the engine for this integration
      */
-    @NotNull
-    protected abstract Class<? extends AlpineIntegrationEngine> getEngineClass();
+    protected abstract @NotNull Class<? extends AlpineIntegrationEngine> getEngineClass();
 
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
@@ -88,13 +87,13 @@ public abstract class AlpineIntegration implements Listener, Activatable {
     }
 
     @EventHandler
-    public final void onPluginEnabled(PluginEnableEvent event) {
+    private void onPluginEnabled(PluginEnableEvent event) {
         // We schedule this 1 tick later as the plugin has not been removed from the internal registry yet
         Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this::checkActivation, 1L);
     }
 
     @EventHandler
-    public final void onPluginDisabled(PluginDisableEvent event) {
+    private void onPluginDisabled(PluginDisableEvent event) {
         // We schedule this 1 tick later as the plugin has not been removed from the internal registry yet
         Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this::checkActivation, 1L);
     }

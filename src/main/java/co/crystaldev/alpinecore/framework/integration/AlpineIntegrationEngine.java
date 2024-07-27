@@ -2,6 +2,7 @@ package co.crystaldev.alpinecore.framework.integration;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An {@link co.crystaldev.alpinecore.framework.engine.AlpineEngine} that is controlled
@@ -24,7 +25,7 @@ public abstract class AlpineIntegrationEngine implements Listener {
      * Engines are reflectively instantiated by the
      * framework automatically.
      */
-    protected AlpineIntegrationEngine(AlpinePlugin plugin) {
+    protected AlpineIntegrationEngine(@NotNull AlpinePlugin plugin) {
         this.plugin = plugin;
     }
 }

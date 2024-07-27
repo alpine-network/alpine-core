@@ -21,14 +21,14 @@ import java.util.function.Consumer;
  * <p>
  * Each draw will produce random a number between 0 and 100 for
  * each {@link Entry}. If that number is less than or equal to
- * it's chance, the reward is given.
+ * its chance, the reward is given.
  *
  * @see Entry
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@Configuration
 @AllArgsConstructor @NoArgsConstructor
+@Configuration
 public class ConfigRewardPool {
 
     private List<Entry> entries;
@@ -38,7 +38,7 @@ public class ConfigRewardPool {
      *
      * @param player The player
      */
-    public void drawForPlayer(Player player) {
+    public void drawForPlayer(@NotNull Player player) {
         Map<String, Object> placeholders = ImmutableMap.of("player", player.getName());
         this.drawInternal(placeholders, (s) -> {});
     }
@@ -49,7 +49,7 @@ public class ConfigRewardPool {
      * @param player The player
      * @param callback The callback
      */
-    public void drawForPlayer(Player player, Consumer<String> callback) {
+    public void drawForPlayer(@NotNull Player player, @NotNull Consumer<String> callback) {
         Map<String, Object> placeholders = ImmutableMap.of("player", player.getName());
         this.drawInternal(placeholders, callback);
     }
@@ -60,7 +60,7 @@ public class ConfigRewardPool {
      * @param player The player
      * @param placeholders The placeholders
      */
-    public void drawForPlayer(Player player, Map<String, Object> placeholders) {
+    public void drawForPlayer(@NotNull Player player, @NotNull Map<String, Object> placeholders) {
         placeholders.put("player", player.getName());
         this.drawInternal(placeholders, (s) -> {});
     }
@@ -73,12 +73,13 @@ public class ConfigRewardPool {
      * @param placeholders The placeholders
      * @param callback The callback
      */
-    public void drawForPlayer(Player player, Map<String, Object> placeholders, Consumer<String> callback) {
+    public void drawForPlayer(@NotNull Player player, @NotNull Map<String, Object> placeholders,
+                              @NotNull Consumer<String> callback) {
         placeholders.put("player", player.getName());
         this.drawInternal(placeholders, callback);
     }
 
-    private void drawInternal(Map<String, Object> placeholders, Consumer<String> callback) {
+    private void drawInternal(@NotNull Map<String, Object> placeholders, @NotNull Consumer<String> callback) {
         for (Entry entry : this.entries) {
             double draw = ThreadLocalRandom.current().nextDouble(0.0D, 100.0D);
             if (entry.chance >= draw) {
@@ -91,7 +92,8 @@ public class ConfigRewardPool {
     /**
      * Represents a possible reward.
      */
-    @Configuration @NoArgsConstructor
+    @NoArgsConstructor
+    @Configuration
     public static class Entry {
         private String name;
         private double chance;
@@ -110,7 +112,7 @@ public class ConfigRewardPool {
             this.commands = commands;
         }
 
-        protected void executeCommands(Map<String, Object> placeholders) {
+        protected void executeCommands(@NotNull Map<String, Object> placeholders) {
             for (String command : this.commands) {
                 command = Formatting.placeholders(command, placeholders);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);

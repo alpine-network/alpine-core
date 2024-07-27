@@ -3,6 +3,7 @@ package co.crystaldev.alpinecore.util;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public final class UuidTypeAdapter extends TypeAdapter<UUID> {
      * @param value The UUID object
      * @return The non-dashed string
      */
-    public static String fromUUID(UUID value) {
+    public static @NotNull String fromUUID(@NotNull UUID value) {
         return value.toString().replace("-", "");
     }
 
@@ -40,7 +41,7 @@ public final class UuidTypeAdapter extends TypeAdapter<UUID> {
      * @param input The non-dashed string
      * @return The UUID object
      */
-    public static UUID fromString(String input) {
+    public static @NotNull UUID fromString(@NotNull String input) {
         return UUID.fromString(input.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
     }
 }

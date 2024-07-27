@@ -1,7 +1,7 @@
 package co.crystaldev.alpinecore.util;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
-import co.crystaldev.alpinecore.config.AlpineCoreConfig;
+import co.crystaldev.alpinecore.framework.config.AlpinePluginConfig;
 import net.kyori.adventure.text.format.StyleBuilderApplicable;
 import net.kyori.adventure.text.minimessage.Context;
 import net.kyori.adventure.text.minimessage.ParsingException;
@@ -23,10 +23,10 @@ public final class StyleTagResolver implements TagResolver {
 
     private final Map<String, Tag> styleToTagMap = new HashMap<>();
 
-    private final AlpineCoreConfig config;
+    private final AlpinePluginConfig config;
 
     public StyleTagResolver(@NotNull AlpinePlugin plugin) {
-        this.config = plugin.getConfiguration(AlpineCoreConfig.class);
+        this.config = plugin.getAlpineConfig();
     }
 
     @Override

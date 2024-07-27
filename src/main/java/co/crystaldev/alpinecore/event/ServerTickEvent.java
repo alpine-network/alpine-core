@@ -11,14 +11,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author BestBearr
- * @since 02/24/2024
+ * @since 0.3.0
  */
+@Getter
 public final class ServerTickEvent extends AlpineEvent {
 
-    @Getter
     private final Server server = Bukkit.getServer();
 
-    @Getter @Setter
+    @Setter
     private long tick;
 
     public boolean isTime(long time, @NotNull TimeUnit unit) {

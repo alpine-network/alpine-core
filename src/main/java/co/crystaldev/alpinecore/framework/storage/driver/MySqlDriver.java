@@ -304,8 +304,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
         this.connection.shutdown();
     }
 
-    @NotNull
-    private Object serializeKey(@NotNull K key) {
+    private @NotNull Object serializeKey(@NotNull K key) {
         SerializerRegistry registry = this.plugin.getSerializerRegistry();
         KeySerializer<K, ?> serializer = null;
         for (Class<?> clazz : registry.getKeySerializers().keySet()) {
@@ -321,8 +320,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
         return serializer.serialize(key);
     }
 
-    @Nullable
-    private Connection getConnection() {
+    private @Nullable Connection getConnection() {
         try {
             return this.connection.getConnection();
         }
@@ -375,8 +373,7 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
      * @see Builder
      * @return New builder for this class
      */
-    @NotNull
-    public static <K, D> Builder<K, D> builder() {
+    public static <K, D> @NotNull Builder<K, D> builder() {
         return new Builder<>();
     }
 
@@ -396,14 +393,17 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
 
         private Gson gson = Reference.GSON;
 
-        @NotNull
-        public Builder<K, D> url(@NotNull String url) {
+        public @NotNull Builder<K, D> url(@NotNull String url) {
             this.url = url;
             return this;
         }
 
-        @NotNull
-        public Builder<K, D> host(@NotNull String host, int port, @NotNull String database, @NotNull String table) {
+        public @NotNull Builder<K, D> table(@NotNull String table) {
+            this.table = table;
+            return this;
+        }
+
+        public @NotNull Builder<K, D> host(@NotNull String host, int port, @NotNull String database, @NotNull String table) {
             this.table = table;
             if (port < 0) {
                 return this.url(String.format("jdbc:mysql://%s/%s", host, database));
@@ -413,41 +413,35 @@ public class MySqlDriver<K, D> extends AlpineDriver<K, D> {
             }
         }
 
-        @NotNull
-        public Builder<K, D> host(@NotNull String host, @NotNull String database, @NotNull String table) {
+        public @NotNull Builder<K, D> host(@NotNull String host, @NotNull String database, @NotNull String table) {
             return this.host(host, -1, database, table);
         }
 
-        @NotNull
-        public Builder<K, D> credentials(@NotNull String username, @NotNull String password) {
+        public @NotNull Builder<K, D> credentials(@NotNull String username, @NotNull String password) {
             this.username = username;
             this.password = password;
             return this;
         }
 
-        @NotNull
-        public Builder<K, D> dataType(@NotNull Class<D> dataType) {
+        public @NotNull Builder<K, D> dataType(@NotNull Class<D> dataType) {
             this.dataType = dataType;
             return this;
         }
 
-        @NotNull
-        public Builder<K, D> gson(@NotNull Gson gson) {
+        public @NotNull Builder<K, D> gson(@NotNull Gson gson) {
             this.gson = gson;
             return this;
         }
 
-        @NotNull
-        public MySqlDriver<K, D> build(@NotNull AlpinePlugin plugin) {
+        public @NotNull MySqlDriver<K, D> build(@NotNull AlpinePlugin plugin) {
             Validate.notNull(this.url, "url must not be null");
             Validate.notNull(this.table, "table must not be null");
             Validate.notNull(this.dataType, "dataType must not be null");
             return new MySqlDriver<>(plugin, this.url, this.table, this.username, this.password, this.dataType, this.gson);
         }
 
-        @NotNull
         @Deprecated
-        public MySqlDriver<K, D> build() {
+        public @NotNull MySqlDriver<K, D> build() {
             return this.build(AlpineCore.getInstance());
         }
     }

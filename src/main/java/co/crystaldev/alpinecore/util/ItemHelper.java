@@ -2,8 +2,16 @@ package co.crystaldev.alpinecore.util;
 
 import com.cryptomorin.xseries.XMaterial;
 import lombok.experimental.UtilityClass;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Utility for interacting with {@link ItemStack}s.
@@ -13,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
  */
 @UtilityClass
 public final class ItemHelper {
+
+    // region Categories
 
     public static final MappedMaterial HELMETS = MappedMaterial.of(
             XMaterial.NETHERITE_HELMET,
@@ -107,21 +117,168 @@ public final class ItemHelper {
     /**
      * @return whether an item is a melee weapon
      */
-    public static boolean isMeleeWeapon(@NotNull ItemStack is) {
-        return SWORDS.test(is) || AXES.test(is);
+    public static boolean isMeleeWeapon(@NotNull ItemStack item) {
+        return SWORDS.test(item) || AXES.test(item);
     }
 
     /**
      * @return whether an item is an armor piece
      */
-    public static boolean isArmor(@NotNull ItemStack is) {
-        return ARMOR.test(is);
+    public static boolean isArmor(@NotNull ItemStack item) {
+        return ARMOR.test(item);
     }
 
     /**
      * @return whether an item is a tool
      */
-    public static boolean isTool(@NotNull ItemStack is) {
-        return TOOLS.test(is);
+    public static boolean isTool(@NotNull ItemStack item) {
+        return TOOLS.test(item);
     }
+
+    // endregion Categories
+
+    // region Meta
+
+    private static final Method ITEM_META_GET_DISPLAY_NAME = ReflectionHelper.findMethod(
+            ItemMeta.class, "displayName");
+
+    private static final Method ITEM_META_SET_DISPLAY_NAME = ReflectionHelper.findMethod(
+            ItemMeta.class, "displayName", Component.class);
+
+    private static final Method ITEM_META_GET_LORE = ReflectionHelper.findMethod(
+            ItemMeta.class, "lore");
+
+    private static final Method ITEM_META_SET_LORE = ReflectionHelper.findMethod(
+            ItemMeta.class, "lore", List.class);
+
+    /**
+     * Fetches the display name of an {@link ItemStack} in {@link Component} form.
+     *
+     * @param item The item.
+     * @return the display name.
+     */
+    public static @NotNull Component getDisplayName(@NotNull ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null || !meta.hasDisplayName()) {
+            return LocaleHelper.getTranslation(item);
+        }
+
+        if (ITEM_META_GET_DISPLAY_NAME != null) {
+            return ReflectionHelper.invokeMethod(ITEM_META_GET_DISPLAY_NAME, meta);
+        }
+        else {
+            return LegacyComponentSerializer.legacySection().deserialize(meta.getDisplayName());
+        }
+    }
+
+    /**
+     * Sets the display name of an {@link ItemStack}.
+     *
+     * @param item The item.
+     * @param name The name.
+     */
+    public static void setDisplayName(@NotNull ItemStack item, @NotNull Component name) {
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null) {
+            return;
+        }
+
+        if (ITEM_META_SET_DISPLAY_NAME != null) {
+            ReflectionHelper.invokeMethod(ITEM_META_SET_DISPLAY_NAME, meta, name);
+        }
+        else {
+            String serialized = LegacyComponentSerializer.legacySection().serialize(name);
+            meta.setDisplayName(serialized);
+        }
+
+        item.setItemMeta(meta);
+    }
+
+    /**
+     * Fetches the lore of an {@link ItemStack} in {@link Component} form.
+     *
+     * @param item The item.
+     * @return the lore.
+     */
+    public static @NotNull List<Component> getLore(@NotNull ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null || !meta.hasLore()) {
+            return Collections.emptyList();
+        }
+
+        if (ITEM_META_GET_LORE != null) {
+            return ReflectionHelper.invokeMethod(ITEM_META_GET_LORE, meta);
+        }
+        else {
+            return meta.getLore()
+                    .stream()
+                    .map(LegacyComponentSerializer.legacySection()::deserialize)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * Fetches the lore of an {@link ItemStack} in {@link Component} form.
+     *
+     * @param item The item.
+     * @return the lore.
+     */
+    public static @NotNull Component getJoinedLore(@NotNull ItemStack item) {
+        return Components.joinNewLines(getLore(item));
+    }
+
+    /**
+     * Sets the display name of an {@link ItemStack}.
+     *
+     * @param item The item.
+     * @param lore The lore.
+     */
+    public static void setLore(@NotNull ItemStack item, @NotNull List<Component> lore) {
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null) {
+            return;
+        }
+
+        // since the lore does not allow newlines, we must split at each newline
+        List<Component> processedLore = lore.isEmpty() ? lore : Components.split(Components.joinNewLines(lore), "\n");
+
+        if (ITEM_META_SET_LORE != null) {
+            ReflectionHelper.invokeMethod(ITEM_META_SET_LORE, meta, processedLore);
+        }
+        else {
+            List<String> serialized = processedLore.stream()
+                    .map(LegacyComponentSerializer.legacySection()::serialize)
+                    .collect(Collectors.toList());
+            meta.setLore(serialized);
+        }
+
+        item.setItemMeta(meta);
+    }
+
+    /**
+     * Creates a hover component for the given item stack.
+     *
+     * @param itemStack The item stack.
+     * @return The hover component.
+     */
+    @NotNull
+    public Component createHoverComponent(@NotNull ItemStack itemStack) {
+        Component displayName = getDisplayName(itemStack);
+
+        Component hover = Component.text("").append(displayName);
+        List<Component> lore = getLore(itemStack);
+        if (!lore.isEmpty()) {
+            hover = hover.appendNewline().append(Components.joinNewLines(lore));
+        }
+
+        return Component.text("")
+                .append(displayName)
+                .hoverEvent(hover);
+    }
+
+    // endregion Meta
 }

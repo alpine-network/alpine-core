@@ -31,7 +31,7 @@ public abstract class AlpineEngine implements Listener, Activatable {
      * Engines are reflectively instantiated by the
      * framework automatically.
      */
-    protected AlpineEngine(AlpinePlugin plugin) {
+    protected AlpineEngine(@NotNull AlpinePlugin plugin) {
         this.plugin = plugin;
     }
 

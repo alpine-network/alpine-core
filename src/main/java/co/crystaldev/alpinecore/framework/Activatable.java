@@ -28,7 +28,7 @@ public interface Activatable {
     /**
      * Can this Activatable object be deactivated?
      *
-     * @return Whether this activatable object can be deactivated.
+     * @return Whether this object can be deactivated.
      */
     default boolean canDeactivate() {
         return true;
@@ -37,7 +37,7 @@ public interface Activatable {
     /**
      * Is this object active?
      *
-     * @return Whether the object is active
+     * @return Whether this object is active
      */
     boolean isActive();
 }

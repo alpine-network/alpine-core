@@ -31,7 +31,6 @@ import java.util.logging.Level;
  * @since 0.1.0
  */
 @ApiStatus.Experimental
-@SuppressWarnings("UnstableApiUsage")
 public abstract class AlpineStore<K, D> implements Activatable {
     // TODO: allow plugins to change this?
     private static final long PERSIST_TASK_PERIOD = 3600L; // ~3m in ticks
@@ -81,7 +80,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
                 .concurrencyLevel(strategy.getConcurrencyLevel())
                 .build(new CacheLoader<K, D>() {
             @Override
-            public D load(K key) throws Exception {
+            public @NotNull D load(@NotNull K key) throws Exception {
                 if (AlpineStore.this.writeCache.containsKey(key))
                     return AlpineStore.this.writeCache.get(key);
                 else
@@ -97,8 +96,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
      * @param key the key
      * @return the data
      */
-    @Nullable
-    public final D get(@NotNull K key) {
+    public final @Nullable D get(@NotNull K key) {
         try {
             // This call will only be expensive if the entry is uncached
             return this.readCache.get(key);
@@ -117,8 +115,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
      * @param defaultData the data to create a new entry with
      * @return the data
      */
-    @NotNull
-    public final D getOrCreate(@NotNull K key, @NotNull D defaultData) {
+    public final @NotNull D getOrCreate(@NotNull K key, @NotNull D defaultData) {
         if (!this.has(key)) {
             this.put(key, defaultData);
         }
@@ -140,8 +137,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
      * @param defaultDataSupplier the data to create a new entry with
      * @return the data
      */
-    @NotNull
-    public final D getOrCreate(@NotNull K key, @NotNull Supplier<D> defaultDataSupplier) {
+    public final @NotNull D getOrCreate(@NotNull K key, @NotNull Supplier<D> defaultDataSupplier) {
         if (!this.has(key)) {
             this.put(key, defaultDataSupplier.get());
         }
@@ -165,8 +161,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
      * @return A collection containing all stored data entries.
      * @throws Exception If an exception occurs while retrieving the data entries.
      */
-    @NotNull
-    public final Collection<D> loadAllEntries() throws Exception {
+    public final @NotNull Collection<D> loadAllEntries() throws Exception {
         return this.driver.getAllEntries();
     }
 
@@ -180,8 +175,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
      * @param exceptionHandler A function for handling errors.
      * @return A collection containing all stored data entries.
      */
-    @NotNull
-    public final Collection<D> loadAllEntries(@Nullable Consumer<Exception> exceptionHandler) {
+    public final @NotNull Collection<D> loadAllEntries(@Nullable Consumer<Exception> exceptionHandler) {
         return this.driver.getAllEntries(exceptionHandler);
     }
 

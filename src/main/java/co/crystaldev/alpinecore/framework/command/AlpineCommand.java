@@ -31,7 +31,7 @@ public abstract class AlpineCommand implements Activatable {
      * Commands are reflectively instantiated by the
      * framework automatically.
      */
-    protected AlpineCommand(AlpinePlugin plugin) {
+    protected AlpineCommand(@NotNull AlpinePlugin plugin) {
         this.plugin = plugin;
     }
 

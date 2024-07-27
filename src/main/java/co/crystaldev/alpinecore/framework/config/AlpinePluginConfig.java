@@ -1,23 +1,50 @@
-package co.crystaldev.alpinecore.config;
+package co.crystaldev.alpinecore.framework.config;
 
-import co.crystaldev.alpinecore.framework.Initializable;
-import co.crystaldev.alpinecore.framework.config.AlpineConfig;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
+import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
- * Configuration for LiteCommands-related messages.
+ * The primary configuration for your {@link co.crystaldev.alpinecore.AlpinePlugin AlpinePlugin}.
  *
  * @author BestBearr
- * @since 0.2.0
+ * @since 0.4.0
  */
-public final class AlpineCoreConfig extends AlpineConfig implements Initializable {
+@NoArgsConstructor(onConstructor_ = @ApiStatus.Internal)
+public final class AlpinePluginConfig extends AlpineConfig {
 
-    @Comment("Predefined chat style tags for use in config")
+    @Comment({
+            "Specifies an AlpinePlugin configuration to be used in place of this configuration.",
+            " ",
+            "The plugin name is CaSe SeNsItIvE and must match that of an existing AlpinePlugin.",
+            " ",
+            "Example usage:",
+            " ",
+            "overrideWith: AlpineCore"
+    })
+    public String overrideWith;
+
+    @Comment({
+            "",
+            "Predefined chat style tags for use in configuration.",
+            "These tags can be used to apply specific formatting to chat messages,",
+            "making it easier to maintain a consistent style across your application.",
+            " ",
+            "Example usage:",
+            " ",
+            "styles:",
+            "  info:      dark_aqua bold",
+            "  highlight: aqua",
+            "  notice:    dark_aqua",
+            " ",
+            "exampleMessage: <info>Example</info> This is an <highlight>example</highlight>!"
+    })
     public HashMap<String, String> styles = new LinkedHashMap<>();
     {
         this.styles.put("info", "dark_aqua bold");
@@ -39,9 +66,10 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
 
     @Comment({
             "",
-            "Predefined variables for use in config",
+            "Predefined variables for use across all your plugin configurations.",
             " ",
-            "Example:",
+            "Example usage:",
+            " ",
             "variables:",
             "  prefix: '<bracket>[<info>*</info>]</bracket>'",
             "  error_prefix: '<bracket>[<error>*</error>]</bracket>'"
@@ -125,13 +153,8 @@ public final class AlpineCoreConfig extends AlpineConfig implements Initializabl
     public String progressRemainingStyle = "light_gray";
 
     @Override
-    public String getFileName() {
+    public @NotNull String getFileName() {
         return "alpinecore.yml";
-    }
-
-    @Override
-    public boolean init() {
-        return false;
     }
 
     @Configuration

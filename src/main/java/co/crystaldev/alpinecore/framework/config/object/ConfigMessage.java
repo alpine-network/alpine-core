@@ -3,6 +3,7 @@ package co.crystaldev.alpinecore.framework.config.object;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.util.Formatting;
 import de.exlll.configlib.Configuration;
+import de.exlll.configlib.Serializer;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -15,12 +16,24 @@ import java.util.stream.Collectors;
  * compatible with {@link co.crystaldev.alpinecore.framework.config.AlpineConfig}.
  * <p>
  * Utilizes the Adventure framework for formatting.
+ * </p>
+ * Example usage:
+ * <pre>{@code
+ * AlpinePlugin plugin = ; // your plugin instance
+ * ConfigMessage message = ConfigMessage.of(
+ *      "<info>PluginName:</info> This is the first part of the message",
+ *      "<notice> -</notice> This is the next line (%placeholder%)"
+ * );
+ * Component component = message.build(plugin, "placeholder", 20);
+ * Messaging.send(player, component);
+ * }</pre>
  *
  * @see <a href="https://docs.advntr.dev/index.html">Adventure Documentation</a>
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@Configuration @NoArgsConstructor
+@NoArgsConstructor
+@Configuration
 public class ConfigMessage {
 
     protected List<String> message;
@@ -37,13 +50,11 @@ public class ConfigMessage {
         this(Arrays.asList(message.split("(<br>|\n|\r)")));
     }
 
-    @NotNull
-    public static ConfigMessage of(@NotNull String component) {
+    public static @NotNull ConfigMessage of(@NotNull String component) {
         return new ConfigMessage(Collections.singletonList(component));
     }
 
-    @NotNull
-    public static ConfigMessage of(@NotNull String... components) {
+    public static @NotNull ConfigMessage of(@NotNull String... components) {
         return new ConfigMessage(Arrays.asList(components));
     }
 
@@ -56,11 +67,11 @@ public class ConfigMessage {
      *
      * @see co.crystaldev.alpinecore.util.Components
      * @see net.kyori.adventure.text.minimessage.MiniMessage
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      */
-    @NotNull
-    public Component build(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
         String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
         return plugin.getMiniMessage().deserialize(formatted);
     }
@@ -74,11 +85,11 @@ public class ConfigMessage {
      *
      * @see co.crystaldev.alpinecore.util.Components
      * @see net.kyori.adventure.text.minimessage.MiniMessage
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      */
-    @NotNull
-    public Component build(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
         String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
         return plugin.getMiniMessage().deserialize(formatted);
     }
@@ -86,26 +97,26 @@ public class ConfigMessage {
     /**
      * Formats the text of this message with placeholders
      *
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The string
      */
-    @NotNull
-    public String buildString(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
         return Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
     }
 
     /**
      * Formats the text of this message with placeholders
      *
+     * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The string
      */
-    @NotNull
-    public String buildString(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
         return Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
     }
 
-    public static class Serializer implements de.exlll.configlib.Serializer<ConfigMessage, Object> {
+    public static final class Adapter implements Serializer<ConfigMessage, Object> {
         @Override
         public Object serialize(ConfigMessage element) {
             return String.join("\n", element.message);

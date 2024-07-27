@@ -17,10 +17,10 @@ import org.jetbrains.annotations.NotNull;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
-@Configuration @NoArgsConstructor
+@NoArgsConstructor @Getter
+@Configuration
 public abstract class AlpineConfig implements Activatable {
 
-    @Getter
     private transient boolean active;
 
     /**
@@ -32,7 +32,7 @@ public abstract class AlpineConfig implements Activatable {
      *
      * @return The name of the file
      */
-    public String getFileName() {
+    public @NotNull String getFileName() {
         return this.getClass().getSimpleName().toLowerCase() + ".yml";
     }
 

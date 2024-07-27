@@ -12,6 +12,7 @@ repositories {
     maven("https://lib.alpn.cloud/alpine-public/")
     maven("https://repo.viaversion.com/")
     maven("https://repo.panda-lang.org/releases")
+    maven("https://jitpack.io/")
 }
 
 dependencies {

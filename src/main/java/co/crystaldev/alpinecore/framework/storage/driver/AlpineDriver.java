@@ -92,8 +92,7 @@ public abstract class AlpineDriver<K, D> {
      * @param key The key
      * @return The data associated with the key
      */
-    @NotNull
-    public abstract D retrieveEntry(@NotNull K key) throws Exception;
+    public abstract @NotNull D retrieveEntry(@NotNull K key) throws Exception;
 
     /**
      * Retrieve all stored values in the data storage.
@@ -107,8 +106,7 @@ public abstract class AlpineDriver<K, D> {
      * @return A collection containing all stored values.
      * @throws Exception If an exception occurs while retrieving the values.
      */
-    @NotNull
-    public abstract Collection<D> getAllEntries() throws Exception;
+    public abstract @NotNull Collection<D> getAllEntries() throws Exception;
 
     /**
      * Retrieve all stored values in the data storage.
@@ -120,8 +118,7 @@ public abstract class AlpineDriver<K, D> {
      * @param exceptionHandler A function for handling errors.
      * @return A collection containing all stored values.
      */
-    @NotNull
-    public abstract Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionHandler);
+    public abstract @NotNull Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionHandler);
 
     /**
      * Shut down the data storage system.

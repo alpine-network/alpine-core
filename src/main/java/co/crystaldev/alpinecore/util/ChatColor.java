@@ -106,8 +106,7 @@ public enum ChatColor {
      * @param code The code
      * @return The enum value, or null if not found
      */
-    @Nullable
-    public static ChatColor getByChar(char code) {
+    public static @Nullable ChatColor getByChar(char code) {
         return BY_CHAR.get(code);
     }
 
@@ -117,8 +116,7 @@ public enum ChatColor {
      * @param code The code, of which the first character will be used
      * @return The enum value, or null if not found
      */
-    @Nullable
-    public static ChatColor getByChar(@NotNull String code) {
+    public static @Nullable ChatColor getByChar(@NotNull String code) {
         return BY_CHAR.get(code.charAt(0));
     }
 
@@ -128,8 +126,8 @@ public enum ChatColor {
      * @param input The message
      * @return The stripped message
      */
-    @Nullable @Contract("null -> null; !null -> !null")
-    public static String stripColor(@Nullable String input) {
+    @Contract("null -> null; !null -> !null")
+    public static @Nullable String stripColor(@Nullable String input) {
         return input == null ? null : STRIP_COLOR_PATTERN.matcher(input).replaceAll("");
     }
 
@@ -140,8 +138,7 @@ public enum ChatColor {
      * @param input The text to be translated
      * @return The Minecraft formatted message
      */
-    @NotNull
-    public static String translate(@NotNull String input) {
+    public static @NotNull String translate(@NotNull String input) {
         return translate(input, '&');
     }
 
@@ -154,8 +151,7 @@ public enum ChatColor {
      * @param formatChar The character used to denote formatting
      * @return The Minecraft formatted message
      */
-    @NotNull
-    public static String translate(@NotNull String input, char formatChar) {
+    public static @NotNull String translate(@NotNull String input, char formatChar) {
         char[] b = input.toCharArray();
 
         for(int i = 0; i < b.length - 1; ++i) {
@@ -175,8 +171,7 @@ public enum ChatColor {
      * @param input The text to be translated
      * @return The ANSI escape code formatted message
      */
-    @NotNull
-    public static String translateToAnsi(@NotNull String input) {
+    public static @NotNull String translateToAnsi(@NotNull String input) {
         return translateToAnsi(input, false);
     }
 
@@ -188,8 +183,7 @@ public enum ChatColor {
      * @param format If the message should be Minecraft formatted beforehand
      * @return The ANSI escape code formatted message
      */
-    @NotNull
-    public static String translateToAnsi(@NotNull String input, boolean format) {
+    public static @NotNull String translateToAnsi(@NotNull String input, boolean format) {
         if (format)
             input = translate(input);
 

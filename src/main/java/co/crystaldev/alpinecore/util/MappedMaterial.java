@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -66,18 +65,15 @@ public final class MappedMaterial {
         return this.test(MaterialHelper.getType(item));
     }
 
-    @NotNull
-    public static MappedMaterial of(@NotNull XMaterial... materials) {
+    public static @NotNull MappedMaterial of(@NotNull XMaterial... materials) {
         return new MappedMaterial(ImmutableSet.copyOf(materials));
     }
 
-    @NotNull
-    public static MappedMaterial of(@NotNull Collection<XMaterial> materials) {
+    public static @NotNull MappedMaterial of(@NotNull Collection<XMaterial> materials) {
         return new MappedMaterial(ImmutableSet.copyOf(materials));
     }
 
-    @NotNull
-    public static Builder builder() {
+    public static @NotNull Builder builder() {
         return new Builder();
     }
 
@@ -86,14 +82,12 @@ public final class MappedMaterial {
 
         private final Set<XMaterial> materials = new HashSet<>();
 
-        @NotNull
-        public Builder add(@NotNull MappedMaterial material) {
+        public @NotNull Builder add(@NotNull MappedMaterial material) {
             this.materials.addAll(material.materials);
             return this;
         }
 
-        @NotNull
-        public Builder add(@NotNull Collection<?> materials) {
+        public @NotNull Builder add(@NotNull Collection<?> materials) {
             for (Object material : materials) {
                 if (material instanceof XMaterial) {
                     this.materials.add((XMaterial) material);
@@ -105,8 +99,7 @@ public final class MappedMaterial {
             return this;
         }
 
-        @NotNull
-        public Builder add(@NotNull Object... materials) {
+        public @NotNull Builder add(@NotNull Object... materials) {
             for (Object material : materials) {
                 if (material instanceof XMaterial) {
                     this.materials.add((XMaterial) material);
@@ -118,26 +111,22 @@ public final class MappedMaterial {
             return this;
         }
 
-        @NotNull
-        public Builder add(@NotNull XMaterial material) {
+        public @NotNull Builder add(@NotNull XMaterial material) {
             this.materials.add(material);
             return this;
         }
 
-        @NotNull
-        public Builder add(@NotNull Material material) {
+        public @NotNull Builder add(@NotNull Material material) {
             this.materials.add(XMaterial.matchXMaterial(material));
             return this;
         }
 
-        @NotNull
-        public Builder add(@NotNull Function<Stream<XMaterial>, Stream<XMaterial>> streamFunction) {
+        public @NotNull Builder add(@NotNull Function<Stream<XMaterial>, Stream<XMaterial>> streamFunction) {
             streamFunction.apply(Stream.of(XMaterial.VALUES).filter(XMaterial::isSupported)).forEach(this::add);
             return this;
         }
 
-        @NotNull
-        public MappedMaterial build() {
+        public @NotNull MappedMaterial build() {
             return new MappedMaterial(ImmutableSet.copyOf(this.materials));
         }
     }

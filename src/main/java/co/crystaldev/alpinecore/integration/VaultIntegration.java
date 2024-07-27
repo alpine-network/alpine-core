@@ -55,35 +55,32 @@ public final class VaultIntegration extends AlpineIntegration {
 
     @SuppressWarnings("unused")
     public static final class VaultEngine extends AlpineIntegrationEngine {
-        private static final EconomyResponse NO_ECONOMY = new EconomyResponse(0.0D, 0.0D, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "No economy provider was registered");
+        private static final EconomyResponse NO_ECONOMY = new EconomyResponse(0.0D, 0.0D,
+                EconomyResponse.ResponseType.NOT_IMPLEMENTED, "No economy provider was registered");
 
         public VaultEngine(AlpinePlugin plugin) {
             super(plugin);
         }
 
-        @Nullable
-        public Economy getEconomy() {
+        public @Nullable Economy getEconomy() {
             RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
             if (rsp == null) return null;
             else return rsp.getProvider();
         }
 
-        @Nullable
-        public String getEconomyName() {
+        public @Nullable String getEconomyName() {
            Economy econ = this.getEconomy();
            if (econ == null) return null;
            else return econ.getName();
         }
 
-        @Nullable
-        public String getCurrencyNameSingular() {
+        public @Nullable String getCurrencyNameSingular() {
             Economy econ = this.getEconomy();
             if (econ == null) return null;
             else return econ.currencyNameSingular();
         }
 
-        @Nullable
-        public String getCurrencyNamePlural() {
+        public @Nullable String getCurrencyNamePlural() {
             Economy econ = this.getEconomy();
             if (econ == null) return null;
             else return econ.currencyNamePlural();
@@ -107,8 +104,7 @@ public final class VaultIntegration extends AlpineIntegration {
             else return econ.fractionalDigits();
         }
 
-        @Nullable
-        public String formatAmount(double amount) {
+        public @Nullable String formatAmount(double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return null;
             else return econ.format(amount);
@@ -150,8 +146,7 @@ public final class VaultIntegration extends AlpineIntegration {
             else return econ.has(player, world, amount);
         }
 
-        @NotNull
-        public EconomyResponse withdrawFunds(@NotNull OfflinePlayer player, double amount) {
+        public @NotNull EconomyResponse withdrawFunds(@NotNull OfflinePlayer player, double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.withdrawPlayer(player, amount);
@@ -161,8 +156,8 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.withdrawFunds(player, amount).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse withdrawFundsInWorld(@NotNull OfflinePlayer player, @NotNull String world, double amount) {
+        public @NotNull EconomyResponse withdrawFundsInWorld(@NotNull OfflinePlayer player, @NotNull String world,
+                                                             double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.withdrawPlayer(player, world, amount);
@@ -172,8 +167,7 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.withdrawFundsInWorld(player, world, amount).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse depositFunds(@NotNull OfflinePlayer player, double amount) {
+        public @NotNull EconomyResponse depositFunds(@NotNull OfflinePlayer player, double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.depositPlayer(player, amount);
@@ -183,8 +177,8 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.depositFunds(player, amount).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse depositFundsInWorld(@NotNull OfflinePlayer player, @NotNull String world, double amount) {
+        public @NotNull EconomyResponse depositFundsInWorld(@NotNull OfflinePlayer player, @NotNull String world,
+                                                            double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.depositPlayer(player, world, amount);
@@ -194,8 +188,7 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.depositFundsInWorld(player, world, amount).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse createBank(@NotNull OfflinePlayer player, @NotNull String name) {
+        public @NotNull EconomyResponse createBank(@NotNull OfflinePlayer player, @NotNull String name) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.createBank(name, player);
@@ -205,8 +198,7 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.createBank(player, name).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse deleteBank(@NotNull String name) {
+        public @NotNull EconomyResponse deleteBank(@NotNull String name) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.deleteBank(name);
@@ -216,8 +208,7 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.deleteBank(name).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse checkBankBalance(@NotNull String name) {
+        public @NotNull EconomyResponse checkBankBalance(@NotNull String name) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.bankBalance(name);
@@ -228,8 +219,7 @@ public final class VaultIntegration extends AlpineIntegration {
             return response.balance;
         }
 
-        @NotNull
-        public EconomyResponse bankHasFunds(@NotNull String name, double amount) {
+        public @NotNull EconomyResponse bankHasFunds(@NotNull String name, double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.bankHas(name, amount);
@@ -239,8 +229,7 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.bankHasFunds(name, amount).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse bankWithdrawFunds(@NotNull String name, double amount) {
+        public @NotNull EconomyResponse bankWithdrawFunds(@NotNull String name, double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.bankWithdraw(name, amount);
@@ -250,8 +239,7 @@ public final class VaultIntegration extends AlpineIntegration {
             return this.bankWithdrawFunds(name, amount).transactionSuccess();
         }
 
-        @NotNull
-        public EconomyResponse bankDepositFunds(@NotNull String name, double amount) {
+        public @NotNull EconomyResponse bankDepositFunds(@NotNull String name, double amount) {
             Economy econ = this.getEconomy();
             if (econ == null) return NO_ECONOMY;
             else return econ.bankDeposit(name, amount);
@@ -273,8 +261,7 @@ public final class VaultIntegration extends AlpineIntegration {
             else return econ.isBankMember(name, player).transactionSuccess();
         }
 
-        @Nullable
-        public List<String> getBanks() {
+        public @Nullable List<String> getBanks() {
             Economy econ = this.getEconomy();
             if (econ == null) return null;
             else return econ.getBanks();
