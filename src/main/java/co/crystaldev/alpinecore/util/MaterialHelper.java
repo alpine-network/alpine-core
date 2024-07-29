@@ -75,12 +75,14 @@ public final class MaterialHelper {
             return XMaterial.AIR;
         }
 
-        if (XMaterial.supports(13)) {
-            return XMaterial.matchXMaterial(block.getType());
-        }
-        else {
-            return getType(block.getTypeId(), block.getData());
-        }
+        // TODO(bear): what happened here?
+        return XMaterial.matchXMaterial(block.getType());
+//        if (XMaterial.supports(13)) {
+//            return XMaterial.matchXMaterial(block.getType());
+//        }
+//        else {
+//            return getType(block.getTypeId(), block.getData());
+//        }
     }
 
     /**
