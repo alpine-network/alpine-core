@@ -135,7 +135,7 @@ public final class CollectionUtils {
      *
      * @see HashMap
      */
-    public static <T> @NotNull Map<T, T> map(@NotNull T... items) {
+    public static <T> @NotNull Map<T, T> mapFromArray(@NotNull T... items) {
         HashMap<T, T> map = new HashMap<>(items.length / 2);
         for (int i = 0; i < items.length; i += 2) {
             map.put(items[i], items[i + 1]);
@@ -189,7 +189,7 @@ public final class CollectionUtils {
      *
      * @see java.util.LinkedHashMap
      */
-    public static <T> @NotNull LinkedHashMap<T, T> linkedMap(@NotNull T... items) {
+    public static <T> @NotNull LinkedHashMap<T, T> linkedMapFromArray(@NotNull T... items) {
         LinkedHashMap<T, T> map = new LinkedHashMap<>(items.length / 2);
         for (int i = 0; i < items.length; i += 2) {
             map.put(items[i], items[i + 1]);

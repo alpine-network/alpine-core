@@ -93,7 +93,7 @@ public final class ConfigInventoryUI {
         public @NotNull Builder dictionary(@NotNull String... dictionary) {
             Validate.notNull(dictionary, "dictionary cannot be null");
             Validate.isTrue(dictionary.length >= 2, "dictionary must have at least 2 entries");
-            this.dictionary = CollectionUtils.linkedMap(dictionary);
+            this.dictionary = CollectionUtils.linkedMapFromArray(dictionary);
             return this;
         }
 
