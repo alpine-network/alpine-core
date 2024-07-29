@@ -17,10 +17,10 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
-    compileOnly("com.viaversion:viaversion-api:4.7.0")
+    compileOnly("com.viaversion:viaversion-api:5.0.2")
     implementation(rootProject)
 
-    val lombok = "org.projectlombok:lombok:1.18.28"
+    val lombok = "org.projectlombok:lombok:1.18.34"
     compileOnly(lombok)
     annotationProcessor(lombok)
 }

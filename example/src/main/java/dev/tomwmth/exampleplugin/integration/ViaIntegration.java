@@ -6,7 +6,6 @@ import co.crystaldev.alpinecore.framework.integration.AlpineIntegrationEngine;
 import co.crystaldev.alpinecore.util.Messaging;
 import com.viaversion.viaversion.api.Via;
 import dev.tomwmth.exampleplugin.config.Config;
-import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
