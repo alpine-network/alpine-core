@@ -9,6 +9,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ public final class ConfigManager {
         }
 
         YamlConfigurationProperties.Builder<?> builder = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
+                .charset(StandardCharsets.UTF_8)
                 .inputNulls(true)
                 .outputNulls(true);
 
