@@ -40,16 +40,15 @@ configurations {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnly("com.google.guava:guava:33.0.0-jre")
-    compileOnly("com.google.code.gson:gson:2.10.1")
+    compileOnly("com.google.code.gson:gson:2.2.4") // bundled with 1.8.8-R0.1
     testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
     testImplementation("commons-lang:commons-lang:2.6")
 
-    shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
 
     shade(this, "org.jetbrains:annotations:24.1.0")
-    shade(this, "de.exlll:configlib-spigot:4.2.0")
+    shade(this, "dev.tomwmth:configlib-spigot:4.5.0")
     shade(this, "com.github.cryptomorin:XSeries:11.2.0.1")
+    shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
     shade(this, "com.github.PikaMug:LocaleLib:60b38e1fbe") // TODO: unpin version
 
     val liteCommands = "3.4.2"
@@ -57,7 +56,7 @@ dependencies {
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
     val adventure = "4.17.0"
-    shade(this, "net.kyori:adventure-platform-bukkit:4.3.0")
+    shade(this, "net.kyori:adventure-platform-bukkit:4.3.3")
     shade(this, "net.kyori:adventure-api:$adventure")
     shade(this, "net.kyori:adventure-text-minimessage:$adventure")
     shade(this, "net.kyori:adventure-text-serializer-plain:$adventure")
