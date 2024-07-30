@@ -44,9 +44,8 @@ dependencies {
     testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
     testImplementation("commons-lang:commons-lang:2.6")
 
-
     shade(this, "org.jetbrains:annotations:24.1.0")
-    shade(this, "dev.tomwmth:configlib-spigot:4.5.0")
+    shade(this, "de.exlll:configlib-spigot:4.2.0")
     shade(this, "com.github.cryptomorin:XSeries:11.2.0.1")
     shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
     shade(this, "com.github.PikaMug:LocaleLib:60b38e1fbe") // TODO: unpin version
