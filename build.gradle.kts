@@ -1,6 +1,5 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 plugins {
     id("java")
@@ -27,7 +26,7 @@ repositories {
     maven("https://lib.alpn.cloud/alpine-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven("https://repo.panda-lang.org/releases")
+    maven("https://repo.panda-lang.org/releases/")
 }
 
 configurations {
@@ -38,12 +37,12 @@ configurations {
 }
 
 dependencies {
+    // Provided/optional dependencies
     compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("com.google.code.gson:gson:2.2.4") // bundled with 1.8.8-R0.1
-    testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
-    testImplementation("commons-lang:commons-lang:2.6")
 
+    // Bundled dependencies
     shade(this, "org.jetbrains:annotations:24.1.0")
     shade(this, "de.exlll:configlib-spigot:4.2.0")
     shade(this, "com.github.cryptomorin:XSeries:11.2.0.1")
@@ -60,6 +59,11 @@ dependencies {
     shade(this, "net.kyori:adventure-text-minimessage:$adventure")
     shade(this, "net.kyori:adventure-text-serializer-plain:$adventure")
 
+    // Testing dependencies
+    testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
+    testImplementation("commons-lang:commons-lang:2.6")
+
+    // Code generation
     val lombok = "org.projectlombok:lombok:1.18.34"
     compileOnly(lombok)
     annotationProcessor(lombok)
@@ -103,11 +107,7 @@ tasks.withType<Jar> {
     }
 }
 
-tasks.getByName<Jar>("sourcesJar") {
-    archiveFileName.set("${project.properties["plugin_name"]}-$version-sources.jar")
-}
-
-tasks.withType<ShadowJar> {
+tasks.shadowJar {
     dependsOn("jar")
     outputs.upToDateWhen { false }
 
@@ -117,6 +117,14 @@ tasks.withType<ShadowJar> {
 
     // Rename shaded jar
     archiveFileName.set("${project.properties["plugin_name"]}-$version-shaded.jar")
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
+}
+
+tasks.getByName<Jar>("sourcesJar") {
+    archiveFileName.set("${project.properties["plugin_name"]}-$version-sources.jar")
 }
 
 tasks.withType<JavaCompile> {
@@ -191,7 +199,7 @@ publishing {
     }
 }
 
-tasks.withType<Javadoc> {
+tasks.javadoc {
     options {
         this as StandardJavadocDocletOptions
         stylesheetFile = File(projectDir, "/dracula-stylesheet.css")
