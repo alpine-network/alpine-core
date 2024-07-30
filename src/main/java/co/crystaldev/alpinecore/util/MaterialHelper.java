@@ -150,49 +150,51 @@ public final class MaterialHelper {
             }
         }
 
-        // Some types such as repeaters and comparators were flattened into one type
-        // resulting in them not getting registered
-        for (Material value : Material.values()) {
-            int id = value.getId();
-            for (int data = 0; data < 16; data++) {
-                if (!hasType(id, (byte) data)) {
-                    LEGACY_MATERIALS.put(id << 8 | data, XMaterial.matchXMaterial(value));
+        if (!XMaterial.supports(13)) {
+            // Some types such as repeaters and comparators were flattened into one type
+            // resulting in them not getting registered
+            for (Material value : Material.values()) {
+                int id = value.getId();
+                for (int data = 0; data < 16; data++) {
+                    if (!hasType(id, (byte) data)) {
+                        LEGACY_MATERIALS.put(id << 8 | data, XMaterial.matchXMaterial(value));
+                    }
                 }
             }
+
+            // Register edge-cases
+            LEGACY_MATERIALS.put(Material.BED_BLOCK.getId() << 8, XMaterial.RED_BED);
+            LEGACY_MATERIALS.put(Material.FLOWER_POT.getId() << 8, XMaterial.FLOWER_POT);
+            LEGACY_MATERIALS.put(Material.SKULL.getId() << 8, XMaterial.SKELETON_SKULL);
+
+            LEGACY_MATERIALS.put(Material.SIGN_POST.getId() << 8, XMaterial.OAK_SIGN);
+            LEGACY_MATERIALS.put(Material.WALL_SIGN.getId() << 8, XMaterial.OAK_WALL_SIGN);
+            LEGACY_MATERIALS.put(Material.WOOD_PLATE.getId() << 8, XMaterial.OAK_PRESSURE_PLATE);
+            LEGACY_MATERIALS.put(Material.TRAP_DOOR.getId() << 8, XMaterial.OAK_TRAPDOOR);
+
+            LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8, XMaterial.SUNFLOWER);
+            LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 1, XMaterial.LILAC);
+            LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 2, XMaterial.TALL_GRASS);
+            LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 3, XMaterial.LARGE_FERN);
+            LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 4, XMaterial.ROSE_BUSH);
+            LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 5, XMaterial.PEONY);
+
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8, XMaterial.SMOOTH_STONE_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 1, XMaterial.SANDSTONE_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 2, XMaterial.PETRIFIED_OAK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 3, XMaterial.COBBLESTONE_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 4, XMaterial.BRICK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 5, XMaterial.STONE_BRICK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 6, XMaterial.NETHER_BRICK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 7, XMaterial.QUARTZ_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 8, XMaterial.SMOOTH_STONE);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 9, XMaterial.SMOOTH_SANDSTONE);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 10, XMaterial.PETRIFIED_OAK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 11, XMaterial.COBBLESTONE_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 12, XMaterial.BRICK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 13, XMaterial.STONE_BRICK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 14, XMaterial.NETHER_BRICK_SLAB);
+            LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 15, XMaterial.SMOOTH_QUARTZ);
         }
-
-        // Register edge-cases
-        LEGACY_MATERIALS.put(Material.BED_BLOCK.getId() << 8, XMaterial.RED_BED);
-        LEGACY_MATERIALS.put(Material.FLOWER_POT.getId() << 8, XMaterial.FLOWER_POT);
-        LEGACY_MATERIALS.put(Material.SKULL.getId() << 8, XMaterial.SKELETON_SKULL);
-
-        LEGACY_MATERIALS.put(Material.SIGN_POST.getId() << 8, XMaterial.OAK_SIGN);
-        LEGACY_MATERIALS.put(Material.WALL_SIGN.getId() << 8, XMaterial.OAK_WALL_SIGN);
-        LEGACY_MATERIALS.put(Material.WOOD_PLATE.getId() << 8, XMaterial.OAK_PRESSURE_PLATE);
-        LEGACY_MATERIALS.put(Material.TRAP_DOOR.getId() << 8, XMaterial.OAK_TRAPDOOR);
-
-        LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8, XMaterial.SUNFLOWER);
-        LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 1, XMaterial.LILAC);
-        LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 2, XMaterial.TALL_GRASS);
-        LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 3, XMaterial.LARGE_FERN);
-        LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 4, XMaterial.ROSE_BUSH);
-        LEGACY_MATERIALS.put(Material.DOUBLE_PLANT.getId() << 8 | 5, XMaterial.PEONY);
-
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8, XMaterial.SMOOTH_STONE_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 1, XMaterial.SANDSTONE_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 2, XMaterial.PETRIFIED_OAK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 3, XMaterial.COBBLESTONE_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 4, XMaterial.BRICK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 5, XMaterial.STONE_BRICK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 6, XMaterial.NETHER_BRICK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 7, XMaterial.QUARTZ_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 8, XMaterial.SMOOTH_STONE);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 9, XMaterial.SMOOTH_SANDSTONE);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 10, XMaterial.PETRIFIED_OAK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 11, XMaterial.COBBLESTONE_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 12, XMaterial.BRICK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 13, XMaterial.STONE_BRICK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 14, XMaterial.NETHER_BRICK_SLAB);
-        LEGACY_MATERIALS.put(Material.DOUBLE_STEP.getId() << 8 | 15, XMaterial.SMOOTH_QUARTZ);
     }
 }
