@@ -8,7 +8,10 @@ import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,16 +25,21 @@ import java.util.Map;
 public final class ConfigManager {
 
     @Getter
-    private final File rootDirectory;
+    private final Path rootDirectory;
     private final Map<Class<? extends AlpineConfig>, AlpineConfig> registeredConfigurations = new HashMap<>();
 
     public final YamlConfigurationProperties properties;
 
     public ConfigManager(@NotNull AlpinePlugin plugin, @NotNull SerializerRegistry serializerRegistry) {
-        this.rootDirectory = plugin.getDataFolder();
+        this.rootDirectory = plugin.getDataFolder().toPath();
 
-        if (!this.rootDirectory.exists() && !this.rootDirectory.mkdirs()) {
-            throw new IllegalStateException("Unable to generate configuration root directory");
+        if (!Files.exists(this.rootDirectory)) {
+            try {
+                Files.createDirectories(this.rootDirectory);
+            }
+            catch (IOException ex) {
+                throw new IllegalStateException("Unable to generate configuration root directory", ex);
+            }
         }
 
         YamlConfigurationProperties.Builder<?> builder = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
@@ -58,14 +66,14 @@ public final class ConfigManager {
 
     public @NotNull AlpineConfig loadConfig(@NotNull AlpineConfig config) {
         Class<? extends AlpineConfig> clazz = config.getClass();
-        File configFile = new File(this.rootDirectory, config.getFileName());
-        if (configFile.exists()) {
-            AlpineConfig existingConfig = YamlConfigurations.load(configFile.toPath(), clazz, this.properties);
-            YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, existingConfig, this.properties);
+        Path file = this.rootDirectory.resolve(Paths.get(config.getFileName()));
+        if (Files.exists(file)) {
+            AlpineConfig existingConfig = YamlConfigurations.load(file, clazz, this.properties);
+            YamlConfigurations.save(file, (Class<? super AlpineConfig>) clazz, existingConfig, this.properties);
             return existingConfig;
         }
         else {
-            YamlConfigurations.save(configFile.toPath(), (Class<? super AlpineConfig>) clazz, config, this.properties);
+            YamlConfigurations.save(file, (Class<? super AlpineConfig>) clazz, config, this.properties);
             return config;
         }
     }

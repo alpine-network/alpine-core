@@ -8,14 +8,15 @@ import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * The ConfigLoader class is responsible for loading and managing configurations.
@@ -41,28 +42,37 @@ import java.util.function.Supplier;
 public final class ConfigLoader<T> {
 
     @Getter
-    private final File directory;
+    private final Path directory;
 
     private final Class<T> configClass;
 
     private final Map<String, T> configRegistry = new HashMap<>();
 
-    private ConfigLoader(@NotNull AlpinePlugin plugin, @NotNull Class<T> configClass, @NotNull File directory, @NotNull Map<String, Supplier<T>> defaultConfigs) {
+    private ConfigLoader(@NotNull AlpinePlugin plugin, @NotNull Class<T> configClass, @NotNull Path directory, @NotNull Map<String, Supplier<T>> defaultConfigs) {
         this.directory = directory;
         this.configClass = configClass;
 
-        if (!this.directory.exists() && !this.directory.mkdirs()) {
-            throw new IllegalStateException("Unable to generate dynamic configuration root directory");
+        if (!Files.exists(this.directory)) {
+            try {
+                Files.createDirectories(this.directory);
+            }
+            catch (IOException ex) {
+                throw new IllegalStateException("Unable to generate dynamic configuration root directory", ex);
+            }
         }
 
+
         YamlConfigurationProperties properties = plugin.getConfigManager().properties;
-        File[] files = this.directory.listFiles(file -> file.isFile() && file.getName().endsWith(".yml"));
-        if (files != null) {
-            for (File configFile : files) {
-                T config = YamlConfigurations.load(configFile.toPath(), this.configClass, properties);
-                String configName = configFile.getName().substring(0, configFile.getName().lastIndexOf('.'));
+        try (Stream<Path> stream = Files.list(this.directory)) {
+            stream.filter(path -> Files.isRegularFile(path) && path.endsWith(".yml")).forEach(file -> {
+                T config = YamlConfigurations.load(file, this.configClass, properties);
+                String fileName = file.getFileName().toString();
+                String configName = fileName.substring(0, fileName.lastIndexOf("."));
                 this.configRegistry.put(configName, config);
-            }
+            });
+        }
+        catch (IOException ex) {
+            throw new IllegalStateException("Unable to load dynamic configuration", ex);
         }
 
         if (this.configRegistry.isEmpty()) {
@@ -71,7 +81,7 @@ public final class ConfigLoader<T> {
                 this.configRegistry.put(name, config);
 
                 String fileName = name + ".yml";
-                Path configPath = Paths.get(this.directory.getAbsolutePath(), fileName);
+                Path configPath = this.directory.resolve(fileName);
                 YamlConfigurations.save(configPath, this.configClass, config, properties);
             });
         }
@@ -139,14 +149,14 @@ public final class ConfigLoader<T> {
 
         private final Class<T> configClass;
 
-        private final File rootDirectory;
+        private final Path rootDirectory;
 
         private final Map<String, Supplier<T>> defaultConfigs = new HashMap<>();
 
         private Builder(@NotNull AlpinePlugin plugin, @NotNull Class<T> configClass, @NotNull String rootDirectory) {
             this.plugin = plugin;
             this.configClass = configClass;
-            this.rootDirectory = new File(plugin.getDataFolder(), rootDirectory);
+            this.rootDirectory = plugin.getDataFolder().toPath().resolve(rootDirectory);
         }
 
         public @NotNull Builder<T> addConfiguration(@NotNull String name, @NotNull Supplier<T> configSupplier) {
