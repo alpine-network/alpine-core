@@ -9,6 +9,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,7 +45,8 @@ public final class ConfigManager {
 
         YamlConfigurationProperties.Builder<?> builder = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
                 .inputNulls(true)
-                .outputNulls(true);
+                .outputNulls(true)
+                .charset(StandardCharsets.UTF_8);
 
         serializerRegistry.getConfigSerializers().forEach((dataType, serializer) -> {
             builder.addSerializer((Class) dataType, serializer);
@@ -65,17 +67,8 @@ public final class ConfigManager {
     }
 
     public @NotNull AlpineConfig loadConfig(@NotNull AlpineConfig config) {
-        Class<? extends AlpineConfig> clazz = config.getClass();
         Path file = this.rootDirectory.resolve(Paths.get(config.getFileName()));
-        if (Files.exists(file)) {
-            AlpineConfig existingConfig = YamlConfigurations.load(file, clazz, this.properties);
-            YamlConfigurations.save(file, (Class<? super AlpineConfig>) clazz, existingConfig, this.properties);
-            return existingConfig;
-        }
-        else {
-            YamlConfigurations.save(file, (Class<? super AlpineConfig>) clazz, config, this.properties);
-            return config;
-        }
+        return YamlConfigurations.update(file, config.getClass(), this.properties);
     }
 
     public void unregisterConfig(@NotNull AlpineConfig config) {
