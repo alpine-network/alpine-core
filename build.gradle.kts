@@ -6,7 +6,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("net.kyori.blossom") version "1.2.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 group = this.compileGroup()
@@ -45,23 +45,23 @@ dependencies {
     // Bundled dependencies
     shade(this, "org.jetbrains:annotations:24.1.0")
     shade(this, "dev.tomwmth:configlib-spigot:4.5.0")
-    shade(this, "com.github.cryptomorin:XSeries:11.2.0.1")
+    shade(this, "com.github.cryptomorin:XSeries:11.2.1")
     shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
-    shade(this, "com.github.PikaMug:LocaleLib:60b38e1fbe") // TODO: unpin version
+    shade(this, "com.github.PikaMug:LocaleLib:4.0.0")
 
-    val liteCommands = "3.4.2"
+    val liteCommands = "3.4.3"
     shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
     val adventure = "4.17.0"
-    shade(this, "net.kyori:adventure-platform-bukkit:4.3.3")
+    shade(this, "net.kyori:adventure-platform-bukkit:4.3.4")
     shade(this, "net.kyori:adventure-api:$adventure")
     shade(this, "net.kyori:adventure-text-minimessage:$adventure")
     shade(this, "net.kyori:adventure-text-serializer-plain:$adventure")
 
     // Testing dependencies
     testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
-    testImplementation("commons-lang:commons-lang:2.6")
+    testImplementation("commons-lang:commons-lang:2.6") // bundled with 1.8.8-R0.1
 
     // Code generation
     val lombok = "org.projectlombok:lombok:1.18.34"
