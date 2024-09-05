@@ -27,6 +27,7 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://repo.panda-lang.org/releases/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 configurations {
@@ -40,6 +41,7 @@ dependencies {
     // Provided/optional dependencies
     compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.google.code.gson:gson:2.2.4") // bundled with 1.8.8-R0.1
 
     // Bundled dependencies

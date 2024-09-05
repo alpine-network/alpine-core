@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * A bundled integration of the Vault API.
  * <p>
- * Allows Alpine plugins to integrate Vault with minimal
+ * Allows AlpinePlugins to integrate Vault with minimal
  * code and without requiring its API to be added as a
  * dependency to their project.
  *
@@ -49,16 +49,23 @@ public final class VaultIntegration extends AlpineIntegration {
     }
 
     @Override
-    public @Nullable VaultEngine getEngine() {
-        return (VaultEngine) super.getEngine();
+    public @NotNull VaultEngine getEngine() {
+        VaultEngine engine = (VaultEngine) super.getEngine();
+        if (engine == null) {
+            throw new IllegalStateException("Vault not installed");
+        }
+        return engine;
     }
 
+    /**
+     * @since 0.1.0
+     */
     @SuppressWarnings("unused")
     public static final class VaultEngine extends AlpineIntegrationEngine {
         private static final EconomyResponse NO_ECONOMY = new EconomyResponse(0.0D, 0.0D,
                 EconomyResponse.ResponseType.NOT_IMPLEMENTED, "No economy provider was registered");
 
-        public VaultEngine(AlpinePlugin plugin) {
+        private VaultEngine(AlpinePlugin plugin) {
             super(plugin);
         }
 

@@ -5,9 +5,10 @@ description: ${pluginDescription}
 authors:
   - tomwmth
   - BestBearr
+  - Crystal Development, LLC.
 website: ${pluginWebsite}
 api-version: 1.13
 
 softdepend:
   - Vault
-  - ViaVersion
+  - PlaceholderAPI
