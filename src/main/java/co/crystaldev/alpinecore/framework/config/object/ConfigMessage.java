@@ -102,8 +102,9 @@ public class ConfigMessage {
      */
     public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
                                     @NotNull Object... placeholders) {
-        String formatted = PlaceholderIntegration.getInstance().replace(targetPlayer,
-                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
+        formatted = integration.replace(targetPlayer, true, formatted);
         return plugin.getMiniMessage().deserialize(formatted);
     }
 
@@ -149,8 +150,9 @@ public class ConfigMessage {
      */
     public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
                                     @Nullable OfflinePlayer otherPlayer, @NotNull Object... placeholders) {
-        String formatted = PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
-                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
+        formatted = integration.replace(targetPlayer, otherPlayer, true, formatted);
         return plugin.getMiniMessage().deserialize(formatted);
     }
 
@@ -179,8 +181,9 @@ public class ConfigMessage {
      */
     public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
                                        @NotNull Object... placeholders) {
-        return PlaceholderIntegration.getInstance().replace(targetPlayer,
-                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
+        return integration.replace(targetPlayer, true, formatted);
     }
 
     /**
@@ -209,8 +212,9 @@ public class ConfigMessage {
      */
     public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
                                        @Nullable OfflinePlayer otherPlayer, @NotNull Object... placeholders) {
-        return PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
-                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
+        return integration.replace(targetPlayer, otherPlayer, true, formatted);
     }
 
     public static final class Adapter implements Serializer<ConfigMessage, Object> {

@@ -117,14 +117,16 @@ public interface ConfigItem {
         Material parsed = type.parseMaterial();
         count = Math.max(Math.min(parsed.getMaxStackSize(), count), 1);
 
-        String replacedName = PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+
+        String replacedName = integration.replace(targetPlayer, otherPlayer, true,
                 Formatting.placeholders(plugin, this.getName(), placeholders));
 
         MiniMessage mm = plugin.getMiniMessage();
         Component name = Components.reset().append(mm.deserialize(replacedName));
         List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
                 .map(v -> Formatting.placeholders(plugin, v, placeholders))
-                .map(v -> PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer, v))
+                .map(v -> integration.replace(targetPlayer, otherPlayer, true, v))
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
@@ -317,14 +319,16 @@ public interface ConfigItem {
             @Nullable OfflinePlayer otherPlayer,
             @NotNull Object... placeholders
     ) {
-        String replacedName = PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+
+        String replacedName = integration.replace(targetPlayer, otherPlayer, true,
                 Formatting.placeholders(plugin, this.getName(), placeholders));
 
         MiniMessage mm = plugin.getMiniMessage();
         Component name = Components.reset().append(mm.deserialize(replacedName));
         List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
                 .map(v -> Formatting.placeholders(plugin, v, placeholders))
-                .map(v -> PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer, v))
+                .map(v -> integration.replace(targetPlayer, otherPlayer, true, v))
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 

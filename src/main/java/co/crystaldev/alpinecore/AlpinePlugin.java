@@ -43,6 +43,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -346,6 +347,21 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
             activatable.deactivate(this);
         }
         this.activatables.remove(activatable);
+    }
+
+    /**
+     * Retrieves an {@link co.crystaldev.alpinecore.framework.Activatable} instance of the specified class type from the plugin.
+     *
+     * @param clazz The type of activatable.
+     * @return The activatable
+     */
+    public final <T extends Activatable> @Nullable T getActivatable(@NotNull Class<T> clazz) {
+        for (Activatable activatable : this.activatables) {
+            if (activatable.getClass().equals(clazz)) {
+                return (T) activatable;
+            }
+        }
+        return null;
     }
 
     /**

@@ -3,13 +3,18 @@ package co.crystaldev.alpinecore.integration;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegrationEngine;
-import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A bundled integration of PlaceholderAPI
@@ -21,10 +26,6 @@ import org.jetbrains.annotations.Nullable;
  * @since 0.4.2
  */
 public final class PlaceholderIntegration extends AlpineIntegration {
-
-    @Getter
-    private static PlaceholderIntegration instance;
-    { instance = this; }
 
     /**
      * Reflectively accessed dependency injection constructor.
@@ -57,13 +58,14 @@ public final class PlaceholderIntegration extends AlpineIntegration {
     /**
      * Replaces placeholders in the given text if the integration is active. Otherwise, returns the original text.
      *
-     * @param target the command sender to be replaced against
-     * @param text   the text to replace placeholders in
+     * @param target      the command sender to be replaced against
+     * @param text        the text to replace placeholders in
+     * @param miniMessage Whether output chat colors should be serialized into {@link MiniMessage}
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@Nullable OfflinePlayer target, @NotNull String text) {
+    public @NotNull String replace(@Nullable OfflinePlayer target, boolean miniMessage, @NotNull String text) {
         if (this.isActive()) {
-            return this.getEngine().replace(target, text);
+            return this.getEngine().replace(target, text, miniMessage);
         }
         else {
             return text;
@@ -78,9 +80,10 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@Nullable OfflinePlayer target, @Nullable OfflinePlayer other, @NotNull String text) {
+    public @NotNull String replace(@Nullable OfflinePlayer target, @Nullable OfflinePlayer other, boolean miniMessage,
+                                   @NotNull String text) {
         if (this.isActive()) {
-            return this.getEngine().replace(target, other, text);
+            return this.getEngine().replace(target, other, text, miniMessage);
         }
         else {
             return text;
@@ -94,9 +97,9 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@Nullable CommandSender target, @NotNull String text) {
+    public @NotNull String replace(@Nullable CommandSender target, boolean miniMessage, @NotNull String text) {
         if (this.isActive()) {
-            return this.getEngine().replace(target, text);
+            return this.getEngine().replace(target, text, miniMessage);
         }
         else {
             return text;
@@ -111,9 +114,10 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@Nullable CommandSender target, @Nullable CommandSender other, @NotNull String text) {
+    public @NotNull String replace(@Nullable CommandSender target, @Nullable CommandSender other, boolean miniMessage,
+                                   @NotNull String text) {
         if (this.isActive()) {
-            return this.getEngine().replace(target, other, text);
+            return this.getEngine().replace(target, other, text, miniMessage);
         }
         else {
             return text;
@@ -125,54 +129,88 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      */
     public static final class PlaceholderEngine extends AlpineIntegrationEngine {
 
+        private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%\\w+_[^ ]+%");
+
         PlaceholderEngine(@NotNull AlpinePlugin plugin) {
             super(plugin);
         }
 
-        public @NotNull String replace(@Nullable OfflinePlayer sender, @NotNull String text) {
+        public @NotNull String replace(@Nullable OfflinePlayer sender, @NotNull String text, boolean miniMessage) {
             if (sender == null) {
                 return text;
             }
 
             if (sender instanceof Player) {
-                return PlaceholderAPI.setPlaceholders((Player) sender, text);
+                return sanitize(this.plugin, miniMessage, text, v -> {
+                    return PlaceholderAPI.setPlaceholders((Player) sender, v);
+                });
             }
             else {
-                return PlaceholderAPI.setPlaceholders(sender, text);
+                return sanitize(this.plugin, miniMessage, text, v -> {
+                    return PlaceholderAPI.setPlaceholders(sender, v);
+                });
             }
         }
 
-        public @NotNull String replace(@Nullable OfflinePlayer sender, @Nullable OfflinePlayer target, @NotNull String text) {
+        public @NotNull String replace(@Nullable OfflinePlayer sender, @Nullable OfflinePlayer target,
+                                       @NotNull String text, boolean miniMessage) {
             if (!(target instanceof Player)) {
-                return this.replace(sender, text);
+                return this.replace(sender, text, miniMessage);
             }
 
             if (sender instanceof Player) {
-                return PlaceholderAPI.setRelationalPlaceholders((Player) sender, (Player) target, text);
+                return sanitize(this.plugin, miniMessage, text, v -> {
+                    return PlaceholderAPI.setRelationalPlaceholders((Player) sender, (Player) target, v);
+                });
             }
             else {
-                return PlaceholderAPI.setPlaceholders(sender, text);
+                return sanitize(this.plugin, miniMessage, text, v -> {
+                    return PlaceholderAPI.setPlaceholders(sender, v);
+                });
             }
         }
 
-        public @NotNull String replace(@Nullable CommandSender sender, @NotNull String text) {
+        public @NotNull String replace(@Nullable CommandSender sender, @NotNull String text, boolean miniMessage) {
             if (!(sender instanceof OfflinePlayer)) {
                 return text;
             }
 
-            return this.replace((OfflinePlayer) sender, text);
+            return this.replace((OfflinePlayer) sender, text, miniMessage);
         }
 
-        public @NotNull String replace(@Nullable CommandSender sender, @Nullable CommandSender target, @NotNull String text) {
+        public @NotNull String replace(@Nullable CommandSender sender, @Nullable CommandSender target,
+                                       @NotNull String text, boolean miniMessage) {
             if (!(sender instanceof Player)) {
                 return text;
             }
 
             if (!(target instanceof Player)) {
-                return this.replace(sender, text);
+                return this.replace(sender, text, miniMessage);
             }
 
-            return this.replace((OfflinePlayer) sender, (Player) target, text);
+            return this.replace((OfflinePlayer) sender, (Player) target, text, miniMessage);
+        }
+
+        private static @NotNull String sanitize(@NotNull AlpinePlugin plugin, boolean serialize, @NotNull String text,
+                                                @NotNull Function<String, String> transformer) {
+            Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
+            while (matcher.find()) {
+                String placeholder = matcher.group();
+                String replaced = transformer.apply(placeholder);
+
+                if (replaced.trim().isEmpty()) {
+                    text = text.replace(placeholder, "");
+                    continue;
+                }
+                if (serialize && replaced.contains("§")) {
+                    MiniMessage miniMessage = plugin.getStrictMiniMessage();
+                    LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
+                    replaced = miniMessage.serialize(serializer.deserialize(replaced));
+                }
+                text = text.replace(placeholder, replaced);
+            }
+
+            return text;
         }
     }
 }
