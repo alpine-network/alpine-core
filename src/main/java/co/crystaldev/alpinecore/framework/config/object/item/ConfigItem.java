@@ -1,6 +1,7 @@
 package co.crystaldev.alpinecore.framework.config.object.item;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
+import co.crystaldev.alpinecore.integration.PlaceholderIntegration;
 import co.crystaldev.alpinecore.util.Components;
 import co.crystaldev.alpinecore.util.Formatting;
 import co.crystaldev.alpinecore.util.ItemHelper;
@@ -10,6 +11,7 @@ import de.exlll.configlib.PolymorphicTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -56,7 +58,7 @@ public interface ConfigItem {
      * Retrieves the attribute associated with the given key.
      *
      * @param key  The key of the attribute
-     * @param type The attribute type\
+     * @param type The attribute type
      * @return The value associated with the key, or null if the key does not exist
      */
     default <T> @Nullable T getAttribute(@NotNull String key, @NotNull Class<T> type) {
@@ -83,16 +85,20 @@ public interface ConfigItem {
         return this.getAttributes() != null && this.getAttributes().containsKey(key);
     }
 
+    // region Material Type
+
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param type         The material type of the item
      * @param count        The quantity of the item
      * @param function     A function that can apply additional modifications to the ItemStack
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
      * @return A fully constructed and optionally modified ItemStack
      */
     default @NotNull ItemStack build(
@@ -100,6 +106,8 @@ public interface ConfigItem {
             @Nullable XMaterial type,
             int count,
             @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
             @NotNull Object... placeholders
     ) {
         if (type == null || !type.isSupported()) {
@@ -109,10 +117,14 @@ public interface ConfigItem {
         Material parsed = type.parseMaterial();
         count = Math.max(Math.min(parsed.getMaxStackSize(), count), 1);
 
+        String replacedName = PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
+                Formatting.placeholders(plugin, this.getName(), placeholders));
+
         MiniMessage mm = plugin.getMiniMessage();
-        Component name = Components.reset().append(mm.deserialize(Formatting.placeholders(plugin, this.getName(), placeholders)));
+        Component name = Components.reset().append(mm.deserialize(replacedName));
         List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
                 .map(v -> Formatting.placeholders(plugin, v, placeholders))
+                .map(v -> PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer, v))
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
@@ -138,11 +150,9 @@ public interface ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
      *
      * @param plugin       The main plugin instance used for contextual operations
-     * @param stack        The item to extend
+     * @param type         The material type of the item
      * @param count        The quantity of the item
      * @param function     A function that can apply additional modifications to the ItemStack
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
@@ -150,46 +160,16 @@ public interface ConfigItem {
      */
     default @NotNull ItemStack build(
             @NotNull AlpinePlugin plugin,
-            @NotNull ItemStack stack,
+            @Nullable XMaterial type,
             int count,
             @Nullable Function<ItemStack, ItemStack> function,
             @NotNull Object... placeholders
     ) {
-        MiniMessage mm = plugin.getMiniMessage();
-        Component name = Components.reset().append(mm.deserialize(Formatting.placeholders(plugin, this.getName(), placeholders)));
-        List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
-                .map(v -> Formatting.placeholders(plugin, v, placeholders))
-                .map(v -> Components.reset().append(mm.deserialize(v)))
-                .collect(Collectors.toList());
-
-        stack = stack.clone();
-
-        if (count > 0) {
-            stack.setAmount(Math.max(Math.min(stack.getMaxStackSize(), count), 1));
-        }
-
-        ItemHelper.setDisplayName(stack, name);
-        ItemHelper.setLore(stack, lore);
-
-        if (this.isEnchanted()) {
-            stack.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 0);
-
-            ItemMeta meta = stack.getItemMeta();
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            stack.setItemMeta(meta);
-        }
-
-        if (function != null) {
-            function.apply(stack);
-        }
-
-        return stack;
+        return this.build(plugin, type, count, function, null, null, placeholders);
     }
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param type         The material type of the item
@@ -204,26 +184,6 @@ public interface ConfigItem {
             @NotNull Object... placeholders
     ) {
         return this.build(plugin, type, this.getCount(), function, placeholders);
-    }
-
-    /**
-     * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
-     *
-     * @param plugin       The main plugin instance used for contextual operations
-     * @param stack        The item to extend
-     * @param function     A function that can apply additional modifications to the ItemStack
-     * @param placeholders Optional placeholders for dynamic text replacement in item meta
-     * @return A fully constructed and optionally modified ItemStack
-     */
-    default @NotNull ItemStack build(
-            @NotNull AlpinePlugin plugin,
-            @NotNull ItemStack stack,
-            @Nullable Function<ItemStack, ItemStack> function,
-            @NotNull Object... placeholders
-    ) {
-        return this.build(plugin, stack, this.getCount(), function, placeholders);
     }
 
     /**
@@ -248,6 +208,189 @@ public interface ConfigItem {
      * Constructs an ItemStack based on the current configuration.
      *
      * @param plugin       The main plugin instance used for contextual operations
+     * @param type         The material type of the item
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable XMaterial type,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, type, this.getCount(), null, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param type         The material type of the item
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable XMaterial type,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, type, this.getCount(), function, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param type         The material type of the item
+     * @param count        The quantity of the item
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable XMaterial type,
+            int count,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, type, count, null, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param type         The material type of the item
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable XMaterial type,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, type, this.getCount(), null, targetPlayer, otherPlayer, placeholders);
+    }
+
+    // endregion Material Type
+
+    // region ItemStack Type
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param count        The quantity of the item
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @NotNull ItemStack stack,
+            int count,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        String replacedName = PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
+                Formatting.placeholders(plugin, this.getName(), placeholders));
+
+        MiniMessage mm = plugin.getMiniMessage();
+        Component name = Components.reset().append(mm.deserialize(replacedName));
+        List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
+                .map(v -> Formatting.placeholders(plugin, v, placeholders))
+                .map(v -> PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer, v))
+                .map(v -> Components.reset().append(mm.deserialize(v)))
+                .collect(Collectors.toList());
+
+        stack = stack.clone();
+        stack.setAmount(Math.max(Math.min(stack.getMaxStackSize(), count), 1));
+
+        ItemHelper.setDisplayName(stack, name);
+        ItemHelper.setLore(stack, lore);
+
+        if (this.isEnchanted()) {
+            stack.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 0);
+
+            ItemMeta meta = stack.getItemMeta();
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            stack.setItemMeta(meta);
+        }
+
+        if (function != null) {
+            function.apply(stack);
+        }
+
+        return stack;
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param count        The quantity of the item
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @NotNull ItemStack stack,
+            int count,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, count, function, null, null, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @NotNull ItemStack stack,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, this.getCount(), function, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
      * @param stack        The item to extend
      * @param count        The quantity of the item
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
@@ -260,22 +403,6 @@ public interface ConfigItem {
             @NotNull Object... placeholders
     ) {
         return this.build(plugin, stack, count, null, placeholders);
-    }
-
-    /**
-     * Constructs an ItemStack based on the current configuration.
-     *
-     * @param plugin       The main plugin instance used for contextual operations
-     * @param type         The material type of the item
-     * @param placeholders Optional placeholders for dynamic text replacement in item meta
-     * @return A fully constructed and optionally modified ItemStack
-     */
-    default @NotNull ItemStack build(
-            @NotNull AlpinePlugin plugin,
-            @Nullable XMaterial type,
-            @NotNull Object... placeholders
-    ) {
-        return this.build(plugin, type, this.getCount(), null, placeholders);
     }
 
     /**
@@ -296,9 +423,83 @@ public interface ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method does not define a type by default. It is for internal use within
-     * plugins (i.e., dynamic guis which define a type based on a state)
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @NotNull ItemStack stack,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, this.getCount(), function, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param count        The quantity of the item
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @NotNull ItemStack stack,
+            int count,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, count, null, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param stack        The item to extend
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @NotNull ItemStack stack,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, stack, this.getCount(), null, targetPlayer, otherPlayer, placeholders);
+    }
+
+    // endregion ItemStack Type
+
+    // region No Type
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param count        The quantity of the item
@@ -317,9 +518,9 @@ public interface ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method does not define a type by default. It is for internal use within
-     * plugins (i.e., dynamic guis which define a type based on a state)
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param function     A function that can apply additional modifications to the ItemStack
@@ -336,9 +537,9 @@ public interface ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method does not define a type by default. It is for internal use within
-     * plugins (i.e., dynamic guis which define a type based on a state)
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param count        The quantity of the item
@@ -355,9 +556,9 @@ public interface ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method does not define a type by default. It is for internal use within
-     * plugins (i.e., dynamic guis which define a type based on a state)
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
@@ -371,8 +572,112 @@ public interface ConfigItem {
     }
 
     /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param count        The quantity of the item
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            int count,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, (XMaterial) null, count, function, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, (XMaterial) null, this.getCount(), function, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param count        The quantity of the item
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            int count,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, (XMaterial) null, count, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method
+     * <p>
+     * This method does not define a type by default.
+     * It is for internal use within plugins (i.e., dynamic guis which define a type based on a state)
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    default @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, (XMaterial) null, this.getCount(), targetPlayer, otherPlayer, placeholders);
+    }
+
+    // endregion No Type
+
+    // region Give
+
+    /**
      * Gives the constructed item to the specified player's inventory.
-     * <br>
+     * <p>
      * This is a convenience method that builds the item and adds it directly to the player's inventory.
      *
      * @param plugin       The main plugin instance used for contextual operations
@@ -396,7 +701,7 @@ public interface ConfigItem {
 
     /**
      * Gives the constructed item to the specified player's inventory.
-     * <br>
+     * <p>
      * This is a convenience method that builds the item and adds it directly to the player's inventory.
      *
      * @param plugin       The main plugin instance used for contextual operations
@@ -418,7 +723,7 @@ public interface ConfigItem {
 
     /**
      * Gives the constructed item to the specified player's inventory.
-     * <br>
+     * <p>
      * This is a convenience method that builds the item and adds it directly to the player's inventory.
      *
      * @param plugin       The main plugin instance used for contextual operations
@@ -439,7 +744,7 @@ public interface ConfigItem {
 
     /**
      * Gives the constructed item to the specified player's inventory.
-     * <br>
+     * <p>
      * This is a convenience method that builds the item and adds it directly to the player's inventory.
      *
      * @param plugin       The main plugin instance used for contextual operations
@@ -455,4 +760,6 @@ public interface ConfigItem {
     ) {
         this.give(plugin, type, player, this.getCount(), null, placeholders);
     }
+
+    // endregion Give
 }

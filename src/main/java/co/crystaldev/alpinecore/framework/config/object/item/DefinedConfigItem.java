@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -63,8 +64,6 @@ public class DefinedConfigItem implements ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param count        The quantity of the item
@@ -84,8 +83,6 @@ public class DefinedConfigItem implements ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param function     A function that can apply additional modifications to the ItemStack
@@ -103,8 +100,6 @@ public class DefinedConfigItem implements ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param count        The quantity of the item
@@ -122,8 +117,6 @@ public class DefinedConfigItem implements ConfigItem {
 
     /**
      * Constructs an ItemStack based on the current configuration.
-     * <br>
-     * This method allows custom modifications via a function and supports placeholder replacement.
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders Optional placeholders for dynamic text replacement in item meta
@@ -135,6 +128,98 @@ public class DefinedConfigItem implements ConfigItem {
             @NotNull Object... placeholders
     ) {
         return this.build(plugin, this.type, this.count, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param count        The quantity of the item
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @Override
+    public @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            int count,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, this.type, count, function, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param function     A function that can apply additional modifications to the ItemStack
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @Override
+    public @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable Function<ItemStack, ItemStack> function,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, this.type, this.count, function, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param count        The quantity of the item
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @Override
+    public @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            int count,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, this.type, count, targetPlayer, otherPlayer, placeholders);
+    }
+
+    /**
+     * Constructs an ItemStack based on the current configuration.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
+     * @param placeholders Optional placeholders for dynamic text replacement in item meta
+     * @return A fully constructed and optionally modified ItemStack
+     */
+    @Override
+    public @NotNull ItemStack build(
+            @NotNull AlpinePlugin plugin,
+            @Nullable OfflinePlayer targetPlayer,
+            @Nullable OfflinePlayer otherPlayer,
+            @NotNull Object... placeholders
+    ) {
+        return this.build(plugin, this.type, this.count, targetPlayer, otherPlayer, placeholders);
     }
 
     /**

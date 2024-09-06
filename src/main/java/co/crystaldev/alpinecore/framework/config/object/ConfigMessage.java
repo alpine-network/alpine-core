@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,13 +85,13 @@ public class ConfigMessage {
      * Formats the text of this message with placeholders, then deserializes
      * it using Adventure's MiniMessage.
      * <p>
-     * PlaceholderAPI placeholders are replaced by this method.
+     * PlaceholderAPI placeholders are replaced by this method
      * <p>
      * {@link co.crystaldev.alpinecore.util.Messaging} should be used to send
      * the result of this method.
      *
      * @param plugin       The main plugin instance used for contextual operations
-     * @param target       The target player.
+     * @param targetPlayer The target player
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      *
@@ -99,9 +100,9 @@ public class ConfigMessage {
      * @see co.crystaldev.alpinecore.util.Messaging
      * @see net.kyori.adventure.text.minimessage.MiniMessage
      */
-    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
                                     @NotNull Object... placeholders) {
-        String formatted = PlaceholderIntegration.getInstance().replace(target,
+        String formatted = PlaceholderIntegration.getInstance().replace(targetPlayer,
                 Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
         return plugin.getMiniMessage().deserialize(formatted);
     }
@@ -130,14 +131,14 @@ public class ConfigMessage {
      * Formats the text of this message with placeholders, then deserializes
      * it using Adventure's MiniMessage.
      * <p>
-     * PlaceholderAPI placeholders are replaced by this method.
+     * PlaceholderAPI placeholders are replaced by this method
      * <p>
      * {@link co.crystaldev.alpinecore.util.Messaging} should be used to send
      * the result of this method.
      *
      * @param plugin       The main plugin instance used for contextual operations
-     * @param target       The target player.
-     * @param other        The relational player.
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
      *
@@ -146,9 +147,9 @@ public class ConfigMessage {
      * @see co.crystaldev.alpinecore.util.Messaging
      * @see net.kyori.adventure.text.minimessage.MiniMessage
      */
-    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
-                                    @NotNull OfflinePlayer other, @NotNull Object... placeholders) {
-        String formatted = PlaceholderIntegration.getInstance().replace(target, other,
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
+                                    @Nullable OfflinePlayer otherPlayer, @NotNull Object... placeholders) {
+        String formatted = PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
                 Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
         return plugin.getMiniMessage().deserialize(formatted);
     }
@@ -167,18 +168,18 @@ public class ConfigMessage {
     /**
      * Formats the text of this message with placeholders
      * <p>
-     * PlaceholderAPI placeholders are replaced by this method.
+     * PlaceholderAPI placeholders are replaced by this method
      *
      * @param plugin       The main plugin instance used for contextual operations
-     * @param target       The target player.
+     * @param targetPlayer The target player
      * @param placeholders The placeholders for formatting the message
      * @return The string
      *
      * @see co.crystaldev.alpinecore.integration.PlaceholderIntegration
      */
-    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
                                        @NotNull Object... placeholders) {
-        return PlaceholderIntegration.getInstance().replace(target,
+        return PlaceholderIntegration.getInstance().replace(targetPlayer,
                 Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
     }
 
@@ -196,19 +197,19 @@ public class ConfigMessage {
     /**
      * Formats the text of this message with placeholders
      * <p>
-     * PlaceholderAPI placeholders are replaced by this method.
+     * PlaceholderAPI placeholders are replaced by this method
      *
      * @param plugin       The main plugin instance used for contextual operations
-     * @param target       The target player.
-     * @param other        The relational player.
+     * @param targetPlayer The target player
+     * @param otherPlayer  The relational player
      * @param placeholders The placeholders for formatting the message
      * @return The string
      *
      * @see co.crystaldev.alpinecore.integration.PlaceholderIntegration
      */
-    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
-                                       @NotNull OfflinePlayer other, @NotNull Object... placeholders) {
-        return PlaceholderIntegration.getInstance().replace(target, other,
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer targetPlayer,
+                                       @Nullable OfflinePlayer otherPlayer, @NotNull Object... placeholders) {
+        return PlaceholderIntegration.getInstance().replace(targetPlayer, otherPlayer,
                 Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
     }
 

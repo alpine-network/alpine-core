@@ -9,6 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A bundled integration of PlaceholderAPI
@@ -60,7 +61,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@NotNull OfflinePlayer target, @NotNull String text) {
+    public @NotNull String replace(@Nullable OfflinePlayer target, @NotNull String text) {
         if (this.isActive()) {
             return this.getEngine().replace(target, text);
         }
@@ -77,7 +78,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@NotNull OfflinePlayer target, @NotNull OfflinePlayer other, @NotNull String text) {
+    public @NotNull String replace(@Nullable OfflinePlayer target, @Nullable OfflinePlayer other, @NotNull String text) {
         if (this.isActive()) {
             return this.getEngine().replace(target, other, text);
         }
@@ -93,7 +94,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@NotNull CommandSender target, @NotNull String text) {
+    public @NotNull String replace(@Nullable CommandSender target, @NotNull String text) {
         if (this.isActive()) {
             return this.getEngine().replace(target, text);
         }
@@ -110,7 +111,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
-    public @NotNull String replace(@NotNull CommandSender target, @NotNull CommandSender other, @NotNull String text) {
+    public @NotNull String replace(@Nullable CommandSender target, @Nullable CommandSender other, @NotNull String text) {
         if (this.isActive()) {
             return this.getEngine().replace(target, other, text);
         }
@@ -128,7 +129,11 @@ public final class PlaceholderIntegration extends AlpineIntegration {
             super(plugin);
         }
 
-        public @NotNull String replace(@NotNull OfflinePlayer sender, @NotNull String text) {
+        public @NotNull String replace(@Nullable OfflinePlayer sender, @NotNull String text) {
+            if (sender == null) {
+                return text;
+            }
+
             if (sender instanceof Player) {
                 return PlaceholderAPI.setPlaceholders((Player) sender, text);
             }
@@ -137,7 +142,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
             }
         }
 
-        public @NotNull String replace(@NotNull OfflinePlayer sender, @NotNull OfflinePlayer target, @NotNull String text) {
+        public @NotNull String replace(@Nullable OfflinePlayer sender, @Nullable OfflinePlayer target, @NotNull String text) {
             if (!(target instanceof Player)) {
                 return this.replace(sender, text);
             }
@@ -150,7 +155,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
             }
         }
 
-        public @NotNull String replace(@NotNull CommandSender sender, @NotNull String text) {
+        public @NotNull String replace(@Nullable CommandSender sender, @NotNull String text) {
             if (!(sender instanceof OfflinePlayer)) {
                 return text;
             }
@@ -158,7 +163,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
             return this.replace((OfflinePlayer) sender, text);
         }
 
-        public @NotNull String replace(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String text) {
+        public @NotNull String replace(@Nullable CommandSender sender, @Nullable CommandSender target, @NotNull String text) {
             if (!(sender instanceof Player)) {
                 return text;
             }
