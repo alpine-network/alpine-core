@@ -117,16 +117,18 @@ public interface ConfigItem {
         Material parsed = type.parseMaterial();
         count = Math.max(Math.min(parsed.getMaxStackSize(), count), 1);
 
-        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        String replacedName = Formatting.placeholders(plugin, this.getName(), placeholders);
 
-        String replacedName = integration.replace(targetPlayer, otherPlayer, true,
-                Formatting.placeholders(plugin, this.getName(), placeholders));
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        if (integration != null) {
+            replacedName = integration.replace(targetPlayer, otherPlayer, true, replacedName);
+        }
 
         MiniMessage mm = plugin.getMiniMessage();
         Component name = Components.reset().append(mm.deserialize(replacedName));
         List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
                 .map(v -> Formatting.placeholders(plugin, v, placeholders))
-                .map(v -> integration.replace(targetPlayer, otherPlayer, true, v))
+                .map(v -> integration == null ? v : integration.replace(targetPlayer, otherPlayer, true, v))
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
@@ -319,16 +321,18 @@ public interface ConfigItem {
             @Nullable OfflinePlayer otherPlayer,
             @NotNull Object... placeholders
     ) {
-        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        String replacedName = Formatting.placeholders(plugin, this.getName(), placeholders);
 
-        String replacedName = integration.replace(targetPlayer, otherPlayer, true,
-                Formatting.placeholders(plugin, this.getName(), placeholders));
+        PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        if (integration != null) {
+            replacedName = integration.replace(targetPlayer, otherPlayer, true, replacedName);
+        }
 
         MiniMessage mm = plugin.getMiniMessage();
         Component name = Components.reset().append(mm.deserialize(replacedName));
         List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
                 .map(v -> Formatting.placeholders(plugin, v, placeholders))
-                .map(v -> integration.replace(targetPlayer, otherPlayer, true, v))
+                .map(v -> integration == null ? v : integration.replace(targetPlayer, otherPlayer, true, v))
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
