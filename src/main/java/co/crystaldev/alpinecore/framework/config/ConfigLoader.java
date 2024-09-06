@@ -52,9 +52,11 @@ public final class ConfigLoader<T> {
         this.directory = directory;
         this.configClass = configClass;
 
-        if (!Files.exists(this.directory)) {
+        boolean createdDirectory = false;
+        if (!Files.isDirectory(this.directory)) {
             try {
                 Files.createDirectories(this.directory);
+                createdDirectory = true;
             }
             catch (IOException ex) {
                 throw new IllegalStateException("Unable to generate dynamic configuration root directory", ex);
@@ -64,7 +66,7 @@ public final class ConfigLoader<T> {
 
         YamlConfigurationProperties properties = plugin.getConfigManager().properties;
         try (Stream<Path> stream = Files.list(this.directory)) {
-            stream.filter(path -> Files.isRegularFile(path) && path.endsWith(".yml")).forEach(file -> {
+            stream.filter(path -> Files.isRegularFile(path) && path.toString().endsWith(".yml")).forEach(file -> {
                 T config = YamlConfigurations.load(file, this.configClass, properties);
                 String fileName = file.getFileName().toString();
                 String configName = fileName.substring(0, fileName.lastIndexOf("."));
@@ -75,7 +77,7 @@ public final class ConfigLoader<T> {
             throw new IllegalStateException("Unable to load dynamic configuration", ex);
         }
 
-        if (this.configRegistry.isEmpty()) {
+        if (createdDirectory) {
             defaultConfigs.forEach((name, supplier) -> {
                 T config = supplier.get();
                 this.configRegistry.put(name, config);
