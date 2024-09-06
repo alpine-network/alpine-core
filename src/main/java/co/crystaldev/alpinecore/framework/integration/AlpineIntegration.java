@@ -65,7 +65,10 @@ public abstract class AlpineIntegration implements Listener, Activatable {
                 AlpineIntegrationEngine engine = constructor.newInstance(this.plugin);
                 this.plugin.getServer().getPluginManager().registerEvents(engine, this.plugin);
                 this.engine = engine;
-                this.plugin.log(String.format("&aIntegration activated &d%s", this.getClass().getSimpleName()));
+
+                if (!this.getClass().getPackage().getName().startsWith("co.crystaldev.alpinecore")) {
+                    this.plugin.log(String.format("&aIntegration activated &d%s", this.getClass().getSimpleName()));
+                }
             }
             catch (Exception ex) {
                 throw new RuntimeException(ex);
