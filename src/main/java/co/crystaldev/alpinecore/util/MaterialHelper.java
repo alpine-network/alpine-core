@@ -19,6 +19,7 @@ import java.util.Map;
  * @since 0.3.1
  */
 @UtilityClass
+@SuppressWarnings("deprecation")
 public final class MaterialHelper {
 
     private static final short MAX_ID = 2267;
@@ -75,7 +76,7 @@ public final class MaterialHelper {
             return XMaterial.AIR;
         }
 
-        if (XMaterial.supports(13)) {
+        if (XMaterial.getVersion() >= 13) {
             return XMaterial.matchXMaterial(block.getType());
         }
         else {
@@ -112,8 +113,15 @@ public final class MaterialHelper {
         }
     }
 
+    /**
+     * Sets the block type to the specified material.
+     *
+     * @param block        The block to set the type of.
+     * @param type         The material to set.
+     * @param applyPhysics Whether to apply physics or not.
+     */
     public static void setType(@NotNull Block block, @NotNull XMaterial type, boolean applyPhysics) {
-        if (XMaterial.supports(13)) {
+        if (XMaterial.getVersion() >= 13) {
             block.setType(type.parseMaterial(), applyPhysics);
         }
         else {
@@ -121,14 +129,33 @@ public final class MaterialHelper {
         }
     }
 
+    /**
+     * Sets the block type to the specified material.
+     *
+     * @param block The block to set the type of.
+     * @param type  The material to set.
+     */
     public static void setType(@NotNull Block block, @NotNull XMaterial type) {
         setType(block, type, true);
     }
 
+    /**
+     * Sets the block type to the specified material.
+     *
+     * @param location     The location of the block.
+     * @param type         The material to set.
+     * @param applyPhysics Whether to apply physics or not.
+     */
     public static void setType(@NotNull Location location, @NotNull XMaterial type, boolean applyPhysics) {
         setType(location.getBlock(), type, applyPhysics);
     }
 
+    /**
+     * Sets the block type to the specified material.
+     *
+     * @param location The location of the block.
+     * @param type     The material to set.
+     */
     public static void setType(@NotNull Location location, @NotNull XMaterial type) {
         setType(location.getBlock(), type, true);
     }
@@ -150,6 +177,7 @@ public final class MaterialHelper {
             }
         }
 
+        //noinspection UnstableApiUsage
         if (!XMaterial.supports(13)) {
             // Some types such as repeaters and comparators were flattened into one type
             // resulting in them not getting registered
