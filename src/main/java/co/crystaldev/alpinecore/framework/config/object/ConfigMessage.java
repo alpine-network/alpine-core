@@ -64,14 +64,16 @@ public class ConfigMessage {
      * Formats the text of this message with placeholders, then deserializes
      * it using Adventure's MiniMessage.
      * <p>
-     * {@link co.crystaldev.alpinecore.util.Components} should be used to send
+     * {@link co.crystaldev.alpinecore.util.Messaging} should be used to send
      * the result of this method.
      *
-     * @see co.crystaldev.alpinecore.util.Components
-     * @see net.kyori.adventure.text.minimessage.MiniMessage
      * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
+     *
+     * @see co.crystaldev.alpinecore.util.Components
+     * @see co.crystaldev.alpinecore.util.Messaging
+     * @see net.kyori.adventure.text.minimessage.MiniMessage
      */
     public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull Object... placeholders) {
         String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
@@ -82,17 +84,72 @@ public class ConfigMessage {
      * Formats the text of this message with placeholders, then deserializes
      * it using Adventure's MiniMessage.
      * <p>
-     * {@link co.crystaldev.alpinecore.util.Components} should be used to send
+     * PlaceholderAPI placeholders are replaced by this method.
+     * <p>
+     * {@link co.crystaldev.alpinecore.util.Messaging} should be used to send
      * the result of this method.
      *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param target       The target player.
+     * @param placeholders The placeholders for formatting the message
+     * @return The {@link Component}
+     *
+     * @see co.crystaldev.alpinecore.integration.PlaceholderIntegration
      * @see co.crystaldev.alpinecore.util.Components
+     * @see co.crystaldev.alpinecore.util.Messaging
      * @see net.kyori.adventure.text.minimessage.MiniMessage
+     */
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
+                                    @NotNull Object... placeholders) {
+        String formatted = PlaceholderIntegration.getInstance().replace(target,
+                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
+        return plugin.getMiniMessage().deserialize(formatted);
+    }
+
+    /**
+     * Formats the text of this message with placeholders, then deserializes
+     * it using Adventure's MiniMessage.
+     * <p>
+     * {@link co.crystaldev.alpinecore.util.Messaging} should be used to send
+     * the result of this method.
+     *
      * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
      * @return The {@link Component}
+     *
+     * @see co.crystaldev.alpinecore.util.Components
+     * @see co.crystaldev.alpinecore.util.Messaging
+     * @see net.kyori.adventure.text.minimessage.MiniMessage
      */
     public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull Map<String, Object> placeholders) {
         String formatted = Formatting.placeholders(plugin, String.join("\n", this.message), placeholders);
+        return plugin.getMiniMessage().deserialize(formatted);
+    }
+
+    /**
+     * Formats the text of this message with placeholders, then deserializes
+     * it using Adventure's MiniMessage.
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
+     * <p>
+     * {@link co.crystaldev.alpinecore.util.Messaging} should be used to send
+     * the result of this method.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param target       The target player.
+     * @param other        The relational player.
+     * @param placeholders The placeholders for formatting the message
+     * @return The {@link Component}
+     *
+     * @see co.crystaldev.alpinecore.integration.PlaceholderIntegration
+     * @see co.crystaldev.alpinecore.util.Components
+     * @see co.crystaldev.alpinecore.util.Messaging
+     * @see net.kyori.adventure.text.minimessage.MiniMessage
+     */
+    public @NotNull Component build(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
+                                    @NotNull OfflinePlayer other, @NotNull Object... placeholders) {
+        String formatted = PlaceholderIntegration.getInstance().replace(target, other,
+                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
         return plugin.getMiniMessage().deserialize(formatted);
     }
 
@@ -109,6 +166,24 @@ public class ConfigMessage {
 
     /**
      * Formats the text of this message with placeholders
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
+     *
+     * @param plugin       The main plugin instance used for contextual operations
+     * @param target       The target player.
+     * @param placeholders The placeholders for formatting the message
+     * @return The string
+     *
+     * @see co.crystaldev.alpinecore.integration.PlaceholderIntegration
+     */
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
+                                       @NotNull Object... placeholders) {
+        return PlaceholderIntegration.getInstance().replace(target,
+                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
+    }
+
+    /**
+     * Formats the text of this message with placeholders
      *
      * @param plugin       The main plugin instance used for contextual operations
      * @param placeholders The placeholders for formatting the message
@@ -119,71 +194,20 @@ public class ConfigMessage {
     }
 
     /**
-     * Formats the text of this message with placeholders, then deserializes
-     * it using Adventure's MiniMessage.
-     * <p>
-     * {@link co.crystaldev.alpinecore.util.Components} should be used to send
-     * the result of this method.
-     *
-     * @see co.crystaldev.alpinecore.util.Components
-     * @see net.kyori.adventure.text.minimessage.MiniMessage
-     * @param plugin       The main plugin instance used for contextual operations
-     * @param target       The target player.
-     * @param placeholders The placeholders for formatting the message
-     * @return The {@link Component}
-     */
-    public @NotNull Component process(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target, @NotNull Object... placeholders) {
-        String formatted = PlaceholderIntegration.getInstance().replace(target,
-                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
-        return plugin.getMiniMessage().deserialize(formatted);
-    }
-
-    /**
-     * Formats the text of this message with placeholders, then deserializes
-     * it using Adventure's MiniMessage.
-     * <p>
-     * {@link co.crystaldev.alpinecore.util.Components} should be used to send
-     * the result of this method.
-     *
-     * @see co.crystaldev.alpinecore.util.Components
-     * @see net.kyori.adventure.text.minimessage.MiniMessage
-     * @param plugin       The main plugin instance used for contextual operations
-     * @param target       The target player.
-     * @param other        The relational player.
-     * @param placeholders The placeholders for formatting the message
-     * @return The {@link Component}
-     */
-    public @NotNull Component process(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target, @NotNull OfflinePlayer other, @NotNull Object... placeholders) {
-        String formatted = PlaceholderIntegration.getInstance().replace(target, other,
-                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
-        return plugin.getMiniMessage().deserialize(formatted);
-    }
-
-    /**
      * Formats the text of this message with placeholders
+     * <p>
+     * PlaceholderAPI placeholders are replaced by this method.
      *
-     * @see net.kyori.adventure.text.minimessage.MiniMessage
-     * @param plugin       The main plugin instance used for contextual operations
-     * @param target       The target player.
-     * @param placeholders The placeholders for formatting the message
-     * @return The string
-     */
-    public @NotNull String processString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target, @NotNull Object... placeholders) {
-        return PlaceholderIntegration.getInstance().replace(target,
-                Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
-    }
-
-    /**
-     * Formats the text of this message with placeholders
-     *
-     * @see net.kyori.adventure.text.minimessage.MiniMessage
      * @param plugin       The main plugin instance used for contextual operations
      * @param target       The target player.
      * @param other        The relational player.
      * @param placeholders The placeholders for formatting the message
      * @return The string
+     *
+     * @see co.crystaldev.alpinecore.integration.PlaceholderIntegration
      */
-    public @NotNull String processString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target, @NotNull OfflinePlayer other, @NotNull Object... placeholders) {
+    public @NotNull String buildString(@NotNull AlpinePlugin plugin, @NotNull OfflinePlayer target,
+                                       @NotNull OfflinePlayer other, @NotNull Object... placeholders) {
         return PlaceholderIntegration.getInstance().replace(target, other,
                 Formatting.placeholders(plugin, String.join("\n", this.message), placeholders));
     }
