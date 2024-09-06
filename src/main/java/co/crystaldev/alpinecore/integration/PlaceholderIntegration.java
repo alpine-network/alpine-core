@@ -6,6 +6,7 @@ import co.crystaldev.alpinecore.framework.integration.AlpineIntegrationEngine;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -129,7 +130,7 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      */
     public static final class PlaceholderEngine extends AlpineIntegrationEngine {
 
-        private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%\\w+_[^ ]+%");
+        private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 
         PlaceholderEngine(@NotNull AlpinePlugin plugin) {
             super(plugin);
@@ -157,6 +158,8 @@ public final class PlaceholderIntegration extends AlpineIntegration {
             if (!(target instanceof Player)) {
                 return this.replace(sender, text, miniMessage);
             }
+
+            text = this.replace(sender, text, miniMessage);
 
             if (sender instanceof Player) {
                 return sanitize(this.plugin, miniMessage, text, v -> {
@@ -202,11 +205,15 @@ public final class PlaceholderIntegration extends AlpineIntegration {
                     text = text.replace(placeholder, "");
                     continue;
                 }
+
+                replaced = ChatColor.translateAlternateColorCodes('&', replaced);
+
                 if (serialize && replaced.contains("§")) {
                     MiniMessage miniMessage = plugin.getStrictMiniMessage();
                     LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
                     replaced = miniMessage.serialize(serializer.deserialize(replaced));
                 }
+
                 text = text.replace(placeholder, replaced);
             }
 
