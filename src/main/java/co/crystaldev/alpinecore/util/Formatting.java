@@ -46,37 +46,10 @@ public final class Formatting {
         for (int i = 0; i < (placeholders.length / 2) * 2; i += 2) {
             String placeholder = (String) placeholders[i];
             Object rawReplacer = placeholders[i + 1];
-            String formattedReplacer;
-
-            if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
-                formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
-            }
-            else if (rawReplacer instanceof Boolean) {
-                formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
-            }
-            else if (rawReplacer instanceof Component) {
-                formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
-            }
-            else if (rawReplacer instanceof Supplier) {
-                formattedReplacer = ((Supplier<?>) rawReplacer).get().toString();
-            }
-            else {
-                formattedReplacer = rawReplacer.toString();
-            }
-
-            text = text.replace("%" + placeholder + "%", formattedReplacer);
+            text = formatPlaceholder(miniMessage, text, rawReplacer, placeholder);
         }
 
         return text;
-    }
-
-    /**
-     * @deprecated Renamed. Use {@link Formatting#placeholders(MiniMessage, String, Object...)}
-     */
-    @Deprecated
-    public static @NotNull String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text,
-                                                     @NotNull Object... placeholders) {
-        return placeholders(miniMessage, text, placeholders);
     }
 
     /**
@@ -102,16 +75,6 @@ public final class Formatting {
     }
 
     /**
-     * @see Formatting#placeholders(AlpinePlugin, String, Object...)
-     * @deprecated Renamed. Use {@link Formatting#placeholders(AlpinePlugin, String, Object...)}
-     */
-    @Deprecated
-    public static @NotNull String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text,
-                                                     @NotNull Object... placeholders) {
-        return placeholders(plugin, text, placeholders);
-    }
-
-    /**
      * Formats text with placeholders.
      * <p>
      * Placeholders are denoted with percent symbols on either side.
@@ -122,15 +85,6 @@ public final class Formatting {
      */
     public static @NotNull String placeholders(@Nullable String text, @NotNull Object... placeholders) {
         return placeholders(MiniMessage.miniMessage(), text, placeholders);
-    }
-
-    /**
-     * @see Formatting#placeholders(String, Object...)
-     * @deprecated Renamed. Use {@link Formatting#placeholders(String, Object...)}
-     */
-    @Deprecated
-    public static @NotNull String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
-        return placeholders(text, placeholders);
     }
 
     /**
@@ -155,38 +109,10 @@ public final class Formatting {
         for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
             String placeholder = "%" + entry.getKey() + "%";
             Object rawReplacer = entry.getValue();
-            String formattedReplacer;
-
-            if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
-                formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
-            }
-            else if (rawReplacer instanceof Boolean) {
-                formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
-            }
-            else if (rawReplacer instanceof Component) {
-                formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
-            }
-            else if (rawReplacer instanceof Supplier) {
-                formattedReplacer = ((Supplier<?>) rawReplacer).get().toString();
-            }
-            else {
-                formattedReplacer = rawReplacer.toString();
-            }
-
-            text = text.replace(placeholder, formattedReplacer);
+            text = formatPlaceholder(miniMessage, text, rawReplacer, placeholder);
         }
 
         return text;
-    }
-
-    /**
-     * @see Formatting#placeholders(MiniMessage, String, Map)
-     * @deprecated Renamed. Use {@link Formatting#placeholders(MiniMessage, String, Map)}
-     */
-    @Deprecated
-    public static @NotNull String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text,
-                                                     @NotNull Map<String, Object> placeholders) {
-        return placeholders(miniMessage, text, placeholders);
     }
 
     /**
@@ -212,16 +138,6 @@ public final class Formatting {
     }
 
     /**
-     * @see Formatting#placeholders(AlpinePlugin, String, Map)
-     * @deprecated Renamed. Use {@link Formatting#placeholders(AlpinePlugin, String, Map)}
-     */
-    @Deprecated
-    public static @NotNull String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text,
-                                                     @NotNull Map<String, Object> placeholders) {
-        return placeholders(plugin, text, placeholders);
-    }
-
-    /**
      * Formats text with placeholders.
      * <p>
      * Placeholders are denoted with percent symbols on either side.
@@ -235,12 +151,83 @@ public final class Formatting {
     }
 
     /**
+     * @deprecated Renamed. Use {@link Formatting#placeholders(MiniMessage, String, Object...)}
+     */
+    @Deprecated
+    public static @NotNull String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text,
+                                                     @NotNull Object... placeholders) {
+        return placeholders(miniMessage, text, placeholders);
+    }
+
+    /**
+     * @see Formatting#placeholders(AlpinePlugin, String, Object...)
+     * @deprecated Renamed. Use {@link Formatting#placeholders(AlpinePlugin, String, Object...)}
+     */
+    @Deprecated
+    public static @NotNull String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text,
+                                                     @NotNull Object... placeholders) {
+        return placeholders(plugin, text, placeholders);
+    }
+
+    /**
+     * @see Formatting#placeholders(String, Object...)
+     * @deprecated Renamed. Use {@link Formatting#placeholders(String, Object...)}
+     */
+    @Deprecated
+    public static @NotNull String formatPlaceholders(@Nullable String text, @NotNull Object... placeholders) {
+        return placeholders(text, placeholders);
+    }
+
+    /**
+     * @see Formatting#placeholders(MiniMessage, String, Map)
+     * @deprecated Renamed. Use {@link Formatting#placeholders(MiniMessage, String, Map)}
+     */
+    @Deprecated
+    public static @NotNull String formatPlaceholders(@NotNull MiniMessage miniMessage, @Nullable String text,
+                                                     @NotNull Map<String, Object> placeholders) {
+        return placeholders(miniMessage, text, placeholders);
+    }
+
+    /**
+     * @see Formatting#placeholders(AlpinePlugin, String, Map)
+     * @deprecated Renamed. Use {@link Formatting#placeholders(AlpinePlugin, String, Map)}
+     */
+    @Deprecated
+    public static @NotNull String formatPlaceholders(@NotNull AlpinePlugin plugin, @Nullable String text,
+                                                     @NotNull Map<String, Object> placeholders) {
+        return placeholders(plugin, text, placeholders);
+    }
+
+    /**
      * @see Formatting#placeholders(String, Map)
      * @deprecated Renamed. Use {@link Formatting#placeholders(String, Map)}
      */
     @Deprecated
     public static @NotNull String formatPlaceholders(@Nullable String text, @NotNull Map<String, Object> placeholders) {
         return placeholders(text, placeholders);
+    }
+
+    private static @NotNull String formatPlaceholder(@NotNull MiniMessage miniMessage, @NotNull String text, Object rawReplacer, String placeholder) {
+        String formattedReplacer;
+
+        if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
+            formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
+        }
+        else if (rawReplacer instanceof Boolean) {
+            formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
+        }
+        else if (rawReplacer instanceof Component) {
+            formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
+        }
+        else if (rawReplacer instanceof Supplier) {
+            formattedReplacer = ((Supplier<?>) rawReplacer).get().toString();
+        }
+        else {
+            formattedReplacer = rawReplacer.toString();
+        }
+
+        text = text.replace("%" + placeholder + "%", formattedReplacer);
+        return text;
     }
 
     /**
