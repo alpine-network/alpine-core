@@ -107,7 +107,7 @@ public final class Formatting {
         }
 
         for (Map.Entry<String, Object> entry : placeholders.entrySet()) {
-            String placeholder = "%" + entry.getKey() + "%";
+            String placeholder = entry.getKey();
             Object rawReplacer = entry.getValue();
             text = formatPlaceholder(miniMessage, text, rawReplacer, placeholder);
         }
@@ -207,23 +207,23 @@ public final class Formatting {
         return placeholders(text, placeholders);
     }
 
-    private static @NotNull String formatPlaceholder(@NotNull MiniMessage miniMessage, @NotNull String text, Object rawReplacer, String placeholder) {
+    private static @NotNull String formatPlaceholder(@NotNull MiniMessage miniMessage, @NotNull String text, Object value, String placeholder) {
         String formattedReplacer;
 
-        if (rawReplacer instanceof Float || rawReplacer instanceof Double) {
-            formattedReplacer = DECIMAL_FORMAT.format(rawReplacer);
+        if (value instanceof Float || value instanceof Double) {
+            formattedReplacer = DECIMAL_FORMAT.format(value);
         }
-        else if (rawReplacer instanceof Boolean) {
-            formattedReplacer = (Boolean) rawReplacer ? "True" : "False";
+        else if (value instanceof Boolean) {
+            formattedReplacer = (Boolean) value ? "True" : "False";
         }
-        else if (rawReplacer instanceof Component) {
-            formattedReplacer = miniMessage.serialize(((Component) rawReplacer).append(Components.reset()));
+        else if (value instanceof Component) {
+            formattedReplacer = miniMessage.serialize(((Component) value).append(Components.reset()));
         }
-        else if (rawReplacer instanceof Supplier) {
-            formattedReplacer = ((Supplier<?>) rawReplacer).get().toString();
+        else if (value instanceof Supplier) {
+            formattedReplacer = ((Supplier<?>) value).get().toString();
         }
         else {
-            formattedReplacer = rawReplacer.toString();
+            formattedReplacer = value.toString();
         }
 
         text = text.replace("%" + placeholder + "%", formattedReplacer);
