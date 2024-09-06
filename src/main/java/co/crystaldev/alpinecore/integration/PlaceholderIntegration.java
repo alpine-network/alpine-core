@@ -60,6 +60,39 @@ public final class PlaceholderIntegration extends AlpineIntegration {
      * @param text   the text to replace placeholders in
      * @return the modified text with placeholders replaced or the original text
      */
+    public @NotNull String replace(@NotNull OfflinePlayer target, @NotNull String text) {
+        if (this.isActive()) {
+            return this.getEngine().replace(target, text);
+        }
+        else {
+            return text;
+        }
+    }
+
+    /**
+     * Replaces placeholders in the given text if the integration is active. Otherwise, returns the original text.
+     *
+     * @param target the command sender to be replaced against
+     * @param other  the other command sender to be replaced against
+     * @param text   the text to replace placeholders in
+     * @return the modified text with placeholders replaced or the original text
+     */
+    public @NotNull String replace(@NotNull OfflinePlayer target, @NotNull OfflinePlayer other, @NotNull String text) {
+        if (this.isActive()) {
+            return this.getEngine().replace(target, other, text);
+        }
+        else {
+            return text;
+        }
+    }
+
+    /**
+     * Replaces placeholders in the given text if the integration is active. Otherwise, returns the original text.
+     *
+     * @param target the command sender to be replaced against
+     * @param text   the text to replace placeholders in
+     * @return the modified text with placeholders replaced or the original text
+     */
     public @NotNull String replace(@NotNull CommandSender target, @NotNull String text) {
         if (this.isActive()) {
             return this.getEngine().replace(target, text);
@@ -95,24 +128,16 @@ public final class PlaceholderIntegration extends AlpineIntegration {
             super(plugin);
         }
 
-        public @NotNull String replace(@NotNull CommandSender sender, @NotNull String text) {
-            if (!(sender instanceof OfflinePlayer)) {
-                return text;
-            }
-
+        public @NotNull String replace(@NotNull OfflinePlayer sender, @NotNull String text) {
             if (sender instanceof Player) {
                 return PlaceholderAPI.setPlaceholders((Player) sender, text);
             }
             else {
-                return PlaceholderAPI.setPlaceholders((OfflinePlayer) sender, text);
+                return PlaceholderAPI.setPlaceholders(sender, text);
             }
         }
 
-        public @NotNull String replace(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String text) {
-            if (!(sender instanceof OfflinePlayer)) {
-                return text;
-            }
-
+        public @NotNull String replace(@NotNull OfflinePlayer sender, @NotNull OfflinePlayer target, @NotNull String text) {
             if (!(target instanceof Player)) {
                 return this.replace(sender, text);
             }
@@ -121,8 +146,28 @@ public final class PlaceholderIntegration extends AlpineIntegration {
                 return PlaceholderAPI.setRelationalPlaceholders((Player) sender, (Player) target, text);
             }
             else {
-                return PlaceholderAPI.setPlaceholders((OfflinePlayer) sender, text);
+                return PlaceholderAPI.setPlaceholders(sender, text);
             }
+        }
+
+        public @NotNull String replace(@NotNull CommandSender sender, @NotNull String text) {
+            if (!(sender instanceof OfflinePlayer)) {
+                return text;
+            }
+
+            return this.replace((OfflinePlayer) sender, text);
+        }
+
+        public @NotNull String replace(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String text) {
+            if (!(sender instanceof Player)) {
+                return text;
+            }
+
+            if (!(target instanceof Player)) {
+                return this.replace(sender, text);
+            }
+
+            return this.replace((OfflinePlayer) sender, (Player) target, text);
         }
     }
 }
