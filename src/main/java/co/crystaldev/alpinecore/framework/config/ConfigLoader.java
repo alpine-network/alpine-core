@@ -63,7 +63,6 @@ public final class ConfigLoader<T> {
             }
         }
 
-
         YamlConfigurationProperties properties = plugin.getConfigManager().properties;
         try (Stream<Path> stream = Files.list(this.directory)) {
             stream.filter(path -> Files.isRegularFile(path) && path.toString().endsWith(".yml")).forEach(file -> {
