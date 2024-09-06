@@ -15,6 +15,8 @@ import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.framework.teleport.TeleportManager;
 import co.crystaldev.alpinecore.framework.ui.UIManager;
 import co.crystaldev.alpinecore.handler.CommandInvalidUsageHandler;
+import co.crystaldev.alpinecore.integration.PlaceholderIntegration;
+import co.crystaldev.alpinecore.integration.VaultIntegration;
 import co.crystaldev.alpinecore.util.ChatColor;
 import co.crystaldev.alpinecore.util.SimpleTimer;
 import co.crystaldev.alpinecore.util.StyleTagResolver;
@@ -47,9 +49,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -369,6 +369,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      */
     private void activateAll() {
         String packageName = this.getClass().getPackage().getName();
+
         Set<Class<?>> classes = ImmutableSet.of();
         try {
             classes = ClassPath.from(this.getClassLoader()).getAllClasses().stream()
@@ -376,6 +377,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                     .filter(clazz -> this.onActivatablePreload(clazz.getName()))
                     .map(ClassPath.ClassInfo::load)
                     .collect(Collectors.toSet());
+
+            classes.add(PlaceholderIntegration.class);
+            classes.add(VaultIntegration.class);
         }
         catch (Exception ex) {
             this.log("&cError scanning classpath", ex);
