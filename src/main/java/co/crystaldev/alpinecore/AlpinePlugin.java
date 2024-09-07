@@ -221,11 +221,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.uiManager = new UIManager(this);
         this.teleportManager = new TeleportManager(this);
 
-        // Activate all activatables
-        this.activateAll();
-
         // Register plugin config
         this.setupAlpinePluginConfig();
+
+        // Activate all activatables
+        this.activateAll();
 
         // Setup plugin MiniMessage instances
         TagResolver resolver = TagResolver.resolver(TagResolver.standard(), new StyleTagResolver(this));
