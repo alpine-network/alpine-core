@@ -111,8 +111,10 @@ public final class ConfigManager {
      * @return the edited configuration object
      */
     public <T extends AlpineConfig> @NotNull T editConfig(@NotNull T config, @NotNull Consumer<T> consumer) {
+        Path file = this.rootDirectory.resolve(Paths.get(config.getFileName()));
         config = this.registerConfig(config);
         consumer.accept(config);
+        YamlConfigurations.save(file, (Class<T>) config.getClass(), config, this.properties);
         return config;
     }
 
