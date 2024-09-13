@@ -145,7 +145,6 @@ public final class ConfigLoader<T> {
      */
     public static final class Builder<T> {
 
-
         private final AlpinePlugin plugin;
 
         private final Class<T> configClass;

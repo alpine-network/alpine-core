@@ -6,7 +6,6 @@ import co.crystaldev.alpinecore.framework.teleport.AlpineTeleportHandler;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
