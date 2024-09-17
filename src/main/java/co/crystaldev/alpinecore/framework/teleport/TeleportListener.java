@@ -85,7 +85,7 @@ final class TeleportListener implements Listener {
         TeleportContext context = task.createContext(!task.canMove());
 
         // do not listen to movement for instant teleportation
-        if (context.isInstant()) {
+        if (task.getTicksToTeleport() < 0) {
             return;
         }
 
