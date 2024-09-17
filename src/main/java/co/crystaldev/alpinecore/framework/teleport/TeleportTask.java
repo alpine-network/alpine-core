@@ -56,11 +56,11 @@ public final class TeleportTask {
     }
 
     int tick() {
-        return this.ticksToTeleport--;
+        return this.ticksToTeleport <= 0 ? this.ticksToTeleport : this.ticksToTeleport--;
     }
 
     boolean canMove() {
-        return this.movementThreshold < 0;
+        return this.ticksToTeleport <= 0 || this.movementThreshold < 0;
     }
 
     @NotNull TeleportContext createContext(boolean instant) {

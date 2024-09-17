@@ -22,15 +22,15 @@ public final class TeleportContext {
 
     private final @NotNull Player player;
 
-    private final @NotNull Location destination;
+    private @NotNull Location destination;
 
     private final int ticksUntilTeleport;
 
     private final boolean canMove;
 
-    private MessageType messageType = MessageType.DISABLED;
+    private @NotNull MessageType messageType = MessageType.DISABLED;
 
-    private Component message;
+    private @Nullable Component message;
 
     private boolean cancelled;
 
@@ -50,6 +50,15 @@ public final class TeleportContext {
      */
     public @NotNull Location destination() {
         return this.destination;
+    }
+
+    /**
+     * Sets the destination location for the teleportation process.
+     *
+     * @param destination the new destination location to be set
+     */
+    public void destination(@NotNull Location destination) {
+        this.destination = destination;
     }
 
     /**
