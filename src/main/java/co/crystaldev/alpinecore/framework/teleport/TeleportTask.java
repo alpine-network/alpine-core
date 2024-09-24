@@ -1,10 +1,7 @@
 package co.crystaldev.alpinecore.framework.teleport;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -63,6 +60,10 @@ public final class TeleportTask {
         return this.ticksToTeleport <= 0 || this.movementThreshold < 0;
     }
 
+    void apply(@NotNull TeleportContext context) {
+        this.ticksToTeleport = context.ticksUntilTeleport();
+    }
+
     @NotNull TeleportContext createContext(boolean instant) {
         if (instant) {
             return new TeleportContext(this.player, this.destination, -1, this.canMove());
@@ -109,6 +110,10 @@ public final class TeleportTask {
         public @NotNull Builder instant() {
             this.delayTicks = -1;
             return this;
+        }
+
+        public @NotNull Builder instant(boolean instant) {
+            return instant ? this.instant() : this;
         }
 
         public @NotNull Builder movementThreshold(double threshold) {

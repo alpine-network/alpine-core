@@ -17,14 +17,14 @@ import java.util.concurrent.TimeUnit;
  *
  * @since 0.4.0
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @ToString
+@ToString
 public final class TeleportContext {
 
     private final @NotNull Player player;
 
     private @NotNull Location destination;
 
-    private final int ticksUntilTeleport;
+    private int ticksUntilTeleport;
 
     private final boolean canMove;
 
@@ -33,6 +33,13 @@ public final class TeleportContext {
     private @Nullable Component message;
 
     private boolean cancelled;
+
+    TeleportContext(@NotNull Player player, @NotNull Location destination, int ticksUntilTeleport, boolean canMove) {
+        this.player = player;
+        this.destination = destination;
+        this.ticksUntilTeleport = ticksUntilTeleport;
+        this.canMove = canMove;
+    }
 
     /**
      * Retrieves the player associated with the teleportation.
@@ -71,6 +78,15 @@ public final class TeleportContext {
     }
 
     /**
+     * Sets the number of ticks remaining until the teleportation occurs.
+     *
+     * @param ticksUntilTeleport the number of ticks until the teleportation takes place
+     */
+    public void setTicksUntilTeleport(int ticksUntilTeleport) {
+        this.ticksUntilTeleport = ticksUntilTeleport;
+    }
+
+    /**
      * Calculates the time remaining until teleportation.
      *
      * @param unit the time unit to convert the result to
@@ -81,12 +97,30 @@ public final class TeleportContext {
     }
 
     /**
+     * Sets the time remaining until the teleportation occurs.
+     *
+     * @param time the time duration
+     * @param unit the time unit of the duration
+     */
+    public void setTimeUntilTeleport(long time, @NotNull TimeUnit unit) {
+        this.setTicksUntilTeleport(Math.toIntExact(unit.toMillis(time) / 50L));
+    }
+
+    /**
      * Determines whether the teleportation is instant or not.
      *
      * @return {@code true} if the teleportation is instant, {@code false} otherwise
      */
     public boolean isInstant() {
         return this.ticksUntilTeleport <= 0;
+    }
+
+    /**
+     * Sets the teleportation to be instant by setting the number of ticks until teleportation to zero.
+     * After calling this method, the teleportation will occur immediately.
+     */
+    public void setInstant() {
+        this.ticksUntilTeleport = -1;
     }
 
     /**

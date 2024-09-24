@@ -64,6 +64,8 @@ final class TeleportListener implements Listener {
             }
 
             if (context != null) {
+                task.apply(context);
+
                 Messaging.send(player, context.messageType(), context.message());
 
                 if (context.isCancelled() && !removed) {
@@ -96,6 +98,7 @@ final class TeleportListener implements Listener {
 
         task.getCallbacks().getOnMove().accept(context);
         handler.onMove(context);
+        task.apply(context);
 
         Messaging.send(context.player(), context.messageType(), context.message());
 
