@@ -16,6 +16,26 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
+ * A handler to manage cooldowns or warmups for given entities.
+ * </p>
+ * Example usage:
+ * <pre>{@code
+ * AlpinePlugin plugin;
+ * CooldownHandler<Player> handler = CooldownHandler.<Player>builder()
+ *         .delay(5, TimeUnit.SECONDS)
+ *         .build(plugin);
+ *
+ * public void onEvent(Player player) {
+ *     Cooldown<Player> cooldown = handler.testCooldown(player);
+ *     if (cooldown.isActive()) {
+ *         player.sendMessage("You are on cooldown for " + cooldown.remainingTime(TimeUnit.SECONDS));
+ *     }
+ *     else {
+ *         // Cooldown is not active
+ *     }
+ * }
+ * }</pre>
+ *
  * @since 0.4.5
  */
 public final class CooldownHandler<T> {

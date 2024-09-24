@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Represents a cooldown or a warmup for a given entity.
+ *
  * @since 0.4.5
  */
 @ToString
