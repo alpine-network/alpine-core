@@ -70,8 +70,8 @@ public final class TeleportManager {
     public void initiateTeleport(@NotNull TeleportTask task) {
         TeleportHandler handler = this.getTeleportHandler();
         TeleportContext context = task.createContext(false);
-        task.getCallbacks().getOnInit().accept(context);
         handler.onInit(context);
+        task.getCallbacks().getOnInit().accept(context);
 
         if (!context.isCancelled()) {
             Messaging.send(context.player(), context.messageType(), context.message());
@@ -99,8 +99,8 @@ public final class TeleportManager {
 
     private static void cancelTask(@NotNull TeleportTask task, @NotNull TeleportHandler handler) {
         TeleportContext context = task.createContext(true);
-        task.getCallbacks().getOnCancel().accept(context);
         handler.onCancel(context);
+        task.getCallbacks().getOnCancel().accept(context);
         Messaging.send(context.player(), context.messageType(), context.message());
     }
 }
