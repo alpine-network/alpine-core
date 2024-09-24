@@ -3,6 +3,8 @@ package dev.tomwmth.exampleplugin.command;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.command.AlpineCommand;
+import co.crystaldev.alpinecore.framework.cooldown.Cooldown;
+import co.crystaldev.alpinecore.framework.cooldown.CooldownHandler;
 import co.crystaldev.alpinecore.framework.teleport.TeleportTask;
 import co.crystaldev.alpinecore.util.Components;
 import co.crystaldev.alpinecore.util.Messaging;
@@ -43,8 +45,14 @@ import java.util.stream.Collectors;
 @Description("This is an example command!")
 @Permission("exampleplugin.example")
 public class ExampleCommand extends AlpineCommand {
+
+    private final CooldownHandler<Player> warmupHandler;
+
     protected ExampleCommand(AlpinePlugin plugin) {
         super(plugin);
+        this.warmupHandler = CooldownHandler.<Player>builder()
+                .delay(5, TimeUnit.SECONDS)
+                .build(plugin);
     }
 
     @Execute
@@ -84,6 +92,34 @@ public class ExampleCommand extends AlpineCommand {
                 config.actionMessage.build(this.plugin,
                         "action", message)
         );
+    }
+
+    @Execute(name = "warmup")
+    public void executeWarmup(@Context Player sender) {
+        Cooldown<Player> warmup = this.warmupHandler.testWarmup(sender, ctx -> {
+            // Warmup has finished
+            ctx.message(Component.text("Done!"));
+        });
+
+        Messaging.send(sender, Components.joinSpaces(
+                Component.text("Will execute in"),
+                Component.text(warmup.remainingTime(TimeUnit.SECONDS) + " second(s)").color(TextColor.color(0x56CAFF))
+        ));
+    }
+
+    @Execute(name = "cooldown")
+    public void executeCooldown(@Context Player sender) {
+        Cooldown<Player> cooldown = this.warmupHandler.testCooldown(sender);
+        if (cooldown.isActive()) {
+            // Player is on cooldown
+            Messaging.send(sender, Components.joinSpaces(
+                    Component.text("You are on cooldown for"),
+                    Component.text(cooldown.remainingTime(TimeUnit.SECONDS) + " second(s)").color(TextColor.color(0x56CAFF))
+            ));
+            return;
+        }
+
+        Messaging.send(sender, Component.text("Done!"));
     }
 
     @Execute(name = "move")

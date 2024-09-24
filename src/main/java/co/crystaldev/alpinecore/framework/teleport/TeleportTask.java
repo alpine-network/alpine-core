@@ -36,21 +36,9 @@ public final class TeleportTask {
 
     private final TeleportCallbacks callbacks;
 
-    private final long delay;
-
     private int ticksToTeleport;
 
     private double movementThreshold;
-
-    /**
-     * Retrieves the time remaining until teleportation in the specified time unit.
-     *
-     * @param unit the time unit to convert the result to
-     * @return the time remaining until teleportation in the specified time unit
-     */
-    public long getTimeUntilTeleport(@NotNull TimeUnit unit) {
-        return unit.convert(this.delay, TimeUnit.MILLISECONDS);
-    }
 
     int tick() {
         return this.ticksToTeleport <= 0 ? this.ticksToTeleport : this.ticksToTeleport--;
@@ -91,19 +79,15 @@ public final class TeleportTask {
 
         private int delayTicks;
 
-        private long delayMs;
-
         private double movementThreshold = 0.1;
 
         public @NotNull Builder delay(int ticks) {
             this.delayTicks = ticks;
-            this.delayMs = ticks * 50L;
             return this;
         }
 
         public @NotNull Builder delay(int time, @NotNull TimeUnit unit) {
-            this.delayMs = unit.toMillis(time);
-            this.delayTicks = Math.toIntExact(this.delayMs / 50L);
+            this.delayTicks = Math.toIntExact(unit.toMillis(time) / 50L);
             return this;
         }
 
@@ -163,7 +147,7 @@ public final class TeleportTask {
         }
 
         public @NotNull TeleportTask build() {
-            return new TeleportTask(this.player, this.player.getLocation(), this.destination, this.callbacks, this.delayMs, this.delayTicks, this.movementThreshold);
+            return new TeleportTask(this.player, this.player.getLocation(), this.destination, this.callbacks, this.delayTicks, this.movementThreshold);
         }
 
         public @NotNull TeleportTask initiate(@NotNull AlpinePlugin plugin) {
