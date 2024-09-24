@@ -21,8 +21,6 @@ public class Cooldown<T> {
 
     private final @NotNull T entity;
 
-    private final boolean warmup;
-
     private int remainingTicks;
 
     private final boolean canMove;
@@ -36,9 +34,8 @@ public class Cooldown<T> {
 
     private boolean cancelled;
 
-    Cooldown(@NotNull T entity, boolean warmup, int remainingTicks, boolean canMove, @Nullable Location origin) {
+    Cooldown(@NotNull T entity, int remainingTicks, boolean canMove, @Nullable Location origin) {
         this.entity = entity;
-        this.warmup = warmup;
         this.remainingTicks = remainingTicks;
         this.canMove = canMove;
         this.origin = origin;
@@ -59,7 +56,7 @@ public class Cooldown<T> {
      * @return {@code true} if the cooldown is in its warmup phase, {@code false} otherwise.
      */
     public boolean isWarmup() {
-        return this.warmup;
+        return this instanceof Warmup;
     }
 
     /**
@@ -113,7 +110,7 @@ public class Cooldown<T> {
      * Sets the cooldown to be instant by setting the number of ticks until teleportation to zero.
      */
     public void setInstant() {
-        this.remainingTicks = -1;
+        this.setRemainingTicks(-1);
     }
 
     /**

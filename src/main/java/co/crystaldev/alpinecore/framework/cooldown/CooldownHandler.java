@@ -58,14 +58,19 @@ public final class CooldownHandler<T> {
         Bukkit.getPluginManager().registerEvents(new CooldownListener<>(this, this.cooldowns), plugin);
     }
 
+    /**
+     * Checks or initializes a cooldown for the given key.
+     *
+     * @param key the key representing the entity to be checked or initialized for cooldown
+     * @return the current cooldown associated with the key
+     */
     public @NotNull Cooldown<T> testCooldown(@NotNull T key) {
         Location origin = key instanceof Player ? ((Player) key).getLocation() : null;
-        Cooldown<T> cooldown = this.cooldowns.getOrDefault(key,
-                new Cooldown<>(key, false, 0, this.movementThreshold < 0, origin));
+        Cooldown<T> cooldown = this.cooldowns.getOrDefault(key, DummyCooldown.instance());
 
         // Cooldown is not in effect, assign a new cooldown
         if (!cooldown.isActive()) {
-            Cooldown<T> newCooldown = new Cooldown<>(key, false, this.delayTicks, this.movementThreshold < 0, origin);
+            Cooldown<T> newCooldown = new Cooldown<>(key, this.delayTicks, this.movementThreshold < 0, origin);
             this.cooldowns.put(key, newCooldown);
             this.callbacks.getOnInit().accept(newCooldown);
 
@@ -81,28 +86,41 @@ public final class CooldownHandler<T> {
         return cooldown;
     }
 
+    /**
+     * Tests or initializes the warmup for the given key.
+     * If the warmup has not been initialized, it begins the warmup process.
+     *
+     * @param key        the key representing the entity to be checked or initialized for warmup
+     * @param onComplete the callback to be executed upon the completion of the warmup
+     * @return the current warmup associated with the key
+     */
     public @NotNull Cooldown<T> testWarmup(@NotNull T key, @NotNull Consumer<Cooldown<T>> onComplete) {
         Location origin = key instanceof Player ? ((Player) key).getLocation() : null;
-        Cooldown<T> cooldown = this.cooldowns.get(key);
+        Cooldown<T> warmup = this.cooldowns.get(key);
 
-        // Cooldown is not in effect, assign a new cooldown
-        if (cooldown == null || cooldown.isActive()) {
-            cooldown = new Warmup<>(key, true, this.delayTicks, this.movementThreshold < 0, origin, onComplete);
-            this.cooldowns.put(key, cooldown);
-            this.callbacks.getOnInit().accept(cooldown);
+        // Has not warmed up yet, begin warmup
+        if (warmup == null || warmup.isActive()) {
+            warmup = new Warmup<>(key, this.delayTicks, this.movementThreshold < 0, origin, onComplete);
+            this.cooldowns.put(key, warmup);
+            this.callbacks.getOnInit().accept(warmup);
 
             if (key instanceof Player) {
-                Messaging.send((Player) key, cooldown.messageType(), cooldown.message());
+                Messaging.send((Player) key, warmup.messageType(), warmup.message());
             }
 
-            if (cooldown.isCancelled()) {
+            if (warmup.isCancelled()) {
                 this.cancel(key);
             }
         }
 
-        return cooldown;
+        return warmup;
     }
 
+    /**
+     * Cancels the cooldown associated with the given key.
+     *
+     * @param key the key corresponding to the cooldown to be canceled
+     */
     public void cancel(@NotNull T key) {
         Cooldown<T> cooldown = this.cooldowns.remove(key);
         if (cooldown != null) {
@@ -112,6 +130,12 @@ public final class CooldownHandler<T> {
         }
     }
 
+    /**
+     * Retrieves the cooldown associated with the given key.
+     *
+     * @param key the key corresponding to the cooldown to be retrieved
+     * @return the cooldown associated with the given key, or {@code null} if no cooldown is found
+     */
     public @Nullable Cooldown<T> get(@NotNull T key) {
         return this.cooldowns.get(key);
     }
@@ -155,7 +179,7 @@ public final class CooldownHandler<T> {
             this.movementThreshold = -1;
             return this;
         }
-        
+
         public @NotNull Builder<T> onInit(@NotNull Consumer<Cooldown<T>> contextConsumer) {
             Validate.notNull(contextConsumer, "contextConsumer cannot be null");
             this.callbacks.setOnInit(contextConsumer);

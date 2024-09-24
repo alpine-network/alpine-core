@@ -13,8 +13,8 @@ final class Warmup<T> extends Cooldown<T> {
 
     private final @NotNull Consumer<Cooldown<T>> onComplete;
 
-    Warmup(@NotNull T entity, boolean warmup, int remainingTicks, boolean canMove, @Nullable Location origin, @NotNull Consumer<Cooldown<T>> onComplete) {
-        super(entity, warmup, remainingTicks, canMove, origin);
+    Warmup(@NotNull T entity, int remainingTicks, boolean canMove, @Nullable Location origin, @NotNull Consumer<Cooldown<T>> onComplete) {
+        super(entity, remainingTicks, canMove, origin);
         this.onComplete = onComplete;
     }
 
