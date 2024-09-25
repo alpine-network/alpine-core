@@ -72,6 +72,7 @@ public final class TeleportManager {
         TeleportContext context = task.createContext(false);
         handler.onInit(context);
         task.getCallbacks().getOnInit().accept(context);
+        task.apply(context);
 
         if (!context.isCancelled()) {
             Messaging.send(context.player(), context.messageType(), context.message());
