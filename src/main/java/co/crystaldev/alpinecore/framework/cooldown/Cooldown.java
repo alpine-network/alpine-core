@@ -42,6 +42,15 @@ public class Cooldown<T> {
     }
 
     /**
+     * Retrieves the entity associated with this cooldown.
+     *
+     * @return The entity.
+     */
+    public @NotNull T getEntity() {
+        return this.entity;
+    }
+
+    /**
      * Checks if the cooldown is currently active.
      *
      * @return {@code true} if the cooldown is active, {@code false} otherwise.
