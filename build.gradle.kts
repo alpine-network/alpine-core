@@ -6,7 +6,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("net.kyori.blossom") version "1.2.0"
-    id("com.gradleup.shadow") version "8.3.0"
+    id("com.gradleup.shadow") version "8.3.3"
 }
 
 group = this.compileGroup()
@@ -26,8 +26,7 @@ repositories {
     maven("https://lib.alpn.cloud/alpine-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven("https://repo.panda-lang.org/releases/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://repo.helpch.at/releases/")
 }
 
 configurations {
@@ -45,13 +44,13 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.2.4") // bundled with 1.8.8-R0.1
 
     // Bundled dependencies
-    shade(this, "org.jetbrains:annotations:24.1.0")
+    shade(this, "org.jetbrains:annotations:25.0.0")
     shade(this, "dev.tomwmth:configlib-spigot:4.5.0")
-    shade(this, "com.github.cryptomorin:XSeries:11.2.1")
+    shade(this, "com.github.cryptomorin:XSeries:11.3.0")
     shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
     shade(this, "com.github.PikaMug:LocaleLib:4.0.0")
 
-    val liteCommands = "3.4.3"
+    val liteCommands = "3.6.1"
     shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
