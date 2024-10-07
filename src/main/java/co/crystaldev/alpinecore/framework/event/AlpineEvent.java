@@ -12,7 +12,16 @@ import org.bukkit.event.HandlerList;
  * @since 0.1.0
  */
 public abstract class AlpineEvent extends Event {
+
     private static final HandlerList HANDLER_LIST = new HandlerList();
+
+    public AlpineEvent() {
+        super(false);
+    }
+
+    public AlpineEvent(boolean async) {
+        super(async);
+    }
 
     @Override
     public final HandlerList getHandlers() {
