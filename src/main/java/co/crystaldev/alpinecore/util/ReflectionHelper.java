@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -105,6 +106,17 @@ public final class ReflectionHelper {
         return null;
     }
 
+    public static @Nullable Constructor<?> findConstructor(@NotNull Class<?> clazz, @NotNull Class<?> parameterTypes) {
+        try {
+            Constructor<?> constructor = clazz.getConstructor(parameterTypes);
+            constructor.setAccessible(true);
+            return constructor;
+        }
+        catch (Exception ignored) {
+            return null;
+        }
+    }
+
     public static <R> @Nullable R invokeMethod(@NotNull Method method, @Nullable Object source, @Nullable Object... parameters) {
         try {
             return (R) method.invoke(source, parameters);
@@ -125,5 +137,14 @@ public final class ReflectionHelper {
             // NO OP
         }
         return null;
+    }
+
+    public static <R> @Nullable R invokeConstructor(@NotNull Constructor<R> constructor, @Nullable Object... parameters) {
+        try {
+            return constructor.newInstance(parameters);
+        }
+        catch (Exception ignored) {
+            return null;
+        }
     }
 }

@@ -145,6 +145,11 @@ public interface ConfigItem {
             stack.setItemMeta(meta);
         }
 
+        Map<String, Object> attributes = this.getAttributes();
+        if (attributes != null && !attributes.isEmpty()) {
+            ConfigItemHelper.applyToItem(stack, attributes);
+        }
+
         if (function != null) {
             function.apply(stack);
         }

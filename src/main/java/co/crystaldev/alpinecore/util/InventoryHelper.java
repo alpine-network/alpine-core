@@ -32,7 +32,7 @@ public final class InventoryHelper {
      */
     public static @NotNull Inventory createInventory(@NotNull InventoryHolder holder, int slots, @NotNull Component title) {
         if (BUKKIT_CREATE_CHEST_INVENTORY != null) {
-            return ReflectionHelper.invokeMethod(Inventory.class, null, holder, slots, title);
+            return ReflectionHelper.invokeMethod(Inventory.class, BUKKIT_CREATE_CHEST_INVENTORY, holder, slots, title);
         }
         else {
             return Bukkit.createInventory(holder, slots, LegacyComponentSerializer.legacySection().serialize(title));
@@ -49,7 +49,7 @@ public final class InventoryHelper {
      */
     public static @NotNull Inventory createInventory(@NotNull InventoryHolder holder, @NotNull InventoryType type, @NotNull Component title) {
         if (BUKKIT_CREATE_VARYING_INVENTORY != null) {
-            return ReflectionHelper.invokeMethod(Inventory.class, null, holder, type, title);
+            return ReflectionHelper.invokeMethod(Inventory.class, BUKKIT_CREATE_VARYING_INVENTORY, holder, type, title);
         }
         else {
             return Bukkit.createInventory(holder, type, LegacyComponentSerializer.legacySection().serialize(title));

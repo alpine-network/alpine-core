@@ -2,7 +2,9 @@ package co.crystaldev.alpinecore.framework.config.object.item;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.util.ItemHelper;
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XPotion;
 import de.exlll.configlib.Configuration;
 import de.exlll.configlib.SerializeWith;
 import lombok.AllArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -372,6 +375,22 @@ public class DefinedConfigItem implements ConfigItem {
         public @NotNull Builder enchanted() {
             this.enchanted = true;
             return this;
+        }
+
+        public @NotNull Builder enchant(@NotNull XEnchantment enchantment, int level) {
+            return this.attribute("enchant_" + enchantment.name(), level);
+        }
+
+        public @NotNull Builder potion(@NotNull XPotion effect, int duration, int amplifier) {
+            return this.attribute("effect_" + effect.name(), duration + " " + amplifier);
+        }
+
+        public @NotNull Builder primaryPotion(@NotNull XPotion effect) {
+            return this.attribute("primary_effect", effect.name());
+        }
+
+        public @NotNull Builder potionColor(@NotNull Color color) {
+            return this.attribute("potion_color", color.asRGB());
         }
 
         public @NotNull Builder attribute(@NotNull String key, @Nullable Object value) {
