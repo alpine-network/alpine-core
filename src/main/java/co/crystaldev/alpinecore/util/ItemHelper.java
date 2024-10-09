@@ -227,7 +227,8 @@ public final class ItemHelper {
      * @return the lore.
      */
     public static @NotNull Component getJoinedLore(@NotNull ItemStack item) {
-        return Components.joinNewLines(getLore(item));
+        List<Component> lore = getLore(item);
+        return lore.isEmpty() ? Component.empty() : Components.joinNewLines(lore);
     }
 
     /**
