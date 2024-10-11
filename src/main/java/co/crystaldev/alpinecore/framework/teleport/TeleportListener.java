@@ -54,13 +54,13 @@ final class TeleportListener implements Listener {
                 removed = true;
                 iterator.remove();
                 context = task.createContext(true);
-                handler.onTeleport(context);
                 task.getCallbacks().getOnTeleport().accept(context);
+                handler.onTeleport(context);
             }
             else if (ticksRemaining % 20 == 0) {
                 context = task.createContext(false);
-                handler.onCountdown(context);
                 task.getCallbacks().getOnCountdown().accept(context);
+                handler.onCountdown(context);
             }
 
             if (context != null) {
@@ -96,8 +96,8 @@ final class TeleportListener implements Listener {
             return;
         }
 
-        handler.onMove(context);
         task.getCallbacks().getOnMove().accept(context);
+        handler.onMove(context);
         task.apply(context);
 
         Messaging.send(context.player(), context.messageType(), context.message());

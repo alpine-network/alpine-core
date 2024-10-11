@@ -70,8 +70,8 @@ public final class TeleportManager {
     public void initiateTeleport(@NotNull TeleportTask task) {
         TeleportHandler handler = this.getTeleportHandler();
         TeleportContext context = task.createContext(false);
-        handler.onInit(context);
         task.getCallbacks().getOnInit().accept(context);
+        handler.onInit(context);
         task.apply(context);
 
         if (!context.isCancelled()) {
