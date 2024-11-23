@@ -151,7 +151,7 @@ public interface ConfigItem {
         }
 
         if (function != null) {
-            function.apply(stack);
+            stack = function.apply(stack);
         }
 
         return stack;
@@ -356,7 +356,7 @@ public interface ConfigItem {
         }
 
         if (function != null) {
-            function.apply(stack);
+            stack = function.apply(stack);
         }
 
         return stack;
