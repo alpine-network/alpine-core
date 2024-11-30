@@ -4,6 +4,7 @@ import co.crystaldev.alpinecore.framework.config.object.item.DefinedConfigItem;
 import co.crystaldev.alpinecore.framework.ui.UIContext;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
 import org.apache.commons.lang.Validate;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,11 +25,15 @@ public final class ConfigItemElement extends Element {
 
     private final Object[] placeholders;
 
+    private final OfflinePlayer primary, secondary;
+
     public ConfigItemElement(@NotNull UIContext context, @NotNull DefinedConfigItem configItem,
-                             @Nullable Object[] placeholders) {
+                             @Nullable Object[] placeholders, @Nullable OfflinePlayer primary, @Nullable OfflinePlayer secondary) {
         super(context);
         this.configItem = configItem;
         this.placeholders = placeholders;
+        this.primary = primary;
+        this.secondary = secondary;
 
         Map<String, Object> attributes = configItem.getAttributes();
         if (attributes != null) {
@@ -38,7 +43,8 @@ public final class ConfigItemElement extends Element {
 
     @Override
     public @NotNull ItemStack buildItemStack() {
-        return this.configItem.build(this.context.plugin(), this.placeholders);
+        return this.configItem.build(this.context.plugin(), this.primary, this.secondary,
+                this.placeholders);
     }
 
     public static @NotNull Builder builder() {
@@ -67,6 +73,7 @@ public final class ConfigItemElement extends Element {
 
         private DefinedConfigItem item;
         private final Map<String, Object> placeholders = new HashMap<>();
+        private OfflinePlayer primary, secondary;
 
         public @NotNull Builder type(@NotNull DefinedConfigItem item) {
             Validate.notNull(item, "item cannot be null");
@@ -102,6 +109,17 @@ public final class ConfigItemElement extends Element {
             return this;
         }
 
+        public @NotNull Builder player(@Nullable OfflinePlayer player) {
+            this.primary = player;
+            return this;
+        }
+
+        public @NotNull Builder players(@Nullable OfflinePlayer primary, @Nullable OfflinePlayer secondary) {
+            this.primary = primary;
+            this.secondary = secondary;
+            return this;
+        }
+
         public @NotNull ConfigItemElement build(@NotNull UIContext context) {
             Object[] placeholders = new Object[this.placeholders.size() * 2];
             AtomicInteger index = new AtomicInteger();
@@ -112,7 +130,7 @@ public final class ConfigItemElement extends Element {
                 index.set(i + 2);
             });
 
-            return new ConfigItemElement(context, this.item, placeholders);
+            return new ConfigItemElement(context, this.item, placeholders, this.primary, this.secondary);
         }
     }
 }
