@@ -44,13 +44,13 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.2.4") // bundled with 1.8.8-R0.1
 
     // Bundled dependencies
-    shade(this, "org.jetbrains:annotations:25.0.0")
+    shade(this, "org.jetbrains:annotations:26.0.1")
     shade(this, "dev.tomwmth:configlib-spigot:4.5.0")
     shade(this, "com.github.cryptomorin:XSeries:11.3.0")
     shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
-    shade(this, "com.github.PikaMug:LocaleLib:4.0.0")
+    shade(this, "com.github.PikaMug:LocaleLib:4.1.0")
 
-    val liteCommands = "3.6.1"
+    val liteCommands = "3.9.1"
     shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
