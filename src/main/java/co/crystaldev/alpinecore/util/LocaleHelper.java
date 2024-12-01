@@ -1,10 +1,12 @@
 package co.crystaldev.alpinecore.util;
 
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.experimental.UtilityClass;
 import me.pikamug.localelib.LocaleManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -160,11 +162,10 @@ public final class LocaleHelper {
     }
 
     /**
-     * Retrieves the translation for a specific EntityType.
+     * Retrieves the translation for a given entity.
      *
-     * @param entity the entity type
-     * @return the translated component
-     * @throws NullPointerException if the entity is null
+     * @param entity the entity
+     * @return the translation
      */
     public static @NotNull Component getTranslation(@NotNull EntityType entity) {
         try {
@@ -172,6 +173,50 @@ public final class LocaleHelper {
         }
         catch (Exception ex) {
             return Component.text(formatEnum(entity));
+        }
+    }
+
+    /**
+     * Retrieves the translation key for a given enchantment.
+     *
+     * @param enchantment the enchantment
+     * @return the translation key
+     */
+    public static @NotNull String getTranslationKey(@NotNull XEnchantment enchantment) {
+        try {
+            Enchantment e = enchantment.getEnchant();
+
+            String key;
+            if (XMaterial.getVersion() >= 13) {
+                String str = e.toString();
+                key = "enchantment.minecraft." + str.substring(str.indexOf(":") + 1, str.indexOf("]")).split(", ")[0];
+            }
+            else {
+                key = "enchantment." + e.getName().toLowerCase()
+                        .replace("_", ".")
+                        .replace("environmental", "all")
+                        .replace("protection", "protect");
+            }
+
+            return key;
+        }
+        catch (Exception ex) {
+            return formatEnum(enchantment);
+        }
+    }
+
+    /**
+     * Retrieves the translation key for a given enchantment.
+     *
+     * @param enchantment the enchantment
+     * @return the translation
+     */
+    public static @NotNull Component getTranslation(@NotNull XEnchantment enchantment) {
+        try {
+            return Component.translatable(getTranslationKey(enchantment));
+        }
+        catch (Exception ex) {
+            return Component.text(formatEnum(enchantment));
         }
     }
 
