@@ -7,6 +7,7 @@ import co.crystaldev.alpinecore.framework.ui.element.ElementPaginator;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @since 0.4.0
@@ -16,19 +17,26 @@ public final class PaginatorNavigationElement extends Element {
 
     private final ElementPaginator.State state;
 
-    private final DefinedConfigItem item;
+    private final DefinedConfigItem item, emptyItem;
 
-    public PaginatorNavigationElement(@NotNull UIContext context, @NotNull ElementPaginator.State state,
-                                      @NotNull DefinedConfigItem item) {
+    private final int direction;
+
+    public PaginatorNavigationElement(@NotNull UIContext context, @NotNull ElementPaginator.State state, int direction,
+                                      @NotNull DefinedConfigItem item, @Nullable DefinedConfigItem emptyItem) {
         super(context);
         this.state = state;
+        this.direction = direction;
         this.item = item;
+        this.emptyItem = emptyItem == null ? item : emptyItem;
     }
 
     @Override
     public @NotNull ItemStack buildItemStack() {
-        int page = this.state.getCurrentPage() + 1;
-        return this.item.build(this.context.manager().getPlugin(),
+        int currentPage = this.state.getCurrentPage();
+        int page = currentPage + 1;
+        DefinedConfigItem configItem = this.state.isValid(currentPage + this.direction) ? this.item : emptyItem;
+
+        return configItem.build(this.context.manager().getPlugin(),
                 "page", page,
                 "previous_page", Math.max(1, page - 1),
                 "next_page", Math.min(this.state.getMaxPages(), page + 1),

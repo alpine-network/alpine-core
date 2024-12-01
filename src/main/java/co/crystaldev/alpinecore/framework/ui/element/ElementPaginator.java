@@ -10,7 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -18,7 +19,6 @@ import java.util.function.Function;
  * and building navigation elements for a user interface.
  *
  * @param <T> the type of the entries in the paginator
- *
  * @since 0.4.0
  */
 public final class ElementPaginator<T> {
@@ -55,17 +55,56 @@ public final class ElementPaginator<T> {
     /**
      * Builds a previous navigation element for the UI paginator.
      *
+     * @param context   the UI context
+     * @param item      the defined config item
+     * @param emptyItem the item to display when no page is available
+     * @return the previous navigation element
+     */
+    public @NotNull Element buildPreviousNav(@NotNull UIContext context, @NotNull DefinedConfigItem item,
+                                             @Nullable DefinedConfigItem emptyItem) {
+        State state = this.states.computeIfAbsent(context,
+                ctx -> new State(this.elementProvider.getEntries().size()));
+        PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, -1, item, emptyItem);
+        element.setOnClick((ctx, click) -> {
+            int page = state.getCurrentPage() - 1;
+            if (state.isValid(page)) {
+                state.setPage(page);
+                context.refresh();
+            }
+        });
+        return element;
+    }
+
+    /**
+     * Builds a previous navigation element for the UI paginator.
+     *
      * @param context the UI context
-     * @param item the defined config item
+     * @param item    the defined config item
      * @return the previous navigation element
      */
     public @NotNull Element buildPreviousNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
+        return this.buildPreviousNav(context, item, null);
+    }
+
+    /**
+     * Builds the next navigation element for the UI paginator.
+     *
+     * @param context   the UI context
+     * @param item      the defined config item
+     * @param emptyItem the item to display when no page is available
+     * @return the next navigation element
+     */
+    public @NotNull Element buildNextNav(@NotNull UIContext context, @NotNull DefinedConfigItem item,
+                                         @Nullable DefinedConfigItem emptyItem) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
-        PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
+        PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, 1, item, emptyItem);
         element.setOnClick((ctx, click) -> {
-            state.setPage(state.getCurrentPage() - 1);
-            context.refresh();
+            int page = state.getCurrentPage() + 1;
+            if (state.isValid(page)) {
+                state.setPage(page);
+                context.refresh();
+            }
         });
         return element;
     }
@@ -74,18 +113,11 @@ public final class ElementPaginator<T> {
      * Builds the next navigation element for the UI paginator.
      *
      * @param context the UI context
-     * @param item the defined config item
+     * @param item    the defined config item
      * @return the next navigation element
      */
     public @NotNull Element buildNextNav(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
-        State state = this.states.computeIfAbsent(context,
-                ctx -> new State(this.elementProvider.getEntries().size()));
-        PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, item);
-        element.setOnClick((ctx, click) -> {
-            state.setPage(state.getCurrentPage() + 1);
-            context.refresh();
-        });
-        return element;
+        return this.buildNextNav(context, item, null);
     }
 
     /**
@@ -98,7 +130,7 @@ public final class ElementPaginator<T> {
     public @NotNull Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
         State state = this.states.computeIfAbsent(context,
                 ctx -> new State(this.elementProvider.getEntries().size()));
-        return new PaginatorNavigationElement(context, state, item);
+        return new PaginatorNavigationElement(context, state, 0, item, null);
     }
 
     /**
@@ -139,6 +171,10 @@ public final class ElementPaginator<T> {
         public void setPage(int page) {
             this.currentPage = Math.max(0, Math.min(this.maxPages - 1, page));
         }
+
+        public boolean isValid(int page) {
+            return page >= 0 && page <= this.maxPages - 1;
+        }
     }
 
     /**
@@ -146,7 +182,6 @@ public final class ElementPaginator<T> {
      * It allows setting the element provider and empty slot provider for the paginator.
      *
      * @param <T> the type of the entries in the paginator
-     *
      * @since 0.4.0
      */
     public static final class Builder<T> {
