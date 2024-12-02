@@ -1,14 +1,17 @@
 package co.crystaldev.alpinecore.util;
 
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -261,6 +264,25 @@ public final class ItemHelper {
     }
 
     /**
+     * Fetches the enchantments of an {@link ItemStack} in {@link Component} form.
+     *
+     * @param item The item.
+     * @return the enchantments.
+     */
+    public static @NotNull List<Component> getEnchantment(@NotNull ItemStack item) {
+        return item.getEnchantments().entrySet().stream()
+                .map(entry -> {
+                    XEnchantment xEnchantment = XEnchantment.matchXEnchantment(entry.getKey());
+                    Component romanLevel = Component.text(RomanNumerals.convertTo(entry.getValue()));
+                    return LocaleHelper.getTranslation(xEnchantment)
+                            .append(Component.text(" "))
+                            .append(romanLevel)
+                            .color(NamedTextColor.GRAY);
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Creates a hover component for the given item stack.
      *
      * @param itemStack The item stack.
@@ -270,15 +292,12 @@ public final class ItemHelper {
     public Component createHoverComponent(@NotNull ItemStack itemStack) {
         Component displayName = getDisplayName(itemStack);
 
-        Component hover = Component.text("").append(displayName);
-        List<Component> lore = getLore(itemStack);
-        if (!lore.isEmpty()) {
-            hover = hover.appendNewline().append(Components.joinNewLines(lore));
-        }
+        List<Component> hoverContent = new ArrayList<>();
+        hoverContent.add(displayName);
+        hoverContent.addAll(getEnchantment(itemStack));
+        hoverContent.addAll(getLore(itemStack));
 
-        return Component.text("")
-                .append(displayName)
-                .hoverEvent(hover);
+        return displayName.hoverEvent(Components.joinNewLines(hoverContent));
     }
 
     // endregion Meta
