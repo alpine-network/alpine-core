@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -269,12 +270,18 @@ public final class ItemHelper {
      * @param item The item.
      * @return the enchantments.
      */
-    public static @NotNull List<Component> getEnchantment(@NotNull ItemStack item) {
+    public static @NotNull List<Component> getEnchantments(@NotNull ItemStack item) {
+
+        if (item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+            return Collections.emptyList();
+        }
+
         return item.getEnchantments().entrySet().stream()
                 .map(entry -> {
-                    XEnchantment xEnchantment = XEnchantment.matchXEnchantment(entry.getKey());
+                    XEnchantment enchant = XEnchantment.matchXEnchantment(entry.getKey());
                     Component romanLevel = Component.text(RomanNumerals.convertTo(entry.getValue()));
-                    return LocaleHelper.getTranslation(xEnchantment)
+
+                    return LocaleHelper.getTranslation(enchant)
                             .append(Component.text(" "))
                             .append(romanLevel)
                             .color(NamedTextColor.GRAY);
@@ -294,7 +301,7 @@ public final class ItemHelper {
 
         List<Component> hoverContent = new ArrayList<>();
         hoverContent.add(displayName);
-        hoverContent.addAll(getEnchantment(itemStack));
+        hoverContent.addAll(getEnchantments(itemStack));
         hoverContent.addAll(getLore(itemStack));
 
         return displayName.hoverEvent(Components.joinNewLines(hoverContent));
