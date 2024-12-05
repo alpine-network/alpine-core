@@ -33,5 +33,5 @@ jobs:
       - name: "Publish artifacts"
         run: ./gradlew publish -Pversion_pre_release=${{ env.BUILD_NUMBER }}
         env:
-          MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
-          MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}
+          ALPINE_MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
+          ALPINE_MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}
