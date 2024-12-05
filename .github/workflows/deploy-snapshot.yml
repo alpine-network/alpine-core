@@ -5,7 +5,7 @@ on:
     branches: [master]
 
 jobs:
-  build_obf_publish:
+  build_deploy_snapshot:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
