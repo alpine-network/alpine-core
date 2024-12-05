@@ -31,7 +31,7 @@ jobs:
         run: ./gradlew build -Pversion_pre_release=${{ github.run_number }} --full-stacktrace
 
       - name: "Publish artifacts"
-        run: ./gradlew publish -Pversion_pre_release=${{ env.BUILD_NUMBER }}
+        run: ./gradlew publish -Pversion_pre_release=${{ github.run_number }}
         env:
           ALPINE_MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
           ALPINE_MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}
