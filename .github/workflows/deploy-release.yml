@@ -1,0 +1,61 @@
+name: "Deploy Release"
+
+on:
+  workflow_dispatch: # manually triggered
+
+
+jobs:
+  build_obf_publish:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: "Checkout source"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: "Setup Gradle"
+        uses: gradle/actions/setup-gradle@cc4fc85e6b35bafd578d5ffbc76a5518407e1af0 # v4.2.1
+        with:
+          validate-wrappers: true
+          gradle-version: wrapper
+          cache-disabled: false
+
+      - name: "Build artifacts"
+        run: ./gradlew build --full-stacktrace
+
+      - name: "Publish artifacts"
+        run: ./gradlew publish
+        env:
+          MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
+          MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}
+
+      - name: "Write version"
+        run: |
+          ./gradlew writeVersion
+          if [[ ! -f .version || ! -s .version ]]; then
+            echo "Error: .version file is missing or empty."
+            exit 1
+          fi
+          echo "RELEASE_VERSION=$(cat .version)" >> $GITHUB_ENV
+
+      - name: "Create GitHub Release"
+        uses: softprops/action-gh-release@01570a1f39cb168c169c802c3bceb9e93fb10974 # v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          name: v${{ env.RELEASE_VERSION }}
+          files: |
+            build/libs/AlpineCore-${{ env.RELEASE_VERSION }}.jar
+            build/libs/AlpineCore-${{ env.RELEASE_VERSION }}-shaded.jar
+          fail_on_unmatched_files: true
+          make_latest: true
+          prerelease: false
+          draft: true

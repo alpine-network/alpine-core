@@ -1,0 +1,37 @@
+name: "Deploy Snapshot"
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build_obf_publish:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: "Checkout source"
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: "Setup Gradle"
+        uses: gradle/actions/setup-gradle@cc4fc85e6b35bafd578d5ffbc76a5518407e1af0 # v4.2.1
+        with:
+          validate-wrappers: true
+          gradle-version: wrapper
+          cache-disabled: false
+
+      - name: "Build artifacts"
+        run: ./gradlew build -Pversion_pre_release=${{ github.run_number }} --full-stacktrace
+
+      - name: "Publish artifacts"
+        run: ./gradlew publish -Pversion_pre_release=${{ env.BUILD_NUMBER }}
+        env:
+          MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
+          MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}

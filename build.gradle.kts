@@ -191,7 +191,7 @@ publishing {
     repositories {
         maven {
             name = "AlpineCloud"
-            url = uri("https://lib.alpn.cloud/alpine-public")
+            url = uri("https://lib.alpn.cloud" + if (isRelease()) "/alpine-public" else "/snapshots")
             credentials {
                 username = System.getenv("ALPINE_MAVEN_NAME")
                 password = System.getenv("ALPINE_MAVEN_SECRET")
@@ -212,10 +212,20 @@ tasks.javadoc {
     include(project.group.toString().replace(".", "/") + "/AlpinePlugin.java")
 }
 
+tasks.register("writeVersion") {
+    doLast {
+        File(".version").writeText(compileVersion())
+    }
+}
+
 subprojects {
     tasks.withType<Javadoc> {
         enabled = false
     }
+}
+
+fun isRelease(): Boolean {
+    return project.properties["version_pre_release"] == null
 }
 
 fun compileGroup(): String {
@@ -227,7 +237,7 @@ fun compileVersion(): String {
     val minor = project.properties["version_minor"]
     val patch = project.properties["version_patch"]
     val preRelease = project.properties["version_pre_release"]
-    return "${major}.${minor}.${patch}${if (preRelease == "none") "" else preRelease}"
+    return "${major}.${minor}.${patch}${if (isRelease()) "" else "-SNAPSHOT-${preRelease}"}"
 }
 
 fun shade(scope: DependencyHandlerScope, dependency: String) {
