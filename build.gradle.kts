@@ -191,7 +191,7 @@ publishing {
     repositories {
         maven {
             name = "AlpineCloud"
-            url = uri("https://lib.alpn.cloud" + if (isRelease()) "/alpine-public" else "/snapshots")
+            url = uri("https://lib.alpn.cloud" + if (isSnapshot()) "/snapshots" else "/alpine-public")
             credentials {
                 username = System.getenv("ALPINE_MAVEN_NAME")
                 password = System.getenv("ALPINE_MAVEN_SECRET")
@@ -224,8 +224,8 @@ subprojects {
     }
 }
 
-fun isRelease(): Boolean {
-    return project.properties["version_pre_release"] == null
+fun isSnapshot(): Boolean {
+    return (project.findProperty("snapshot") as? String)?.toBoolean() ?: false
 }
 
 fun compileGroup(): String {
@@ -236,8 +236,7 @@ fun compileVersion(): String {
     val major = project.properties["version_major"]
     val minor = project.properties["version_minor"]
     val patch = project.properties["version_patch"]
-    val preRelease = project.properties["version_pre_release"]
-    return "${major}.${minor}.${patch}${if (isRelease()) "" else "-SNAPSHOT-${preRelease}"}"
+    return "${major}.${minor}.${patch}${if (isSnapshot()) "-SNAPSHOT" else ""}"
 }
 
 fun shade(scope: DependencyHandlerScope, dependency: String) {

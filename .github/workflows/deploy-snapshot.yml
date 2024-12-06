@@ -28,10 +28,10 @@ jobs:
           cache-disabled: false
 
       - name: "Build artifacts"
-        run: ./gradlew build -Pversion_pre_release=${{ github.run_number }} --full-stacktrace
+        run: ./gradlew build -Psnapshot=true --full-stacktrace
 
       - name: "Publish artifacts"
-        run: ./gradlew publish -Pversion_pre_release=${{ github.run_number }}
+        run: ./gradlew publish -Psnapshot=true --full-stacktrace
         env:
           ALPINE_MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
           ALPINE_MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}
