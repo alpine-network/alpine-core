@@ -1,5 +1,6 @@
 package co.crystaldev.alpinecore.framework.ui;
 
+import co.crystaldev.alpinecore.event.ServerTickEvent;
 import co.crystaldev.alpinecore.framework.ui.event.ActionResult;
 import co.crystaldev.alpinecore.framework.ui.event.type.ClickEvent;
 import co.crystaldev.alpinecore.framework.ui.event.type.DragEvent;
@@ -24,6 +25,11 @@ final class UIListener implements Listener {
         if (this.manager.isManaged(event.getInventory())) {
             this.manager.onClose(event.getInventory());
         }
+    }
+
+    @EventHandler
+    public void onServerTick(ServerTickEvent event) {
+        this.manager.onTick(event.getTick());
     }
 
     @EventHandler

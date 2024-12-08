@@ -186,6 +186,27 @@ public final class UIManager {
     }
 
     /**
+     * Called every server tick to update open UIs.
+     *
+     * @param tick the current tick.
+     */
+    void onTick(long tick) {
+        if (this.states.isEmpty()) {
+            return;
+        }
+
+        this.states.forEach((playerId, state) -> {
+            Player player = Bukkit.getPlayer(playerId);
+
+            if (player != null && !state.isEmpty()) {
+                UIContext context = state.peek();
+                UIHandler handler = context.ui().getHandler();
+                handler.tick(context);
+            }
+        });
+    }
+
+    /**
      * Retrieves the state of a user interface for a specific player.
      *
      * @param player the UUID of the player
@@ -211,9 +232,16 @@ public final class UIManager {
      * @param context the context containing the elements and inventory
      */
     public void refresh(@NotNull UIContext context) {
+
+        // notify the handler
+        UIHandler handler = context.ui().getHandler();
+        handler.beforeRefresh(context);
+
+        // clear the inventory
         Inventory inventory = context.inventory();
         inventory.clear();
 
+        // redraw all elements
         for (Element element : context.getElements()) {
             SlotPosition position = element.getPosition();
             if (position == null) {
@@ -224,6 +252,10 @@ public final class UIManager {
             inventory.setItem(position.getSlot(), element.buildItemStack());
         }
 
+        // notify the handler
+        handler.afterRefresh(context);
+
+        // update the gui
         Player player = context.player();
         InventoryView openInventory = player.getOpenInventory();
         if (openInventory != null && openInventory.getTopInventory().equals(inventory)) {

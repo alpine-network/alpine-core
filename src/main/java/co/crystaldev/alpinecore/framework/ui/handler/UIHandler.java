@@ -36,6 +36,33 @@ public abstract class UIHandler implements UIEventSubscriber {
     }
 
     /**
+     * Handles periodic updates to the user interface.
+     *
+     * @param context the UIContext object representing the state of the user interface
+     */
+    public void tick(@NotNull UIContext context) {
+        // NO OP
+    }
+
+    /**
+     * Handles the event immediately before the user interface is redrawn.
+     *
+     * @param context the UIContext object representing the state of the user interface
+     */
+    public void beforeRefresh(@NotNull UIContext context) {
+        // NO OP
+    }
+
+    /**
+     * Handles the event immediately after the user interface is redrawn.
+     *
+     * @param context the UIContext object representing the state of the user interface
+     */
+    public void afterRefresh(@NotNull UIContext context) {
+        // NO OP
+    }
+
+    /**
      * Handles the event when a user interface is closed.
      *
      * @param context the UIContext object representing the state of the user interface
