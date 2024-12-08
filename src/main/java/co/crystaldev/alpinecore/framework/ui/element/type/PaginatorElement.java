@@ -1,9 +1,9 @@
 package co.crystaldev.alpinecore.framework.ui.element.type;
 
 import co.crystaldev.alpinecore.framework.ui.UIContext;
-import co.crystaldev.alpinecore.framework.ui.element.ElementPaginator;
 import co.crystaldev.alpinecore.framework.ui.element.ElementProvider;
 import co.crystaldev.alpinecore.framework.ui.element.Element;
+import co.crystaldev.alpinecore.framework.ui.element.PaginatorState;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public final class PaginatorElement<S> extends Element {
 
     private final Function<UIContext, ItemStack> emptySlotProvider;
 
-    private final ElementPaginator.State state;
+    private final PaginatorState state;
 
     private final int offset;
 
@@ -30,7 +30,7 @@ public final class PaginatorElement<S> extends Element {
     public PaginatorElement(@NotNull UIContext context,
                             @NotNull ElementProvider<S, ?> elementProvider,
                             @Nullable Function<UIContext, ItemStack> emptySlotProvider,
-                            @NotNull ElementPaginator.State state,
+                            @NotNull PaginatorState state,
                             int offset) {
         super(context);
         this.elementProvider = elementProvider;

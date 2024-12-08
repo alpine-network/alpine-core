@@ -3,8 +3,7 @@ package co.crystaldev.alpinecore.framework.ui.element;
 import co.crystaldev.alpinecore.framework.config.object.item.DefinedConfigItem;
 import co.crystaldev.alpinecore.framework.ui.UIContext;
 import co.crystaldev.alpinecore.framework.ui.element.type.PaginatorElement;
-import co.crystaldev.alpinecore.framework.ui.element.type.PaginatorNavigationElement;
-import lombok.Getter;
+import co.crystaldev.alpinecore.framework.ui.element.type.PaginatorNavElement;
 import org.apache.commons.lang.Validate;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -27,12 +26,26 @@ public final class ElementPaginator<T> {
 
     private final Function<UIContext, ItemStack> emptySlotProvider;
 
-    private final Map<UIContext, State> states = new HashMap<>();
+    private final Map<UIContext, PaginatorState> states = new HashMap<>();
 
     private ElementPaginator(@NotNull ElementProvider<T, ?> elementProvider,
                              @Nullable Function<UIContext, ItemStack> emptySlotProvider) {
         this.elementProvider = elementProvider;
         this.emptySlotProvider = emptySlotProvider;
+    }
+
+    /**
+     * Initializes the paginator state with the specified page and page size.
+     *
+     * @param context  the UI context
+     * @param page     the initial page to set (zero-based)
+     * @param pageSize the number of elements per page
+     */
+    public void initPage(@NotNull UIContext context, int page, int pageSize) {
+        PaginatorState state = this.states.computeIfAbsent(context,
+                ctx -> new PaginatorState(this.elementProvider.size()));
+        state.setPageSize(pageSize);
+        state.setPage(page);
     }
 
     /**
@@ -42,12 +55,12 @@ public final class ElementPaginator<T> {
      * @return the next element from the paginator
      */
     public @NotNull PaginatorElement<T> buildNextSlot(@NotNull UIContext context) {
-        State state = this.states.computeIfAbsent(context,
-                ctx -> new State(this.elementProvider.size()));
+        PaginatorState state = this.states.computeIfAbsent(context,
+                ctx -> new PaginatorState(this.elementProvider.size()));
         this.elementProvider.nextElement(context);
 
         int offset = this.elementProvider.getIndex(context) - 1;
-        state.setPageSize(state.pageSize + 1);
+        state.setPageSize(state.getPageSize() + 1);
 
         return new PaginatorElement<>(context, this.elementProvider, this.emptySlotProvider, state, offset);
     }
@@ -62,17 +75,9 @@ public final class ElementPaginator<T> {
      */
     public @NotNull Element buildPreviousNav(@NotNull UIContext context, @NotNull DefinedConfigItem item,
                                              @Nullable DefinedConfigItem emptyItem) {
-        State state = this.states.computeIfAbsent(context,
-                ctx -> new State(this.elementProvider.getEntries().size()));
-        PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, -1, item, emptyItem);
-        element.setOnClick((ctx, click) -> {
-            int page = state.getCurrentPage() - 1;
-            if (state.isValid(page)) {
-                state.setPage(page);
-                context.refresh();
-            }
-        });
-        return element;
+        PaginatorState state = this.states.computeIfAbsent(context,
+                ctx -> new PaginatorState(this.elementProvider.size()));
+        return new PaginatorNavElement(context, state, -1, item, emptyItem);
     }
 
     /**
@@ -96,17 +101,9 @@ public final class ElementPaginator<T> {
      */
     public @NotNull Element buildNextNav(@NotNull UIContext context, @NotNull DefinedConfigItem item,
                                          @Nullable DefinedConfigItem emptyItem) {
-        State state = this.states.computeIfAbsent(context,
-                ctx -> new State(this.elementProvider.getEntries().size()));
-        PaginatorNavigationElement element = new PaginatorNavigationElement(context, state, 1, item, emptyItem);
-        element.setOnClick((ctx, click) -> {
-            int page = state.getCurrentPage() + 1;
-            if (state.isValid(page)) {
-                state.setPage(page);
-                context.refresh();
-            }
-        });
-        return element;
+        PaginatorState state = this.states.computeIfAbsent(context,
+                ctx -> new PaginatorState(this.elementProvider.size()));
+        return new PaginatorNavElement(context, state, 1, item, emptyItem);
     }
 
     /**
@@ -128,9 +125,9 @@ public final class ElementPaginator<T> {
      * @return the navigation info element
      */
     public @NotNull Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
-        State state = this.states.computeIfAbsent(context,
-                ctx -> new State(this.elementProvider.getEntries().size()));
-        return new PaginatorNavigationElement(context, state, 0, item, null);
+        PaginatorState state = this.states.computeIfAbsent(context,
+                ctx -> new PaginatorState(this.elementProvider.size()));
+        return new PaginatorNavElement(context, state, 0, item, null);
     }
 
     /**
@@ -140,7 +137,7 @@ public final class ElementPaginator<T> {
      */
     public void closed(@NotNull UIContext context) {
         this.elementProvider.closed(context);
-        State state = this.states.get(context);
+        PaginatorState state = this.states.get(context);
         if (state != null) {
             state.resetPageSize();
         }
@@ -153,37 +150,6 @@ public final class ElementPaginator<T> {
 
     public static <T> @NotNull Builder<T> builder() {
         return new Builder<>();
-    }
-
-    @Getter
-    public static final class State {
-
-        private final int elementCount;
-        private int pageSize;
-        private int maxPages;
-        private int currentPage; // zero-based
-
-        private State(int elementCount) {
-            this.elementCount = elementCount;
-        }
-
-        private void setPageSize(int pageSize) {
-            this.pageSize = pageSize;
-            this.maxPages = (int) Math.ceil(this.elementCount / (double) pageSize);
-        }
-
-        private void resetPageSize() {
-            this.pageSize = 0;
-            this.maxPages = 0;
-        }
-
-        public void setPage(int page) {
-            this.currentPage = Math.max(0, Math.min(this.maxPages - 1, page));
-        }
-
-        public boolean isValid(int page) {
-            return page >= 0 && page <= this.maxPages - 1;
-        }
     }
 
     /**
