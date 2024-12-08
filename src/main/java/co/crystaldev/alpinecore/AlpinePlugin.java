@@ -388,8 +388,8 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.activate(classes, c -> AlpineConfig.class.isAssignableFrom(c) && !AlpinePluginConfig.class.isAssignableFrom(c));
         this.activate(classes, AlpineIntegration.class::isAssignableFrom);
         this.activate(classes, AlpineEngine.class::isAssignableFrom);
-        this.activate(classes, AlpineCommand.class::isAssignableFrom);
         this.activate(classes, AlpineArgumentResolver.class::isAssignableFrom);
+        this.activate(classes, AlpineCommand.class::isAssignableFrom);
         this.activate(classes, c ->  !AlpinePluginConfig.class.isAssignableFrom(c));
     }
 
@@ -447,7 +447,13 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
         // Register all argument resolvers
         AlpineCore.getInstance().forEachResolver(resolver -> {
-            builder.argument(resolver.getType(), ArgumentKey.of(resolver.getKey()), resolver);
+            String key = resolver.getKey();
+            if (key == null) {
+                builder.argument(resolver.getType(), resolver);
+            }
+            else {
+                builder.argument(resolver.getType(), ArgumentKey.of(key), resolver);
+            }
         });
 
         // Let individual plugin commands mutate the command manager

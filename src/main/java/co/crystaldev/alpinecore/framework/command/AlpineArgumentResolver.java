@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author BestBearr
@@ -18,7 +19,7 @@ public abstract class AlpineArgumentResolver<T> extends ArgumentResolver<Command
 
     private final @NotNull Class<T> type;
 
-    private final @NotNull String key;
+    private final @Nullable String key;
 
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
