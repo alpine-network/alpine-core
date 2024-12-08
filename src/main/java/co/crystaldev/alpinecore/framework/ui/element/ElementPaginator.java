@@ -140,7 +140,11 @@ public final class ElementPaginator<T> {
      */
     public void closed(@NotNull UIContext context) {
         this.elementProvider.closed(context);
-        this.states.entrySet().removeIf(e -> e.getKey().isStale() || e.getKey().playerId().equals(context.playerId()));
+        State state = this.states.get(context);
+        if (state != null) {
+            state.resetPageSize();
+        }
+        this.states.entrySet().removeIf(e -> e.getKey().isStale());
     }
 
     public static <S> @NotNull ElementPaginator<S> from(@NotNull ElementProvider<S, ?> elementProvider) {
@@ -166,6 +170,11 @@ public final class ElementPaginator<T> {
         private void setPageSize(int pageSize) {
             this.pageSize = pageSize;
             this.maxPages = (int) Math.ceil(this.elementCount / (double) pageSize);
+        }
+
+        private void resetPageSize() {
+            this.pageSize = 0;
+            this.maxPages = 0;
         }
 
         public void setPage(int page) {
