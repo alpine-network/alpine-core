@@ -70,8 +70,16 @@ public final class TeleportManager {
     public void initiateTeleport(@NotNull TeleportTask task) {
         TeleportHandler handler = this.getTeleportHandler();
         TeleportContext context = task.createContext(false);
+
+        // Initialize the teleport process (i.e., mark as instantaneous or cancel)
         task.getCallbacks().getOnInit().accept(context);
         handler.onInit(context);
+
+        // Apply the teleportation
+        task.getCallbacks().getOnApply().accept(context);
+        handler.onApply(context);
+
+        // Copy to the task
         task.apply(context);
 
         if (!context.isCancelled()) {

@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 final class TeleportCallbacks {
     private static final Consumer<TeleportContext> NO_OP = ctx -> {};
     private Consumer<TeleportContext> onInit = NO_OP;
+    private Consumer<TeleportContext> onApply = NO_OP;
     private Consumer<TeleportContext> onMove = NO_OP;
     private Consumer<TeleportContext> onCountdown = NO_OP;
     private Consumer<TeleportContext> onTeleport = NO_OP;

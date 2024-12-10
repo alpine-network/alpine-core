@@ -18,6 +18,14 @@ public interface TeleportHandler {
      */
     void onInit(@NotNull TeleportContext context);
 
+
+    /**
+     * Applies the teleport process with the given context.
+     *
+     * @param context the context containing information about the teleportation
+     */
+    void onApply(@NotNull TeleportContext context);
+
     /**
      * Handles the countdown phase of the teleport process.
      *

@@ -122,6 +122,12 @@ public final class TeleportTask {
             return this;
         }
 
+        public @NotNull Builder onApply(@NotNull Consumer<TeleportContext> contextConsumer) {
+            Validate.notNull(contextConsumer, "contextConsumer cannot be null");
+            this.callbacks.setOnApply(contextConsumer);
+            return this;
+        }
+
         public @NotNull Builder onMove(@NotNull Consumer<TeleportContext> contextConsumer) {
             Validate.notNull(contextConsumer, "contextConsumer cannot be null");
             this.callbacks.setOnMove(contextConsumer);
