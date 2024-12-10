@@ -17,6 +17,11 @@ public final class AlpineTeleportHandler implements TeleportHandler {
     }
 
     @Override
+    public void onApply(@NotNull TeleportContext context) {
+        // NO OP
+    }
+
+    @Override
     public void onCountdown(@NotNull TeleportContext context) {
         // NO OP
     }
