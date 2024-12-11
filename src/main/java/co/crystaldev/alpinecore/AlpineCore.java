@@ -3,8 +3,11 @@ package co.crystaldev.alpinecore;
 import co.crystaldev.alpinecore.event.ServerTickEvent;
 import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.teleport.AlpineTeleportHandler;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -33,6 +36,9 @@ public final class AlpineCore extends AlpinePlugin {
     static final AtomicLong TICK_COUNTER = new AtomicLong();
 
     private final Map<AlpinePlugin, Set<AlpineArgumentResolver<?>>> argumentResolvers = new HashMap<>();
+
+    @Getter @Setter
+    private InvalidUsageHandler<CommandSender> invalidCommandUsageHandler;
 
     @Override
     public void onStart() {

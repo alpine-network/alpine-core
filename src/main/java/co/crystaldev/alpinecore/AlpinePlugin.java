@@ -14,7 +14,7 @@ import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.framework.teleport.TeleportManager;
 import co.crystaldev.alpinecore.framework.ui.UIManager;
-import co.crystaldev.alpinecore.handler.CommandInvalidUsageHandler;
+import co.crystaldev.alpinecore.handler.InvalidCommandUsageHandler;
 import co.crystaldev.alpinecore.integration.PlaceholderIntegration;
 import co.crystaldev.alpinecore.integration.VaultIntegration;
 import co.crystaldev.alpinecore.util.ChatColor;
@@ -29,6 +29,7 @@ import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import lombok.Getter;
@@ -302,6 +303,18 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
     }
 
     /**
+     * Sets a global handler for managing invalid command usage.
+     * <p>
+     * This handler is shared globally across all {@link AlpinePlugin}
+     * implementations and will override any previously set handler.
+     *
+     * @param handler The {@link InvalidUsageHandler} to handle invalid command usage.
+     */
+    public void setInvalidCommandUseHandler(@Nullable InvalidUsageHandler<CommandSender> handler) {
+        AlpineCore.getInstance().setInvalidCommandUseHandler(handler);
+    }
+
+    /**
      * Logs an information message with color formatting.
      *
      * @param message The message to log
@@ -436,7 +449,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                 .commands((Object[]) commands)
 
                 // Input our configurable messages
-                .invalidUsage(new CommandInvalidUsageHandler(this))
+                .invalidUsage(new InvalidCommandUsageHandler(this))
                 .message(LiteMessages.MISSING_PERMISSIONS, permission -> messages.missingPermissions.buildString(this, "permission", permission))
                 .message(LiteMessages.INVALID_NUMBER, input -> messages.invalidNumber.buildString(this, "input", input))
                 .message(LiteMessages.INSTANT_INVALID_FORMAT, input -> messages.invalidInstant.buildString(this, "input", input))

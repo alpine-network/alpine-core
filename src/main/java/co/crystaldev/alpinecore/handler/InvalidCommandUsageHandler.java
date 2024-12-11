@@ -1,5 +1,6 @@
 package co.crystaldev.alpinecore.handler;
 
+import co.crystaldev.alpinecore.AlpineCore;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.config.AlpinePluginConfig;
 import co.crystaldev.alpinecore.util.Messaging;
@@ -16,12 +17,19 @@ import org.bukkit.command.CommandSender;
  * @since 0.2.0
  */
 @RequiredArgsConstructor
-public final class CommandInvalidUsageHandler implements InvalidUsageHandler<CommandSender> {
+public final class InvalidCommandUsageHandler implements InvalidUsageHandler<CommandSender> {
 
     private final AlpinePlugin plugin;
 
     @Override
     public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result, ResultHandlerChain<CommandSender> chain) {
+
+        InvalidUsageHandler<CommandSender> handler = AlpineCore.getInstance().getInvalidCommandUsageHandler();
+        if (handler != null) {
+            handler.handle(invocation, result, chain);
+            return;
+        }
+
         AlpinePluginConfig config = this.plugin.getAlpineConfig();
         CommandSender sender = invocation.sender();
         Schematic command = result.getSchematic();
