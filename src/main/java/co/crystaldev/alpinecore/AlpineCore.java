@@ -5,13 +5,13 @@ import co.crystaldev.alpinecore.framework.command.AlpineArgumentResolver;
 import co.crystaldev.alpinecore.framework.teleport.AlpineTeleportHandler;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +37,7 @@ public final class AlpineCore extends AlpinePlugin {
 
     private final Map<AlpinePlugin, Set<AlpineArgumentResolver<?>>> argumentResolvers = new HashMap<>();
 
-    @Getter @Setter
+    @Getter
     private InvalidUsageHandler<CommandSender> invalidCommandUsageHandler;
 
     @Override
@@ -71,5 +71,10 @@ public final class AlpineCore extends AlpinePlugin {
         this.argumentResolvers.forEach((plugin, resolvers) -> {
             resolvers.forEach(resolverConsumer);
         });
+    }
+
+    @Override
+    public void setInvalidCommandUseHandler(@Nullable InvalidUsageHandler<CommandSender> handler) {
+        this.invalidCommandUsageHandler = handler;
     }
 }
