@@ -198,6 +198,23 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         return builder.build();
     }
 
+    /**
+     * Retrieves the set of packages to be scanned for {@link Activatable} classes, configurations,
+     * integrations, and other relevant plugin components.
+     * <br>
+     * This method allows developers to define the scope of class scanning for the plugin.
+     * By default, it includes the package of the plugin's main class, but it can be extended
+     * to include additional packages or domains as needed.
+     *
+     * @return A set of classes representing the base packages to scan.
+     * @see Activatable
+     * @see co.crystaldev.alpinecore.framework.config.AlpineConfig
+     * @see co.crystaldev.alpinecore.framework.integration.AlpineIntegration
+     */
+    protected @NotNull Set<Class<?>> getScannablePackages() {
+        return ImmutableSet.of(this.getClass());
+    }
+
     // endregion
 
     // region Override methods
@@ -384,12 +401,12 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * Locates all {@link co.crystaldev.alpinecore.framework.Activatable}s within the classpath and activates them.
      */
     private void activateAll() {
-        String packageName = this.getClass().getPackage().getName();
-
         Set<Class<?>> classes = ImmutableSet.of();
         try {
             classes = ClassPath.from(this.getClassLoader()).getAllClasses().stream()
-                    .filter(clazz -> clazz.getPackageName().contains(packageName))
+                    .filter(clazz -> this.getScannablePackages().stream().anyMatch(c -> {
+                        return clazz.getPackageName().contains(c.getPackage().getName());
+                    }))
                     .filter(clazz -> this.onActivatablePreload(clazz.getName()))
                     .map(ClassPath.ClassInfo::load)
                     .collect(Collectors.toSet());
@@ -534,7 +551,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         this.setupAlpineConfig(config);
 
         // Register with the config manager
-        this.pluginConfig = (AlpinePluginConfig) this.configManager.loadConfig(config);
+        this.pluginConfig = this.configManager.loadConfig(config);
 
         // Override the config if defined
         if (this.pluginConfig.overrideWith != null && !this.pluginConfig.overrideWith.equals(this.getName())) {
