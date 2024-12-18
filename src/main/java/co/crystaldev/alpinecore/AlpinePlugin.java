@@ -54,7 +54,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * The base class for Alpine plugins. Use this
@@ -401,15 +400,16 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
      * Locates all {@link co.crystaldev.alpinecore.framework.Activatable}s within the classpath and activates them.
      */
     private void activateAll() {
-        Set<Class<?>> classes = ImmutableSet.of();
+        Set<Class<?>> classes = new HashSet<>();
         try {
-            classes = ClassPath.from(this.getClassLoader()).getAllClasses().stream()
-                    .filter(clazz -> this.getScannablePackages().stream().anyMatch(c -> {
-                        return clazz.getPackageName().contains(c.getPackage().getName());
-                    }))
-                    .filter(clazz -> this.onActivatablePreload(clazz.getName()))
-                    .map(ClassPath.ClassInfo::load)
-                    .collect(Collectors.toSet());
+            for (Class<?> scannablePackage : this.getScannablePackages()) {
+                String packageName = scannablePackage.getPackage().getName();
+                ClassPath.from(scannablePackage.getClassLoader()).getAllClasses().stream()
+                        .filter(clazz -> clazz.getPackageName().contains(packageName))
+                        .filter(clazz -> this.onActivatablePreload(clazz.getName()))
+                        .map(ClassPath.ClassInfo::load)
+                        .forEach(classes::add);
+            }
 
             classes.add(PlaceholderIntegration.class);
             classes.add(VaultIntegration.class);
