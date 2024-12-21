@@ -48,6 +48,15 @@ public abstract class Element implements UIEventSubscriber {
     public abstract @Nullable ItemStack buildItemStack();
 
     /**
+     * Should null/empty items be allowed to populate this element?
+     *
+     * @return Whether this element can provide a null element to the UIHandler.
+     */
+    public boolean allowsEmptyItems() {
+        return true;
+    }
+
+    /**
      * Initializes the UI element.
      */
     public void init() {

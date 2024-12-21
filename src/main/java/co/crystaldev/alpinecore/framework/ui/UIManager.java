@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -250,7 +251,10 @@ public final class UIManager {
             }
 
             element.init();
-            inventory.setItem(position.getSlot(), element.buildItemStack());
+            ItemStack item = element.buildItemStack();
+            if (item != null || element.allowsEmptyItems()) {
+                inventory.setItem(position.getSlot(), item);
+            }
         }
 
         // notify the handler
