@@ -50,7 +50,7 @@ dependencies {
     shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
     shade(this, "com.github.PikaMug:LocaleLib:4.1.0")
 
-    val liteCommands = "3.9.1"
+    val liteCommands = "3.9.3"
     shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
     shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
 
