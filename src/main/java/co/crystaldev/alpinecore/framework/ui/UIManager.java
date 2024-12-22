@@ -163,6 +163,17 @@ public final class UIManager {
 
         // mark the context as stale
         context.setStale(true);
+
+        // empty the inventory
+        Inventory inventory = context.inventory();
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            inventory.clear();
+
+            Player player = context.player();
+            if (player.isOnline()) {
+                player.updateInventory();
+            }
+        }, 2L);
     }
 
     /**
