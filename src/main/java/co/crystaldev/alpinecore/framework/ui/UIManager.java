@@ -173,7 +173,7 @@ public final class UIManager {
             if (player.isOnline()) {
                 player.updateInventory();
             }
-        }, 2L);
+        }, 1L);
     }
 
     /**
