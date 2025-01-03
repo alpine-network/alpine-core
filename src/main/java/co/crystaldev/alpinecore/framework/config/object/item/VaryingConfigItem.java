@@ -122,15 +122,15 @@ public class VaryingConfigItem implements ConfigItem {
         }
 
         public @NotNull Builder enchant(@NotNull XEnchantment enchantment, int level) {
-            return this.attribute("enchant_" + enchantment.name(), level);
+            return this.attribute("enchant_" + enchantment.name().toLowerCase(), level);
         }
 
         public @NotNull Builder potion(@NotNull XPotion effect, int duration, int amplifier) {
-            return this.attribute("effect_" + effect.name(), duration + " " + amplifier);
+            return this.attribute("effect_" + effect.name().toLowerCase(), duration + " " + amplifier);
         }
 
         public @NotNull Builder primaryPotion(@NotNull XPotion effect) {
-            return this.attribute("primary_effect", effect.name());
+            return this.attribute("primary_effect", effect.name().toLowerCase());
         }
 
         public @NotNull Builder potionColor(@NotNull Color color) {
