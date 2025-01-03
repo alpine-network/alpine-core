@@ -138,7 +138,7 @@ public interface ConfigItem {
         ItemHelper.setLore(stack, lore);
 
         if (this.isEnchanted()) {
-            stack.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 0);
+            stack.addUnsafeEnchantment(Enchantment.LURE, 1);
 
             ItemMeta meta = stack.getItemMeta();
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
