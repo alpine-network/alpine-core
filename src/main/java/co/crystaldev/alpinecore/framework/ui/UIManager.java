@@ -171,7 +171,7 @@ public final class UIManager {
                 inventory.clear();
 
                 Player player = context.player();
-                if (player.isOnline()) {
+                if (player != null && player.isOnline()) {
                     player.updateInventory();
                 }
             }, 1L);
