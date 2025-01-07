@@ -36,6 +36,9 @@ public final class UIContext {
     @Getter @Setter(AccessLevel.PACKAGE)
     private boolean stale;
 
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
+    private boolean processingInput;
+
     @Setter(AccessLevel.PACKAGE)
     private Inventory inventory;
 

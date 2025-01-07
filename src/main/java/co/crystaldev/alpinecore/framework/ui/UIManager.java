@@ -50,6 +50,22 @@ public final class UIManager {
      */
     public void open(@NotNull Player player, @NotNull InventoryUI ui, boolean force) {
         UIState state = this.states.computeIfAbsent(player.getUniqueId(), k -> new UIState(player));
+
+        // wait for user input to finish being processed before switching screens
+        if (!state.isEmpty() && state.peek().isProcessingInput()) {
+
+            // do not accept further input until the context is fully closed
+            state.setAcceptInput(false);
+
+            Bukkit.getScheduler().runTask(this.plugin, () -> {
+                this.open(player, ui, force);
+            });
+            return;
+        }
+
+        // unlock the context
+        state.setAcceptInput(true);
+
         UIHolder holder = new UIHolder(state);
         ConfigInventoryUI properties = ui.getProperties();
 
@@ -125,6 +141,21 @@ public final class UIManager {
         UUID playerId = player.getUniqueId();
 
         UIState state = this.states.get(playerId);
+
+        // wait for user input to finish being processed before closing
+        if (!state.isEmpty() && state.peek().isProcessingInput()) {
+
+            // do not accept further input until the context is fully closed
+            state.setAcceptInput(false);
+
+            Bukkit.getScheduler().runTask(this.plugin, () -> {
+                this.close(player, openParent);
+            });
+            return;
+        }
+
+        // unlock the context
+        state.setAcceptInput(true);
 
         // close the current context
         this.closeContext(state.pop());
@@ -323,5 +354,10 @@ public final class UIManager {
         UIHolder holder = (UIHolder) inventoryHolder;
         UIState state = this.states.get(holder.getPlayer().getUniqueId());
         return state != null && holder.getContext().equals(state.peek());
+    }
+
+    boolean canInteract(@NotNull UUID player) {
+        UIState state = this.states.get(player);
+        return state == null || state.isAcceptInput();
     }
 }

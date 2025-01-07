@@ -2,6 +2,7 @@ package co.crystaldev.alpinecore.framework.ui;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,9 @@ final class UIState {
     private final Player player;
 
     private final Deque<UIContext> contextStack = new LinkedList<>();
+
+    @Getter @Setter
+    private boolean acceptInput = true;
 
     public @Nullable UIContext push(@NotNull UIContext context) {
         UIContext peek = this.peek();

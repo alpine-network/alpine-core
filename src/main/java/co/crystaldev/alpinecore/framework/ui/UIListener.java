@@ -39,11 +39,20 @@ final class UIListener implements Listener {
             return;
         }
 
+        if (!this.manager.canInteract(player.getUniqueId())) {
+            event.setCancelled(true);
+            return;
+        }
+
         UIContext context = this.manager.get(player.getUniqueId());
+        context.setProcessingInput(true);
+
         ActionResult result = context.eventBus().call(context, new ClickEvent(event));
         if (result == ActionResult.CANCEL) {
             event.setCancelled(true);
         }
+
+        context.setProcessingInput(false);
     }
 
     @EventHandler
@@ -53,10 +62,19 @@ final class UIListener implements Listener {
             return;
         }
 
+        if (!this.manager.canInteract(player.getUniqueId())) {
+            event.setCancelled(true);
+            return;
+        }
+
         UIContext context = this.manager.get(player.getUniqueId());
+        context.setProcessingInput(true);
+
         ActionResult result = context.eventBus().call(context, new DragEvent(event));
         if (result == ActionResult.CANCEL) {
             event.setCancelled(true);
         }
+
+        context.setProcessingInput(false);
     }
 }
