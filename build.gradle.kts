@@ -5,8 +5,8 @@ plugins {
     id("java")
     id("java-library")
     id("maven-publish")
-    id("net.kyori.blossom") version "1.2.0"
-    id("com.gradleup.shadow") version "8.3.3"
+    alias(libs.plugins.blossom)
+    alias(libs.plugins.shadow)
 }
 
 group = this.compileGroup()
@@ -38,36 +38,28 @@ configurations {
 
 dependencies {
     // Provided/optional dependencies
-    compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-    compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("com.google.code.gson:gson:2.2.4") // bundled with 1.8.8-R0.1
+    compileOnly(libs.spigot.api)
+    compileOnly(libs.vault.api)
+    compileOnly(libs.placeholderapi)
+    compileOnly(libs.gson)
 
     // Bundled dependencies
-    shade(this, "org.jetbrains:annotations:26.0.1")
-    shade(this, "dev.tomwmth:configlib-spigot:4.5.0")
-    shade(this, "com.github.cryptomorin:XSeries:11.3.0")
-    shade(this, "org.apache.commons:commons-dbcp2:2.12.0")
-    shade(this, "com.github.PikaMug:LocaleLib:4.1.0")
+    shade(this, libs.annotations)
+    shade(this, libs.configlib.spigot)
+    shade(this, libs.xseries)
+    shade(this, libs.commons.dbcp2)
+    shade(this, libs.localelib)
 
-    val liteCommands = "3.9.4"
-    shade(this, "dev.rollczi:litecommands-bukkit:$liteCommands")
-    shade(this, "dev.rollczi:litecommands-adventure-platform:$liteCommands")
-
-    val adventure = "4.17.0"
-    shade(this, "net.kyori:adventure-platform-bukkit:4.3.4")
-    shade(this, "net.kyori:adventure-api:$adventure")
-    shade(this, "net.kyori:adventure-text-minimessage:$adventure")
-    shade(this, "net.kyori:adventure-text-serializer-plain:$adventure")
+    shade(this, libs.bundles.litecommands)
+    shade(this, libs.bundles.adventure)
 
     // Testing dependencies
-    testImplementation("org.testng:testng:7.5.1") // v7.6+ requires JDK 11
-    testImplementation("commons-lang:commons-lang:2.6") // bundled with 1.8.8-R0.1
+    testImplementation(libs.testng)
+    testImplementation(libs.commons.lang)
 
     // Code generation
-    val lombok = "org.projectlombok:lombok:1.18.34"
-    compileOnly(lombok)
-    annotationProcessor(lombok)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 }
 
 blossom {
@@ -239,7 +231,7 @@ fun compileVersion(): String {
     return "${major}.${minor}.${patch}${if (isSnapshot()) "-SNAPSHOT" else ""}"
 }
 
-fun shade(scope: DependencyHandlerScope, dependency: String) {
+fun <T> shade(scope: DependencyHandlerScope, dependency: Provider<T?>) where T : Any {
     scope.implementation(dependency)
     scope.api(dependency)
     scope.shadow(dependency)

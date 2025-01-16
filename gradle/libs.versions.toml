@@ -1,0 +1,54 @@
+[versions]
+adventure = "4.17.0"
+adventure-platform = "4.3.4"
+annotations = "26.0.1"
+blossom = "1.2.0"
+commons-dbcp2 = "2.12.0"
+commons-lang = "2.6" # bundled with 1.8.8-R0.1
+configlib = "4.5.0"
+gson = "2.2.4" # bundled with 1.8.8-R0.1
+litecommands = "3.9.4"
+localelib = "4.1.0"
+lombok = "1.18.34"
+placeholderapi = "2.11.6"
+shadow = "8.3.3"
+spigot = "1.8.8-R0.1-SNAPSHOT"
+testng = "7.5.1" # v7.6+ requires JDK 11
+vault = "1.7.1"
+xseries = "11.3.0"
+
+[libraries]
+adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
+adventure-text-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure" }
+adventure-text-serializer-plain = { group = "net.kyori", name = "adventure-text-serializer-plain", version.ref = "adventure" }
+adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform" }
+annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
+commons-dbcp2 = { group = "org.apache.commons", name = "commons-dbcp2", version.ref = "commons-dbcp2" }
+commons-lang = { group = "commons-lang", name = "commons-lang", version.ref = "commons-lang" }
+configlib-spigot = { group = "dev.tomwmth", name = "configlib-spigot", version.ref = "configlib" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+litecommands-bukkit = { group = "dev.rollczi", name = "litecommands-bukkit", version.ref = "litecommands" }
+litecommands-adventure-platform = { group = "dev.rollczi", name = "litecommands-adventure-platform", version.ref = "litecommands" }
+localelib = { group = "com.github.PikaMug", name = "LocaleLib", version.ref = "localelib" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
+spigot-api = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
+testng = { group = "org.testng", name = "testng", version.ref = "testng" }
+vault-api = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
+xseries = { group = "com.github.cryptomorin", name = "XSeries", version.ref = "xseries" }
+
+[plugins]
+blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+
+[bundles]
+adventure = [
+    "adventure-api",
+    "adventure-text-minimessage",
+    "adventure-text-serializer-plain",
+    "adventure-platform-bukkit",
+]
+litecommands = [
+    "litecommands-bukkit",
+    "litecommands-adventure-platform",
+]

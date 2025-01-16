@@ -16,13 +16,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:${project.properties["spigot_version"]}")
+    compileOnly(libs.spigot.api)
     compileOnly("com.viaversion:viaversion-api:5.0.2")
     implementation(rootProject)
 
-    val lombok = "org.projectlombok:lombok:1.18.34"
-    compileOnly(lombok)
-    annotationProcessor(lombok)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 }
 
 tasks.withType<Jar> {
