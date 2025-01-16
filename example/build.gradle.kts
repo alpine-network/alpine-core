@@ -24,7 +24,7 @@ dependencies {
     annotationProcessor(libs.lombok)
 }
 
-tasks.withType<Jar> {
+tasks.withType<Jar>().configureEach {
     // Rename jar
 //    archiveFileName.set("ExamplePlugin-$version.jar")
 
@@ -33,7 +33,7 @@ tasks.withType<Jar> {
     exclude("META-INF/maven/")
 }
 
-tasks.withType<JavaCompile> {
+tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 

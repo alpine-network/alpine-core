@@ -9,8 +9,8 @@ plugins {
     alias(libs.plugins.shadow)
 }
 
-group = this.compileGroup()
-version = this.compileVersion()
+group = compileGroup()
+version = compileVersion()
 
 val properties = mapOf(
     "pluginVersion" to version,
@@ -29,11 +29,9 @@ repositories {
     maven("https://repo.helpch.at/releases/")
 }
 
-configurations {
-    configureEach {
-        exclude("org.slf4j")
-        exclude("junit")
-    }
+configurations.configureEach {
+    exclude("org.slf4j")
+    exclude("junit")
 }
 
 dependencies {
@@ -74,7 +72,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.withType<Jar> {
+tasks.withType<Jar>().configureEach {
     // Rename JAR
     archiveFileName.set("${project.properties["plugin_name"]}-$version.jar")
 
@@ -120,11 +118,11 @@ tasks.getByName<Jar>("sourcesJar") {
     archiveFileName.set("${project.properties["plugin_name"]}-$version-sources.jar")
 }
 
-tasks.withType<JavaCompile> {
+tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 
-tasks.withType<ProcessResources> {
+tasks.withType<ProcessResources>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     inputs.properties(properties)
@@ -139,7 +137,7 @@ tasks.withType<ProcessResources> {
     }
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useTestNG()
 }
 
@@ -147,10 +145,10 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             // Set the unshaded JAR as the main artifact
-            artifact(tasks["jar"])
+            artifact(tasks.named("jar"))
 
             // Add sources as secondary artifact
-            artifact(tasks["sourcesJar"]) {
+            artifact(tasks.named("sourcesJar")) {
                 classifier = "sources"
             }
 
@@ -211,7 +209,7 @@ tasks.register("writeVersion") {
 }
 
 subprojects {
-    tasks.withType<Javadoc> {
+    tasks.withType<Javadoc>().configureEach {
         enabled = false
     }
 }
