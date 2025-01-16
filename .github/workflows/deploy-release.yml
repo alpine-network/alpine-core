@@ -12,16 +12,19 @@ jobs:
 
     steps:
       - name: "Checkout source"
+        # https://github.com/actions/checkout/releases
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: "Set up JDK"
-        uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
+        # https://github.com/actions/setup-java/releases
+        uses: actions/setup-java@7a6d8a8234af8eb26422e24e3006232cccaa061b # v4.6.0
         with:
           distribution: temurin
           java-version: 17
 
       - name: "Setup Gradle"
-        uses: gradle/actions/setup-gradle@cc4fc85e6b35bafd578d5ffbc76a5518407e1af0 # v4.2.1
+        # https://github.com/gradle/actions/releases
+        uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6 # v4.2.2
         with:
           validate-wrappers: true
           gradle-version: wrapper
@@ -46,7 +49,8 @@ jobs:
           echo "RELEASE_VERSION=$(cat .version)" >> $GITHUB_ENV
 
       - name: "Create GitHub Release"
-        uses: softprops/action-gh-release@01570a1f39cb168c169c802c3bceb9e93fb10974 # v2.1.0
+        # https://github.com/softprops/action-gh-release/releases
+        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
