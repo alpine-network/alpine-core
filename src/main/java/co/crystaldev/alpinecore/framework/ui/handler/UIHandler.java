@@ -111,6 +111,8 @@ public abstract class UIHandler implements UIEventSubscriber {
         Map<String, String> dictionary = properties.getDictionary();
         String[] slots = properties.getSlots();
 
+        context.clearElements();
+
         for (int y = 0; y < slots.length; y++) {
             String row = slots[y];
             for (int x = 0; x < row.length(); x++) {

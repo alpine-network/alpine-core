@@ -293,6 +293,20 @@ public final class UIManager {
     }
 
     /**
+     * Rebuild all elements in the UIContext.
+     *
+     * @param context the context containing the elements and inventory
+     */
+    public void rebuild(@NotNull UIContext context) {
+
+        // clear and reinitialize elements
+        context.ui().getHandler().fill(context);
+
+        // refresh the ui
+        this.refresh(context);
+    }
+
+    /**
      * Refreshes the inventory with the current elements in the UIContext.
      *
      * @param context the context containing the elements and inventory

@@ -141,6 +141,13 @@ public final class UIContext {
     }
 
     /**
+     * Reconstructs all elements associated with this context.
+     */
+    public void rebuild() {
+        this.manager().rebuild(this);
+    }
+
+    /**
      * Refreshes the inventory associated with this context.
      */
     public void refresh() {
@@ -177,6 +184,16 @@ public final class UIContext {
     public void removeElement(@NotNull Element element) {
         this.eventBus.unregister(element);
         this.elements.remove(element);
+    }
+
+    /**
+     * Clears all elements from this context.
+     */
+    public void clearElements() {
+        for (Element element : this.elements) {
+            this.eventBus.unregister(element);
+        }
+        this.elements.clear();
     }
 
     /**
