@@ -273,6 +273,26 @@ public final class UIManager {
     }
 
     /**
+     * Checks if the player is managed by the AlpineUIManager.
+     *
+     * @param player the player to check
+     * @return true if the player is managed, false otherwise
+     */
+    public boolean has(@NotNull UUID player) {
+        return this.states.containsKey(player);
+    }
+
+    /**
+     * Checks if the player is managed by the AlpineUIManager.
+     *
+     * @param player the player to check
+     * @return true if the player is managed, false otherwise
+     */
+    public boolean has(@NotNull Player player) {
+        return this.get(player) != null;
+    }
+
+    /**
      * Refreshes the inventory with the current elements in the UIContext.
      *
      * @param context the context containing the elements and inventory
