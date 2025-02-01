@@ -184,6 +184,10 @@ public final class UIManager {
      * @param context the context to be closed
      */
     private void closeContext(@NotNull UIContext context) {
+        this.closeContext(context, true);
+    }
+
+    private void closeContext(@NotNull UIContext context, boolean clearInventory) {
         // notify the ui handler
         context.ui().getHandler().closed(context);
 
@@ -196,7 +200,7 @@ public final class UIManager {
         context.setStale(true);
 
         // empty the inventory
-        if (this.plugin.isEnabled()) {
+        if (clearInventory && this.plugin.isEnabled()) {
             Inventory inventory = context.inventory();
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                 inventory.clear();
@@ -298,6 +302,10 @@ public final class UIManager {
      * @param context the context containing the elements and inventory
      */
     public void rebuild(@NotNull UIContext context) {
+
+        // close the context
+        this.closeContext(context, false);
+        context.ui().getHandler().closed(context);
 
         // clear and reinitialize elements
         context.ui().getHandler().fill(context);
