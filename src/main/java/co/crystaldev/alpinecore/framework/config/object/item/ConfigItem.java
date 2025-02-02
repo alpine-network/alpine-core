@@ -348,11 +348,16 @@ public interface ConfigItem {
         ItemHelper.setLore(stack, lore);
 
         if (this.isEnchanted()) {
-            stack.addUnsafeEnchantment(Enchantment.SILK_TOUCH, 0);
+            stack.addUnsafeEnchantment(Enchantment.LURE, 1);
 
             ItemMeta meta = stack.getItemMeta();
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             stack.setItemMeta(meta);
+        }
+
+        Map<String, Object> attributes = this.getAttributes();
+        if (attributes != null && !attributes.isEmpty()) {
+            ConfigItemHelper.applyToItem(stack, attributes);
         }
 
         if (function != null) {
