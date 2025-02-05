@@ -49,6 +49,15 @@ public final class ElementPaginator<T> {
     }
 
     /**
+     * Retrieves the element provider for the UI paginator.
+     *
+     * @return The element provider
+     */
+    public @NotNull ElementProvider<T, ?> getProvider() {
+        return this.elementProvider;
+    }
+
+    /**
      * Retrieves the next element from the paginator.
      *
      * @param context the UI context
