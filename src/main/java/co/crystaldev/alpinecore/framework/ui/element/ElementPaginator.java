@@ -35,6 +35,17 @@ public final class ElementPaginator<T> {
     }
 
     /**
+     * Retrieves or creates the paginator state for the given UI context.
+     *
+     * @param context the UI context
+     * @return the existing or newly created {@link PaginatorState} for the given context
+     */
+    public @NotNull PaginatorState getOrCreateState(@NotNull UIContext context) {
+        return this.states.computeIfAbsent(context,
+                ctx -> new PaginatorState(this.elementProvider.size()));
+    }
+
+    /**
      * Initializes the paginator state with the specified page and page size.
      *
      * @param context  the UI context
@@ -42,8 +53,7 @@ public final class ElementPaginator<T> {
      * @param pageSize the number of elements per page
      */
     public void initPage(@NotNull UIContext context, int page, int pageSize) {
-        PaginatorState state = this.states.computeIfAbsent(context,
-                ctx -> new PaginatorState(this.elementProvider.size()));
+        PaginatorState state = this.getOrCreateState(context);
         state.setPageSize(pageSize);
         state.setPage(page);
     }
@@ -64,8 +74,7 @@ public final class ElementPaginator<T> {
      * @return the next element from the paginator
      */
     public @NotNull PaginatorElement<T> buildNextSlot(@NotNull UIContext context) {
-        PaginatorState state = this.states.computeIfAbsent(context,
-                ctx -> new PaginatorState(this.elementProvider.size()));
+        PaginatorState state = this.getOrCreateState(context);
         this.elementProvider.nextElement(context);
 
         int offset = this.elementProvider.getIndex(context) - 1;
@@ -84,8 +93,7 @@ public final class ElementPaginator<T> {
      */
     public @NotNull Element buildPreviousNav(@NotNull UIContext context, @NotNull DefinedConfigItem item,
                                              @Nullable DefinedConfigItem emptyItem) {
-        PaginatorState state = this.states.computeIfAbsent(context,
-                ctx -> new PaginatorState(this.elementProvider.size()));
+        PaginatorState state = this.getOrCreateState(context);
         return new PaginatorNavElement(context, state, -1, item, emptyItem);
     }
 
@@ -110,8 +118,7 @@ public final class ElementPaginator<T> {
      */
     public @NotNull Element buildNextNav(@NotNull UIContext context, @NotNull DefinedConfigItem item,
                                          @Nullable DefinedConfigItem emptyItem) {
-        PaginatorState state = this.states.computeIfAbsent(context,
-                ctx -> new PaginatorState(this.elementProvider.size()));
+        PaginatorState state = this.getOrCreateState(context);
         return new PaginatorNavElement(context, state, 1, item, emptyItem);
     }
 
@@ -134,8 +141,7 @@ public final class ElementPaginator<T> {
      * @return the navigation info element
      */
     public @NotNull Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
-        PaginatorState state = this.states.computeIfAbsent(context,
-                ctx -> new PaginatorState(this.elementProvider.size()));
+        PaginatorState state = this.getOrCreateState(context);
         return new PaginatorNavElement(context, state, 0, item, null);
     }
 
