@@ -305,7 +305,6 @@ public final class UIManager {
 
         // close the context
         this.closeContext(context, false);
-        context.ui().getHandler().closed(context);
 
         // clear and reinitialize elements
         context.ui().getHandler().fill(context);
