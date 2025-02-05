@@ -50,6 +50,26 @@ public final class ElementProvider<S, T extends Element> {
     }
 
     /**
+     * Skips to the specified index in the iterator and retrieves the element at that position.
+     *
+     * @param context the UI context
+     * @param index   the index to skip to (0-based)
+     * @return the element at the specified index
+     */
+    public @Nullable T skipToIndex(@NotNull UIContext context, int index) {
+        Validate.isTrue(index >= 0 && index < this.entries.size(), "index out of bounds");
+
+        State<S> state = new State<>(this.entries.iterator());
+        this.states.put(context, state);
+
+        S next = null;
+        while (index-- > 0 && (next = state.next()) != null) {
+        }
+
+        return next != null ? this.toElementFunction.apply(context, next) : null;
+    }
+
+    /**
      * Retrieves an element from the paginator at the specified index.
      *
      * @param context the UI context
