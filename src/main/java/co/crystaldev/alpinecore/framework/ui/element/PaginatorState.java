@@ -50,7 +50,7 @@ public final class PaginatorState {
      */
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
-        this.maxPages = (int) Math.ceil(this.elementCount / (double) pageSize);
+        this.maxPages = pageSize == 0 ? 0 : (int) Math.ceil(this.elementCount / (double) pageSize);
     }
 
     /**

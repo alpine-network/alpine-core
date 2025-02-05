@@ -119,14 +119,12 @@ public final class ElementProvider<S, T extends Element> {
 
         public @NotNull Builder<S, T> entries(@NotNull Collection<S> entries) {
             Validate.notNull(entries, "entries cannot be null");
-            Validate.isTrue(!entries.isEmpty(), "entries cannot be empty");
             this.entries = entries;
             return this;
         }
 
         public @NotNull Builder<S, T> entries(@NotNull S... entries) {
             Validate.notNull(entries, "entries cannot be null");
-            Validate.isTrue(entries.length > 0, "entries cannot be empty");
             this.entries = ImmutableList.copyOf(entries);
             return this;
         }
