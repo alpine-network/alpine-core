@@ -136,12 +136,25 @@ public final class ElementPaginator<T> {
      * @param context the UI context
      */
     public void closed(@NotNull UIContext context) {
+        this.closed(context, true);
+    }
+
+    /**
+     * Removes any stale states or states associated with a specific player from the context.
+     *
+     * @param context    the UI context
+     * @param clearState whether to clear the paginator state for the context.
+     */
+    public void closed(@NotNull UIContext context, boolean clearState) {
         this.elementProvider.closed(context);
-        PaginatorState state = this.states.get(context);
-        if (state != null) {
-            state.resetPageSize();
+
+        if (clearState) {
+            PaginatorState state = this.states.get(context);
+            if (state != null) {
+                state.resetPageSize();
+            }
+            this.states.entrySet().removeIf(e -> e.getKey().isStale());
         }
-        this.states.entrySet().removeIf(e -> e.getKey().isStale());
     }
 
     public static <S> @NotNull ElementPaginator<S> from(@NotNull ElementProvider<S, ?> elementProvider) {
