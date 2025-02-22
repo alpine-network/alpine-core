@@ -35,7 +35,8 @@ public final class PaginatorNavElement extends Element {
     public @NotNull ItemStack buildItemStack() {
         int currentPage = this.state.getCurrentPage();
         int page = currentPage + 1;
-        DefinedConfigItem configItem = this.state.isValid(currentPage + this.direction) ? this.item : emptyItem;
+        boolean hasPage = this.state.getMaxPages() > 1 && this.state.isValid(currentPage + this.direction);
+        DefinedConfigItem configItem = hasPage ? this.item : emptyItem;
 
         return configItem.build(this.context.manager().getPlugin(),
                 "page", page,
