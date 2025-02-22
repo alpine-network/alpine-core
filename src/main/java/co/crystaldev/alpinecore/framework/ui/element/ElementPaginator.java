@@ -136,13 +136,26 @@ public final class ElementPaginator<T> {
     /**
      * Builds a navigation info element for the UI paginator.
      *
+     * @param context   the UI context
+     * @param item      the defined config item
+     * @param emptyItem the item to display when no page is available
+     * @return the navigation info element
+     */
+    public @NotNull Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item,
+                                         @Nullable DefinedConfigItem emptyItem) {
+        PaginatorState state = this.getOrCreateState(context);
+        return new PaginatorNavElement(context, state, 0, item, emptyItem);
+    }
+
+    /**
+     * Builds a navigation info element for the UI paginator.
+     *
      * @param context the UI context
      * @param item    the defined config item
      * @return the navigation info element
      */
     public @NotNull Element buildNavInfo(@NotNull UIContext context, @NotNull DefinedConfigItem item) {
-        PaginatorState state = this.getOrCreateState(context);
-        return new PaginatorNavElement(context, state, 0, item, null);
+        return this.buildNavInfo(context, item, null);
     }
 
     /**
