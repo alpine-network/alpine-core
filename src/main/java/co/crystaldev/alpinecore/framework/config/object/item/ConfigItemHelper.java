@@ -53,8 +53,18 @@ final class ConfigItemHelper {
             itemStack.addUnsafeEnchantment(enchantment.getEnchant(), Integer.parseInt(attrib.toString()));
         });
 
-        // Add custom potion effects from attributes
         ItemMeta itemMeta = itemStack.getItemMeta();
+        boolean updated = false;
+
+        // Add ItemFlags from attributes
+        for (ItemFlag value : ItemFlag.values()) {
+            if (attributes.containsKey(value.name())) {
+                itemMeta.addItemFlags(value);
+                updated = true;
+            }
+        }
+
+        // Add custom potion effects from attributes
         if (itemMeta instanceof PotionMeta) {
 
             // Iterate over effects
@@ -114,6 +124,10 @@ final class ConfigItemHelper {
                 itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             }
 
+            updated = true;
+        }
+
+        if (updated) {
             // Update the item meta
             itemStack.setItemMeta(itemMeta);
         }
