@@ -462,6 +462,11 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                         .colorizeArgument(true)
                         .serializer(this.miniMessage))
 
+                // Use Bukkit permissions
+                .settings(settings -> settings
+                        .nativePermissions(true)
+                        .fallbackPrefix(this.getName().toLowerCase(Locale.ROOT)))
+
                 // Feed in our commands
                 .commands((Object[]) commands)
 
