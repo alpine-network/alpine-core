@@ -1,21 +1,21 @@
 [versions]
-adventure = "4.17.0"
+adventure = "4.19.0"
 adventure-platform = "4.3.4"
-annotations = "26.0.1"
+annotations = "26.0.2"
 blossom = "1.2.0"
-commons-dbcp2 = "2.12.0"
+commons-dbcp2 = "2.13.0"
 commons-lang = "2.6" # bundled with 1.8.8-R0.1
-configlib = "4.5.0"
+configlib = "4.5.2"
 gson = "2.2.4" # bundled with 1.8.8-R0.1
 litecommands = "3.9.6"
 localelib = "4.1.0"
-lombok = "1.18.34"
+lombok = "1.18.36"
 placeholderapi = "2.11.6"
-shadow = "8.3.3"
+shadow = "8.3.6"
 spigot = "1.8.8-R0.1-SNAPSHOT"
 testng = "7.5.1" # v7.6+ requires JDK 11
 vault = "1.7.1"
-xseries = "11.3.0"
+xseries = "13.0.0"
 
 [libraries]
 adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }

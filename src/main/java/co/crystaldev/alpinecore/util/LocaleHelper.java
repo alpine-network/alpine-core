@@ -2,6 +2,7 @@ package co.crystaldev.alpinecore.util;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.base.XModule;
 import lombok.experimental.UtilityClass;
 import me.pikamug.localelib.LocaleManager;
 import net.kyori.adventure.text.Component;
@@ -201,7 +202,7 @@ public final class LocaleHelper {
             return key;
         }
         catch (Exception ex) {
-            return formatEnum(enchantment);
+            return formatXEnum(enchantment);
         }
     }
 
@@ -216,12 +217,20 @@ public final class LocaleHelper {
             return Component.translatable(getTranslationKey(enchantment));
         }
         catch (Exception ex) {
-            return Component.text(formatEnum(enchantment));
+            return Component.text(formatXEnum(enchantment));
         }
     }
 
     private static @NotNull String formatEnum(@NotNull Enum<?> value) {
-        return Stream.of(value.name().toLowerCase().split("_"))
+        return formatEnumName(value.name());
+    }
+
+    private static @NotNull String formatXEnum(@NotNull XModule<?, ?> value) {
+        return formatEnumName(value.name());
+    }
+
+    private static @NotNull String formatEnumName(@NotNull String name) {
+        return Stream.of(name.toLowerCase().split("_"))
                 .map(v -> v.isEmpty() ? v : Character.toUpperCase(v.charAt(0)) + (v.length() > 1  ? v.substring(1) : ""))
                 .collect(Collectors.joining(" "));
     }

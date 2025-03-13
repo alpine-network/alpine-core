@@ -2,6 +2,8 @@ package co.crystaldev.alpinecore.framework.config;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
+import co.crystaldev.alpinecore.util.XModuleSerializer;
+import com.cryptomorin.xseries.*;
 import de.exlll.configlib.ConfigLib;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
@@ -49,7 +51,32 @@ public final class ConfigManager {
         YamlConfigurationProperties.Builder<?> builder = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
                 .inputNulls(true)
                 .outputNulls(true)
-                .charset(StandardCharsets.UTF_8);
+                .charset(StandardCharsets.UTF_8)
+                .addSerializerByCondition(
+                        type -> type instanceof Class<?> &&
+                                XAttribute.class.isAssignableFrom((Class<?>) type),
+                        new XModuleSerializer<>(XAttribute.class)
+                )
+                .addSerializerByCondition(
+                        type -> type instanceof Class<?> &&
+                                XBiome.class.isAssignableFrom((Class<?>) type),
+                        new XModuleSerializer<>(XBiome.class)
+                )
+                .addSerializerByCondition(
+                        type -> type instanceof Class<?> &&
+                                XEnchantment.class.isAssignableFrom((Class<?>) type),
+                        new XModuleSerializer<>(XEnchantment.class)
+                )
+                .addSerializerByCondition(
+                        type -> type instanceof Class<?> &&
+                                XPatternType.class.isAssignableFrom((Class<?>) type),
+                        new XModuleSerializer<>(XPatternType.class)
+                )
+                .addSerializerByCondition(
+                        type -> type instanceof Class<?> &&
+                                XSound.class.isAssignableFrom((Class<?>) type),
+                        new XModuleSerializer<>(XSound.class)
+                );
 
         // Add serializers
         serializerRegistry.getConfigSerializers().forEach((dataType, serializer) -> {
