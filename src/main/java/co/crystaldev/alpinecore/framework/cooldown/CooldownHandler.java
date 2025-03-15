@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -48,7 +48,7 @@ public final class CooldownHandler<T> {
     @Getter
     private final CooldownCallbacks<T> callbacks;
 
-    private final Map<T, Cooldown<T>> cooldowns = new HashMap<>();
+    private final Map<T, Cooldown<T>> cooldowns = new ConcurrentHashMap<>();
 
     private CooldownHandler(@NotNull AlpinePlugin plugin, int delayTicks, double movementThreshold, @NotNull CooldownCallbacks<T> callbacks) {
         this.delayTicks = delayTicks;
