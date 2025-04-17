@@ -7,6 +7,7 @@ commons-dbcp2 = "2.13.0"
 commons-lang = "2.6" # bundled with 1.8.8-R0.1
 configlib = "4.5.2"
 gson = "2.2.4" # bundled with 1.8.8-R0.1
+hangar-publish = "0.1.2"
 litecommands = "3.9.6"
 localelib = "4.1.0"
 lombok = "1.18.36"
@@ -39,6 +40,7 @@ xseries = { group = "com.github.cryptomorin", name = "XSeries", version.ref = "x
 
 [plugins]
 blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+hangar-publish = { id = "io.papermc.hangar-publish-plugin", version.ref = "hangar-publish" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [bundles]

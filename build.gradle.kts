@@ -1,3 +1,5 @@
+import io.papermc.hangarpublishplugin.model.Platforms
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -6,6 +8,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     alias(libs.plugins.blossom)
+    alias(libs.plugins.hangar.publish)
     alias(libs.plugins.shadow)
 }
 
@@ -190,6 +193,34 @@ publishing {
     }
 }
 
+hangarPublish {
+    publications.register("plugin") {
+        val versionString: String = compileVersion()
+        val changelogContent: String
+        if (isSnapshot()) {
+            channel.set("Snapshot")
+            changelogContent = latestCommitMessage()
+            version.set(versionString + "+" + System.getenv("GITHUB_RUN_NUMBER"))
+        } else {
+            channel.set("Release")
+            version.set(versionString)
+            changelogContent = "https://github.com/alpine-network/alpine-core/releases/tag/$versionString"
+        }
+        id.set("AlpineCore")
+        changelog.set(changelogContent)
+        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
+        platforms {
+            register(Platforms.PAPER) {
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                val versions: List<String> = (property("paperVersion") as String)
+                    .split(',')
+                    .map { it.trim() }
+                platformVersions.set(versions)
+            }
+        }
+    }
+}
+
 tasks.javadoc {
     options {
         this as StandardJavadocDocletOptions
@@ -233,4 +264,17 @@ fun <T> shade(scope: DependencyHandlerScope, dependency: Provider<T?>) where T :
     scope.implementation(dependency)
     scope.api(dependency)
     scope.shadow(dependency)
+}
+
+fun executeGitCommand(vararg command: String): String {
+    val byteOut = ByteArrayOutputStream()
+    providers.exec {
+        commandLine = listOf("git", *command)
+        standardOutput = byteOut
+    }
+    return byteOut.toString(Charsets.UTF_8.name()).trim()
+}
+
+fun latestCommitMessage(): String {
+    return executeGitCommand("log", "-1", "--pretty=%B")
 }
