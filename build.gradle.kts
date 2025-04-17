@@ -267,12 +267,10 @@ fun <T> shade(scope: DependencyHandlerScope, dependency: Provider<T?>) where T :
 }
 
 fun executeGitCommand(vararg command: String): String {
-    val byteOut = ByteArrayOutputStream()
-    providers.exec {
-        commandLine = listOf("git", *command)
-        standardOutput = byteOut
-    }
-    return byteOut.toString(Charsets.UTF_8.name()).trim()
+    val result = providers.exec {
+        commandLine = listOf("git") + command
+    }.standardOutput.asText.get()
+    return result.trim()
 }
 
 fun latestCommitMessage(): String {
