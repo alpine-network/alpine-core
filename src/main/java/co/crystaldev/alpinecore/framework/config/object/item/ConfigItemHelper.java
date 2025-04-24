@@ -66,32 +66,33 @@ final class ConfigItemHelper {
 
         // Add custom potion effects from attributes
         if (itemMeta instanceof PotionMeta) {
-
             // Iterate over effects
             POTIONS.forEach((key, potion) -> {
                 Object attrib = attributes.get(key);
-                if (attrib != null) {
-                    int duration, amplifier = 0;
-                    if (attrib instanceof Number) {
-                        duration = ((Number) attrib).intValue();
-                    }
-                    else if (attrib instanceof Map) {
-                        Map<String, Integer> effect = (Map<String, Integer>) attrib;
-                        duration = effect.getOrDefault("duration", 0);
-                        amplifier = effect.getOrDefault("amplifier", 0);
-                    }
-                    else {
-                        String[] split = attrib.toString().split(" ");
-                        duration = Integer.parseInt(split[0]);
-                        if (split.length > 1) {
-                            amplifier = Integer.parseInt(split[1]);
-                        }
-                    }
-
-                    PotionMeta potionMeta = (PotionMeta) itemMeta;
-                    potionMeta.addCustomEffect(potion.buildPotionEffect(duration * 20, amplifier), true);
-                    setPrimaryType(potionMeta, potion);
+                if (attrib == null) {
+                    return;
                 }
+
+                int duration, amplifier = 0;
+                if (attrib instanceof Number) {
+                    duration = ((Number) attrib).intValue();
+                }
+                else if (attrib instanceof Map) {
+                    Map<String, Integer> effect = (Map<String, Integer>) attrib;
+                    duration = effect.getOrDefault("duration", 0);
+                    amplifier = effect.getOrDefault("amplifier", 0);
+                }
+                else {
+                    String[] split = attrib.toString().split(" ");
+                    duration = Integer.parseInt(split[0]);
+                    if (split.length > 1) {
+                        amplifier = Integer.parseInt(split[1]);
+                    }
+                }
+
+                PotionMeta potionMeta = (PotionMeta) itemMeta;
+                potionMeta.addCustomEffect(potion.buildPotionEffect(duration * 20, amplifier), true);
+                setPrimaryType(potionMeta, potion);
             });
 
             // Set the potion color
@@ -123,8 +124,6 @@ final class ConfigItemHelper {
             if ("true".equals(attributes.getOrDefault("hide_effects", "false").toString())) {
                 itemMeta.addItemFlags(XItemFlag.HIDE_ADDITIONAL_TOOLTIP.get());
             }
-
-            updated = true;
         }
 
         if (updated) {
