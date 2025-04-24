@@ -121,7 +121,7 @@ final class ConfigItemHelper {
 
             // Hide effects on item
             if ("true".equals(attributes.getOrDefault("hide_effects", "false").toString())) {
-                itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                itemMeta.addItemFlags(XItemFlag.HIDE_ADDITIONAL_TOOLTIP.get());
             }
 
             updated = true;

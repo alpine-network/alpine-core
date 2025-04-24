@@ -5,6 +5,7 @@ import co.crystaldev.alpinecore.integration.PlaceholderIntegration;
 import co.crystaldev.alpinecore.util.Components;
 import co.crystaldev.alpinecore.util.Formatting;
 import co.crystaldev.alpinecore.util.ItemHelper;
+import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
 import de.exlll.configlib.Polymorphic;
 import de.exlll.configlib.PolymorphicTypes;
@@ -14,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -141,7 +141,7 @@ public interface ConfigItem {
             stack.addUnsafeEnchantment(Enchantment.LURE, 1);
 
             ItemMeta meta = stack.getItemMeta();
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(XItemFlag.HIDE_ENCHANTS.get());
             stack.setItemMeta(meta);
         }
 
@@ -351,7 +351,7 @@ public interface ConfigItem {
             stack.addUnsafeEnchantment(Enchantment.LURE, 1);
 
             ItemMeta meta = stack.getItemMeta();
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(XItemFlag.HIDE_ENCHANTS.get());
             stack.setItemMeta(meta);
         }
 

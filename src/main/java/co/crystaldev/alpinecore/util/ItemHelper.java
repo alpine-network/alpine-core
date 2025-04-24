@@ -1,12 +1,12 @@
 package co.crystaldev.alpinecore.util;
 
 import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -272,7 +272,7 @@ public final class ItemHelper {
      */
     public static @NotNull List<Component> getEnchantments(@NotNull ItemStack item) {
 
-        if (item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+        if (item.getItemMeta().hasItemFlag(XItemFlag.HIDE_ENCHANTS.get())) {
             return Collections.emptyList();
         }
 
