@@ -2,10 +2,10 @@ package co.crystaldev.alpinecore.framework.config.object.item;
 
 import co.crystaldev.alpinecore.util.ReflectionHelper;
 import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XPotion;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -23,6 +23,8 @@ import java.util.Map;
 final class ConfigItemHelper {
 
     private static final Map<String, XEnchantment> ENCHANTMENTS = new HashMap<>();
+
+    private static final Map<String, XItemFlag> FLAGS = new HashMap<>();
 
     private static final Map<String, XPotion> POTIONS = new HashMap<>();
 
@@ -50,19 +52,20 @@ final class ConfigItemHelper {
                 return;
             }
 
-            itemStack.addUnsafeEnchantment(enchantment.getEnchant(), Integer.parseInt(attrib.toString()));
+            itemStack.addUnsafeEnchantment(enchantment.get(), Integer.parseInt(attrib.toString()));
         });
 
         ItemMeta itemMeta = itemStack.getItemMeta();
-        boolean updated = false;
 
         // Add ItemFlags from attributes
-        for (ItemFlag value : ItemFlag.values()) {
-            if (attributes.containsKey(value.name())) {
-                itemMeta.addItemFlags(value);
-                updated = true;
+        FLAGS.forEach((key, flag) -> {
+            Object attrib = attributes.get(key);
+            if (attrib == null || "false".equals(attributes.getOrDefault(key, "false").toString())) {
+                return;
             }
-        }
+
+            itemMeta.addItemFlags(flag.get());
+        });
 
         // Add custom potion effects from attributes
         if (itemMeta instanceof PotionMeta) {
@@ -121,15 +124,14 @@ final class ConfigItemHelper {
             }
 
             // Hide effects on item
+            // TODO: idk if I should straight up remove this, as FLAGS could replace the need for this @BestBearr
             if ("true".equals(attributes.getOrDefault("hide_effects", "false").toString())) {
                 itemMeta.addItemFlags(XItemFlag.HIDE_ADDITIONAL_TOOLTIP.get());
             }
         }
 
-        if (updated) {
-            // Update the item meta
-            itemStack.setItemMeta(itemMeta);
-        }
+        // Update the item meta regardless of edits
+        itemStack.setItemMeta(itemMeta);
     }
 
     private static void setPrimaryType(@NotNull PotionMeta meta, @NotNull XPotion type) {
@@ -154,6 +156,11 @@ final class ConfigItemHelper {
         for (XPotion potion : XPotion.values()) {
             if (potion.isSupported()) {
                 POTIONS.put("potion_" + potion.name().toLowerCase(), potion);
+            }
+        }
+        for (XItemFlag flag : XItemFlag.values()) {
+            if (flag.isSupported()) {
+                FLAGS.put("flag_" + flag.name().toLowerCase(), flag);
             }
         }
     }

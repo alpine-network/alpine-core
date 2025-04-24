@@ -3,6 +3,7 @@ package co.crystaldev.alpinecore.framework.config.object.item;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.util.ItemHelper;
 import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XPotion;
 import de.exlll.configlib.Configuration;
@@ -375,6 +376,10 @@ public class DefinedConfigItem implements ConfigItem {
         public @NotNull Builder enchanted() {
             this.enchanted = true;
             return this;
+        }
+
+        public @NotNull Builder flag(@NotNull XItemFlag flag, boolean value) {
+            return this.attribute("flag_" + flag.name().toLowerCase(), value);
         }
 
         public @NotNull Builder enchant(@NotNull XEnchantment enchantment, int level) {
