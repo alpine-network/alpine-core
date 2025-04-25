@@ -40,6 +40,11 @@ public final class AlpineTeleportHandler implements TeleportHandler {
     }
 
     @Override
+    public void onDamage(@NotNull TeleportContext context) {
+        // NO OP
+    }
+
+    @Override
     public void onCancel(@NotNull TeleportContext context) {
         // NO OP
     }

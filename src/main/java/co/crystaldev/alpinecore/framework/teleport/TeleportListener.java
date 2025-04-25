@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -72,6 +73,32 @@ final class TeleportListener implements Listener {
                     this.manager.cancel(context.player());
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) event.getEntity();
+        if (!this.tasks.containsKey(player)) {
+            return;
+        }
+
+        TeleportHandler handler = this.manager.getTeleportHandler();
+        TeleportTask task = this.tasks.get(player);
+        TeleportContext context = task.createContext(false);
+
+        task.getCallbacks().getOnDamage().accept(context);
+        handler.onDamage(context);
+        task.apply(context);
+
+        Messaging.send(context.player(), context.messageType(), context.message());
+
+        if (context.isCancelled()) {
+            this.manager.cancel(player);
         }
     }
 
