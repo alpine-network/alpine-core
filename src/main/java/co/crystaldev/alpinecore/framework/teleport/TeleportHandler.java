@@ -45,14 +45,18 @@ public interface TeleportHandler {
      *
      * @param context the context containing information about the teleportation
      */
-    void onMove(@NotNull TeleportContext context);
+    default void onMove(@NotNull TeleportContext context) {
+        // NO OP
+    }
 
     /**
      * Handles player damage during the teleport process.
      *
      * @param context the context containing information about the teleportation
      */
-    void onDamage(@NotNull TeleportContext context);
+    default void onDamage(@NotNull TeleportContext context) {
+        // NO OP
+    }
 
     /**
      * Handles the cancellation of the teleport process.
