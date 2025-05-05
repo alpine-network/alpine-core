@@ -12,7 +12,7 @@ import lombok.NonNull;
 @Getter
 public final class PaginatorState {
 
-    private final int elementCount;
+    private int elementCount;
 
     private int pageSize;
 
@@ -41,6 +41,15 @@ public final class PaginatorState {
         this.elementCount = elementCount;
         this.setPageSize(pageSize);
         this.currentPage = Observable.of(Math.max(0, Math.min(this.maxPages - 1, page)));
+    }
+
+    /**
+     * Sets the number of elements contained by the paginator.
+     *
+     * @param elementCount the number of elements.
+     */
+    public void setElementCount(int elementCount) {
+        this.elementCount = elementCount;
     }
 
     /**
