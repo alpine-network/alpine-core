@@ -1,5 +1,4 @@
 import io.papermc.hangarpublishplugin.model.Platforms
-import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -46,13 +45,13 @@ dependencies {
 
     // Bundled dependencies
     shade(this, libs.annotations)
-    shade(this, libs.configlib.spigot)
     shade(this, libs.xseries)
     shade(this, libs.commons.dbcp2)
     shade(this, libs.localelib)
 
-    shade(this, libs.bundles.litecommands)
     shade(this, libs.bundles.adventure)
+    shade(this, libs.bundles.configlib)
+    shade(this, libs.bundles.litecommands)
 
     // Testing dependencies
     testImplementation(libs.testng)

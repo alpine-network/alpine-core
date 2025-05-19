@@ -5,7 +5,7 @@ annotations = "26.0.2"
 blossom = "1.2.0"
 commons-dbcp2 = "2.13.0"
 commons-lang = "2.6" # bundled with 1.8.8-R0.1
-configlib = "4.5.2"
+configlib = "4.6.0"
 gson = "2.2.4" # bundled with 1.8.8-R0.1
 hangar-publish = "0.1.2"
 litecommands = "3.9.6"
@@ -26,7 +26,8 @@ adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bu
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
 commons-dbcp2 = { group = "org.apache.commons", name = "commons-dbcp2", version.ref = "commons-dbcp2" }
 commons-lang = { group = "commons-lang", name = "commons-lang", version.ref = "commons-lang" }
-configlib-spigot = { group = "dev.tomwmth", name = "configlib-spigot", version.ref = "configlib" }
+configlib-yaml = { group = "dev.tomwmth.configlib", name = "configlib-yaml", version.ref = "configlib" }
+configlib-bukkit = { group = "dev.tomwmth.configlib", name = "configlib-bukkit", version.ref = "configlib" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 litecommands-bukkit = { group = "dev.rollczi", name = "litecommands-bukkit", version.ref = "litecommands" }
 litecommands-adventure-platform = { group = "dev.rollczi", name = "litecommands-adventure-platform", version.ref = "litecommands" }
@@ -49,6 +50,10 @@ adventure = [
     "adventure-text-minimessage",
     "adventure-text-serializer-plain",
     "adventure-platform-bukkit",
+]
+configlib = [
+    "configlib-yaml",
+    "configlib-bukkit"
 ]
 litecommands = [
     "litecommands-bukkit",

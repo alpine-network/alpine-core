@@ -4,7 +4,7 @@ import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.util.XModuleSerializer;
 import com.cryptomorin.xseries.*;
-import de.exlll.configlib.ConfigLib;
+import de.exlll.configlib.BukkitBundle;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
@@ -48,10 +48,11 @@ public final class ConfigManager {
         }
 
         // Create the YamlConfiguration builder
-        YamlConfigurationProperties.Builder<?> builder = ConfigLib.BUKKIT_DEFAULT_PROPERTIES.toBuilder()
+        YamlConfigurationProperties.Builder<?> builder = YamlConfigurationProperties.newBuilder()
                 .inputNulls(true)
                 .outputNulls(true)
                 .charset(StandardCharsets.UTF_8)
+                .addBundle(BukkitBundle.DEFAULT)
                 .addSerializerByCondition(
                         type -> type instanceof Class<?> &&
                                 XAttribute.class.isAssignableFrom((Class<?>) type),
