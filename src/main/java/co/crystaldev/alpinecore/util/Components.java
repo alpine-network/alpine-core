@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -86,13 +86,71 @@ public final class Components {
 
     /**
      * Joins a variable number of components together
+     * with a specified joiner.
+     *
+     * @param components The components to join
+     * @param separator  The joiner.
+     * @return The joined component
+     */
+    public static @NotNull Component joinSeparated(@NotNull ComponentLike separator, @NotNull Component... components) {
+        TextComponent.Builder root = Component.text();
+
+        for (int i = 0; i < components.length; i++) {
+            Component line = components[i];
+            root.append(line);
+
+            // edge case to retain empty lines
+            if (line instanceof TextComponent && ((TextComponent) line).content().isEmpty()) {
+                root.append(Component.space());
+            }
+
+            if (i < components.length - 1) {
+                root.append(separator);
+            }
+        }
+
+        return root.build();
+    }
+
+    /**
+     * Joins a variable number of components together
+     * with a specified joiner.
+     *
+     * @param components The components to join
+     * @param separator  The joiner.
+     * @return The joined component
+     */
+    public static @NotNull Component joinSeparated(@NotNull ComponentLike separator, @NotNull Iterable<Component> components) {
+        List<Component> list = components instanceof List ? (List<Component>) components : ImmutableList.copyOf(components);
+
+        TextComponent.Builder root = Component.text();
+
+        for (int i = 0; i < list.size(); i++) {
+            Component line = list.get(i);
+            root.append(line);
+
+            // edge case to retain empty lines
+            if (line instanceof TextComponent && ((TextComponent) line).content().isEmpty()) {
+                root.append(Component.space());
+            }
+
+            if (i < list.size() - 1) {
+                root.append(separator);
+            }
+        }
+
+        return root.build();
+    }
+
+    /**
+     * Joins a variable number of components together
      * with no joiner.
      *
      * @param components The components to join
      * @return The joined component
      */
     public static @NotNull Component join(@NotNull Component... components) {
-        return Component.join(JoinConfiguration.noSeparators(), components);
+        return joinSeparated(Component.empty(), components);
     }
 
     /**
@@ -103,7 +161,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component join(@NotNull Iterable<Component> components) {
-        return Component.join(JoinConfiguration.noSeparators(), components);
+        return joinSeparated(Component.empty(), components);
     }
 
     /**
@@ -114,7 +172,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinSpaces(@NotNull Component... components) {
-        return Component.join(JoinConfiguration.separator(Component.space()), components);
+        return joinSeparated(Component.space(), components);
     }
 
     /**
@@ -125,7 +183,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinSpaces(@NotNull Iterable<Component> components) {
-        return Component.join(JoinConfiguration.separator(Component.space()), components);
+        return joinSeparated(Component.space(), components);
     }
 
     /**
@@ -136,7 +194,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinCommas(@NotNull Component... components) {
-        return Component.join(JoinConfiguration.commas(true), components);
+        return joinSeparated(Component.text(", "), components);
     }
 
     /**
@@ -147,7 +205,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinCommas(@NotNull Iterable<Component> components) {
-        return Component.join(JoinConfiguration.commas(true), components);
+        return joinSeparated(Component.text(", "), components);
     }
 
     /**
@@ -158,7 +216,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinNewLines(@NotNull Component... components) {
-        return Component.join(JoinConfiguration.newlines(), components);
+        return joinSeparated(Component.newline(), components);
     }
 
     /**
@@ -169,7 +227,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinNewLines(@NotNull Iterable<Component> components) {
-        return Component.join(JoinConfiguration.newlines(), components);
+        return joinSeparated(Component.newline(), components);
     }
 
     // endregion Join
