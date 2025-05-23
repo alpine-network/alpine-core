@@ -227,6 +227,26 @@ public final class ItemHelper {
     /**
      * Fetches the lore of an {@link ItemStack} in {@link Component} form.
      *
+     * @param item          The item.
+     * @param appendNewLine Whether to append a newline to the end of the non-empty lore.
+     * @return the lore.
+     */
+    public static @NotNull Component getJoinedLore(@NotNull ItemStack item, boolean appendNewLine) {
+        List<Component> lore = getLore(item);
+        if (lore.isEmpty()) {
+            return Component.empty();
+        }
+        else if (appendNewLine) {
+            return Components.join(Components.joinNewLines(lore), Component.newline());
+        }
+        else {
+            return Components.joinNewLines(lore);
+        }
+    }
+
+    /**
+     * Fetches the lore of an {@link ItemStack} in {@link Component} form.
+     *
      * @param item The item.
      * @return the lore.
      */
