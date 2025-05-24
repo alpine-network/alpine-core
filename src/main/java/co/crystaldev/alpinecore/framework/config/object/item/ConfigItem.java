@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Represents a configurable item within the plugin framework.
@@ -126,9 +127,15 @@ public interface ConfigItem {
 
         MiniMessage mm = plugin.getMiniMessage();
         Component name = Components.reset().append(mm.deserialize(replacedName));
-        List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
-                .map(v -> Formatting.placeholders(plugin, v, placeholders))
-                .map(v -> integration == null ? v : integration.replace(targetPlayer, otherPlayer, true, v))
+
+        String joinedLore = this.getLore() == null || this.getLore().isEmpty() ? "" : String.join("\n", this.getLore());
+        joinedLore = Formatting.placeholders(plugin, joinedLore, placeholders);
+        if (integration != null) {
+            joinedLore = integration.replace(targetPlayer, otherPlayer, true, joinedLore);
+        }
+
+        List<Component> lore = Stream.of(joinedLore.split("\n"))
+                .map(v -> v.isEmpty() ? " " : v)
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
