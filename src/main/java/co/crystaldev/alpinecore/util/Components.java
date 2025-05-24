@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -93,23 +94,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinSeparated(@NotNull ComponentLike separator, @NotNull Component... components) {
-        TextComponent.Builder root = Component.text();
-
-        for (int i = 0; i < components.length; i++) {
-            Component line = components[i];
-            root.append(line);
-
-            // edge case to retain empty lines
-            if (line instanceof TextComponent && ((TextComponent) line).content().isEmpty()) {
-                root.append(Component.space());
-            }
-
-            if (i < components.length - 1) {
-                root.append(separator);
-            }
-        }
-
-        return root.build();
+        return Component.join(JoinConfiguration.separator(separator), components);
     }
 
     /**
@@ -121,25 +106,7 @@ public final class Components {
      * @return The joined component
      */
     public static @NotNull Component joinSeparated(@NotNull ComponentLike separator, @NotNull Iterable<Component> components) {
-        List<Component> list = components instanceof List ? (List<Component>) components : ImmutableList.copyOf(components);
-
-        TextComponent.Builder root = Component.text();
-
-        for (int i = 0; i < list.size(); i++) {
-            Component line = list.get(i);
-            root.append(line);
-
-            // edge case to retain empty lines
-            if (line instanceof TextComponent && ((TextComponent) line).content().isEmpty()) {
-                root.append(Component.space());
-            }
-
-            if (i < list.size() - 1) {
-                root.append(separator);
-            }
-        }
-
-        return root.build();
+        return Component.join(JoinConfiguration.separator(separator), components);
     }
 
     /**
