@@ -237,7 +237,7 @@ public final class ItemHelper {
             return Component.empty();
         }
         else if (appendNewLine) {
-            return Components.join(Components.joinNewLines(lore), Component.newline());
+            return Components.joinNewLines(lore).append(Component.newline());
         }
         else {
             return Components.joinNewLines(lore);
