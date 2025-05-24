@@ -4,11 +4,14 @@ import co.crystaldev.alpinecore.util.ReflectionHelper;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XItemFlag;
 import com.cryptomorin.xseries.XPotion;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
@@ -128,6 +131,12 @@ final class ConfigItemHelper {
             if ("true".equals(attributes.getOrDefault("hide_effects", "false").toString())) {
                 itemMeta.addItemFlags(XItemFlag.HIDE_ADDITIONAL_TOOLTIP.get());
             }
+        }
+
+        // Apply skull meta
+        if (itemMeta instanceof SkullMeta && attributes.containsKey("skull_profile")) {
+            Profileable profileable = Profileable.detect(attributes.get("skull_profile").toString());
+            XSkull.of(itemMeta).profile(profileable).apply();
         }
 
         // Update the item meta regardless of edits
