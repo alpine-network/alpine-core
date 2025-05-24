@@ -134,7 +134,7 @@ public interface ConfigItem {
             joinedLore = integration.replace(targetPlayer, otherPlayer, true, joinedLore);
         }
 
-        List<Component> lore = Stream.of(joinedLore.split("\n"))
+        List<Component> lore = Stream.of(joinedLore.split("\n|<br>"))
                 .map(v -> v.isEmpty() ? " " : v)
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
