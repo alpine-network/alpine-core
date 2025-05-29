@@ -53,7 +53,7 @@ The project consists of the following core systems:
 ### For Developers
 The library can be added as a dependency to your Gradle buildscript like so:
 
-```
+```groovy
 repositories {
     maven {
         name 'Alpine Public'
@@ -64,6 +64,23 @@ repositories {
 dependencies {
     compileOnly 'co.crystaldev:alpinecore:0.4.9'
 }
+```
+
+```xml
+<repositories>
+  <repository>
+    <name>Alpine Public</name>
+    <url>https://lib.alpn.cloud/alpine-public</url>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>co.crystaldev</groupId>
+    <artifactId>alpinecore</artifactId>
+    <version>0.4.9</version>
+  </dependency>
+</dependencies>
 ```
 
 All classes and methods that are part of the API should have Javadocs. If one does not, open an issue. There is also a very basic example plugin located in this repository.
