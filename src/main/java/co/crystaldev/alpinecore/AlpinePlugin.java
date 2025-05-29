@@ -407,7 +407,16 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                 ClassPath.from(scannablePackage.getClassLoader()).getAllClasses().stream()
                         .filter(clazz -> clazz.getPackageName().contains(packageName))
                         .filter(clazz -> this.onActivatablePreload(clazz.getName()))
-                        .map(ClassPath.ClassInfo::load)
+                        .map(v -> {
+                            try {
+                                return v.load();
+                            }
+                            catch (Throwable e) {
+                                this.log(Level.FINE, String.format("&cUnable to scan class &d%s&c", v.getName()));
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
                         .forEach(classes::add);
             }
 
