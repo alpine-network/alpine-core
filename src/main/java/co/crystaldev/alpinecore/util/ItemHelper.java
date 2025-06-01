@@ -10,6 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -207,8 +208,16 @@ public final class ItemHelper {
      * @return the lore.
      */
     public static @NotNull List<Component> getLore(@NotNull ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
+        return getLore(item.getItemMeta());
+    }
 
+    /**
+     * Fetches the lore from an {@link ItemMeta} in {@link Component} form.
+     *
+     * @param meta The item meta.
+     * @return the lore.
+     */
+    public static @NotNull List<Component> getLore(@Nullable ItemMeta meta) {
         if (meta == null || !meta.hasLore()) {
             return Collections.emptyList();
         }
@@ -256,14 +265,22 @@ public final class ItemHelper {
     }
 
     /**
-     * Sets the display name of an {@link ItemStack}.
+     * Sets the lore of an {@link ItemStack} in {@link Component} form.
      *
      * @param item The item.
-     * @param lore The lore.
+     * @param lore the lore.
      */
     public static void setLore(@NotNull ItemStack item, @NotNull List<Component> lore) {
-        ItemMeta meta = item.getItemMeta();
+        setLore(item.getItemMeta(), lore);
+    }
 
+    /**
+     * Sets the lore on an {@link ItemMeta} in {@link Component} form.
+     *
+     * @param meta The item meta.
+     * @param lore the lore.
+     */
+    public static void setLore(@Nullable ItemMeta meta, @NotNull List<Component> lore) {
         if (meta == null) {
             return;
         }
@@ -280,8 +297,6 @@ public final class ItemHelper {
                     .collect(Collectors.toList());
             meta.setLore(serialized);
         }
-
-        item.setItemMeta(meta);
     }
 
     /**
