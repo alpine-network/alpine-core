@@ -271,7 +271,9 @@ public final class ItemHelper {
      * @param lore the lore.
      */
     public static void setLore(@NotNull ItemStack item, @NotNull List<Component> lore) {
-        setLore(item.getItemMeta(), lore);
+        ItemMeta meta = item.getItemMeta();
+        setLore(meta, lore);
+        item.setItemMeta(meta);
     }
 
     /**
