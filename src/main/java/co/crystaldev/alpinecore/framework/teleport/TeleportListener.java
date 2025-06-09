@@ -88,10 +88,6 @@ final class TeleportListener implements Listener {
             return;
         }
 
-        if (event.isCancelled()) {
-            return;
-        }
-
         TeleportHandler handler = this.manager.getTeleportHandler();
         TeleportTask task = this.tasks.get(player);
         TeleportContext context = task.createContext(false);
