@@ -8,6 +8,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     alias(libs.plugins.blossom)
+    alias(libs.plugins.idea.ext)
     alias(libs.plugins.hangar.publish)
     alias(libs.plugins.shadow)
 }

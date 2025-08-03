@@ -17,6 +17,7 @@ testng = "7.5.1" # v7.6+ requires JDK 11
 vault = "1.7.1"
 xseries = "13.3.3"
 blossom = "2.1.0"                      # https://github.com/KyoriPowered/blossom/releases
+idea-ext = "1.2"                       # https://github.com/jetbrains/gradle-idea-ext-plugin
 
 [libraries]
 adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
@@ -40,6 +41,7 @@ xseries = { group = "com.github.cryptomorin", name = "XSeries", version.ref = "x
 
 [plugins]
 blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
 hangar-publish = { id = "io.papermc.hangar-publish-plugin", version.ref = "hangar-publish" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
