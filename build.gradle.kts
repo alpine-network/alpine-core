@@ -63,11 +63,24 @@ dependencies {
     annotationProcessor(libs.lombok)
 }
 
-blossom {
-    properties.forEach {
-        replaceToken("\${${it.key}}", it.value)
+sourceSets {
+    main {
+        blossom {
+            javaSources {
+                property("name", rootProject.name)
+                property("version", rootProject.version.toString())
+                property("group", rootProject.group.toString())
+            }
+        }
     }
 }
+
+//spotless {
+//    java {
+//        licenseHeaderFile("./HEADER")
+////        removeUnusedImports()
+//    }
+//}
 
 java {
     withSourcesJar()

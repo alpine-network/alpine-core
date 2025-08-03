@@ -15,11 +15,11 @@ import java.util.UUID;
  */
 public final class Reference {
     /** The name of the plugin */
-    public static final String NAME = "${pluginName}";
+    public static final String NAME = PluginInfo.NAME;
     /** The version of the plugin */
-    public static final String VERSION = "${pluginVersion}";
+    public static final String VERSION = PluginInfo.VERSION;
     /** The maven group of the plugin */
-    public static final String GROUP = "${group}";
+    public static final String GROUP = PluginInfo.GROUP;
 
     /** A regular Gson parser */
     public static final Gson GSON = gsonBuilder().create();
