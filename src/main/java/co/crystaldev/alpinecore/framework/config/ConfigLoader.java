@@ -22,7 +22,6 @@ import java.util.stream.Stream;
  * The ConfigLoader class is responsible for loading and managing configurations.
  * It allows you to load configurations from a specified directory, retrieve specific configurations,
  * check if a configuration is loaded, and get a list of all configuration keys.
- *
  * <p>
  * Usage Example:
  * <pre>{@code
@@ -34,7 +33,6 @@ import java.util.stream.Stream;
  *            .addConfiguration("config2", new MyConfig())
  *            .build();
  * }</pre>
- * </p>
  *
  * @param <T> The type of configuration class.
  * @since 0.4.0

@@ -16,8 +16,11 @@ import java.util.LinkedHashMap;
  * @author BestBearr
  * @since 0.4.0
  */
-@NoArgsConstructor(onConstructor_ = @ApiStatus.Internal)
 public final class AlpinePluginConfig extends AlpineConfig {
+
+    @ApiStatus.Internal
+    public AlpinePluginConfig() {
+    }
 
     @Comment({
             "Specifies an AlpinePlugin configuration to be used in place of this configuration.",

@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 /**
  * A handler to manage cooldowns or warmups for given entities.
- * </p>
+ * <p>
  * Example usage:
  * <pre>{@code
  * AlpinePlugin plugin;

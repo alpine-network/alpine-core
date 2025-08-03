@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 /**
  * The TeleportTask class represents a teleport task for a player.
  * It allows for delayed teleportation with customizable callbacks and movement restrictions.
- * </p>
+ * <p>
  * Example usage:
  * <pre>{@code
  * TeleportTask task = TeleportTask.builder(player, destination)

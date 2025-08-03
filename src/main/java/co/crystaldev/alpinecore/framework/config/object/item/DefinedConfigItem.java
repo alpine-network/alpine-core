@@ -28,7 +28,7 @@ import java.util.function.Function;
 /**
  * Represents a configurable item within the plugin framework.
  * Provides methods to build and manipulate item stacks based on dynamic configurations.
- * </p>
+ * <p>
  * Example usage:
  * <pre>{@code
  * Builder builder = DefinedConfigItem.builder(XMaterial.STICK);
