@@ -1,0 +1,13 @@
+name: "${name}"
+version: "${version}"
+main: "${main}"
+description: "${description}"
+website: "${website}"
+api-version: "1.13"
+authors:
+  - tomwmth
+  - BestBearr
+  - Crystal Development, LLC.
+softdepend:
+  - Vault
+  - PlaceholderAPI
