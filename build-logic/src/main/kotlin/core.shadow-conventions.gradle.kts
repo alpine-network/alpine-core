@@ -42,7 +42,10 @@ tasks {
 
 fun ShadowJar.configureRelocations() {
     val base = "${project.group}.${rootProject.name.lowercase()}.libs"
-    relocate("javax.transaction", "${base}.javax.transaction") // dbcp2
+    // dbcp2
+    relocate("org.apache.commons", "${base}.org.apache.commons")
+    relocate("javax.transaction", "${base}.javax.transaction")
+    // localelib
     relocate("me.pikamug.localelib", "${base}.localelib")
 }
 
