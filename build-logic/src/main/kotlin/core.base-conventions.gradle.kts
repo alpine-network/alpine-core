@@ -57,8 +57,10 @@ tasks {
     register("writeVersionToFile") {
         group = "publishing"
         description = "Generates a file containing the project version."
+        val v = version.toString()
+        val f = rootProject.file(".version")
         doLast {
-            file("${rootProject.projectDir}/.version").writeText(project.version.toString())
+            f.writeText(v)
         }
     }
     named("clean") {
