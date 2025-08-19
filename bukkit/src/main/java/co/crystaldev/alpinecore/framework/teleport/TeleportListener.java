@@ -1,0 +1,155 @@
+/*
+ * This file is part of AlpineCore - https://github.com/alpine-network/alpine-core
+ * Copyright (C) 2025 Crystal Development, LLC
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+package co.crystaldev.alpinecore.framework.teleport;
+
+import co.crystaldev.alpinecore.event.ServerTickEvent;
+import co.crystaldev.alpinecore.util.Messaging;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * @since 0.4.0
+ */
+@RequiredArgsConstructor
+@ApiStatus.Internal
+final class TeleportListener implements Listener {
+
+    private final TeleportManager manager;
+
+    private final Map<Player, TeleportTask> tasks;
+
+    @EventHandler
+    public void onServerTick(ServerTickEvent event) {
+        if (this.tasks.isEmpty()) {
+            return;
+        }
+
+        TeleportHandler handler = this.manager.getTeleportHandler();
+
+        Iterator<Map.Entry<Player, TeleportTask>> iterator = this.tasks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Player, TeleportTask> next = iterator.next();
+            Player player = next.getKey();
+            TeleportTask task = next.getValue();
+            int ticksRemaining = task.tick();
+
+            // ensure that the player is still in the same world
+            if (!task.getOrigin().getWorld().equals(player.getWorld())) {
+                this.manager.cancel(player);
+                iterator.remove();
+                continue;
+            }
+
+            TeleportContext context = null;
+            boolean removed = false;
+            if (ticksRemaining <= 0) {
+                removed = true;
+                iterator.remove();
+                context = task.createContext(true);
+                task.getCallbacks().getOnTeleport().accept(context);
+                handler.onTeleport(context);
+            }
+            else if (ticksRemaining % 20 == 0) {
+                context = task.createContext(false);
+                task.getCallbacks().getOnCountdown().accept(context);
+                handler.onCountdown(context);
+            }
+
+            if (context != null) {
+                task.apply(context);
+
+                Messaging.send(player, context.messageType(), context.message());
+
+                if (context.isCancelled() && !removed) {
+                    this.manager.cancel(context.player());
+                }
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) event.getEntity();
+        if (!this.tasks.containsKey(player)) {
+            return;
+        }
+
+        TeleportHandler handler = this.manager.getTeleportHandler();
+        TeleportTask task = this.tasks.get(player);
+        TeleportContext context = task.createContext(false);
+
+        task.getCallbacks().getOnDamage().accept(context);
+        handler.onDamage(context);
+        task.apply(context);
+
+        Messaging.send(context.player(), context.messageType(), context.message());
+
+        if (context.isCancelled()) {
+            this.manager.cancel(player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (!this.tasks.containsKey(player)) {
+            return;
+        }
+
+        TeleportHandler handler = this.manager.getTeleportHandler();
+        TeleportTask task = this.tasks.get(player);
+        TeleportContext context = task.createContext(!task.canMove());
+
+        // do not listen to movement for instant teleportation
+        if (task.getTicksToTeleport() < 0) {
+            return;
+        }
+
+        // ensure that the player has even moved enough
+        if (checkDistance(event.getTo(), task.getOrigin(), task.getMovementThreshold())) {
+            return;
+        }
+
+        task.getCallbacks().getOnMove().accept(context);
+        handler.onMove(context);
+        task.apply(context);
+
+        Messaging.send(context.player(), context.messageType(), context.message());
+
+        if (context.isCancelled() || !task.canMove()) {
+            this.manager.cancel(player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDisconnect(PlayerQuitEvent event) {
+        this.manager.cancel(event.getPlayer());
+    }
+
+    private static boolean checkDistance(@NotNull Location to, @NotNull Location from, double threshold) {
+        double value;
+        return Math.abs(from.getY() - to.getY()) < 1.25
+                && (value = from.getX() - to.getX()) * value + (value = from.getZ() - to.getZ()) * value < threshold * threshold;
+    }
+}

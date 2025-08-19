@@ -1,0 +1,79 @@
+name: "Deploy"
+
+on:
+  workflow_dispatch: # manually triggered
+  push:
+    branches: [master]
+    paths-ignore:
+      - 'README.md'
+      - 'gradle.properties'
+
+jobs:
+  build_deploy:
+    if: github.repository_owner == 'alpine-network' && github.ref_name == 'master'
+
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: "Checkout"
+        # https://github.com/actions/checkout/releases
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: "Set up JDK"
+        # https://github.com/actions/setup-java/releases
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: 21
+          check-latest: true
+
+      - name: "Setup Gradle"
+        # https://github.com/gradle/actions/releases
+        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
+        with:
+          validate-wrappers: true
+          gradle-version: wrapper
+          cache-disabled: false
+
+      - name: "Build Project"
+        run: ./gradlew build --full-stacktrace
+
+      - name: "Publish to Maven"
+        run: ./gradlew publishAllPublicationsToAlpineCloudRepository --full-stacktrace
+        env:
+          ALPINE_MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
+          ALPINE_MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}
+
+      - name: "Publish to Hangar"
+        run: ./gradlew publishPluginPublicationToHangar --full-stacktrace
+        env:
+          HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+
+      - name: "Read Version"
+        run: |
+          ./gradlew writeVersionToFile
+          if [[ ! -f .version || ! -s .version ]]; then
+            echo "Error: .version file is missing or empty."
+            exit 1
+          fi
+          echo "RELEASE_VERSION=$(cat .version)" >> $GITHUB_ENV
+
+      - name: "Create GitHub Release"
+        if: github.event_name == 'workflow_dispatch'
+        # https://github.com/softprops/action-gh-release/releases
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          name: v${{ env.RELEASE_VERSION }}
+          files: |
+            build/libs/AlpineCore-${{ env.RELEASE_VERSION }}.jar
+          fail_on_unmatched_files: true
+          make_latest: true
+          prerelease: false
+          draft: true
