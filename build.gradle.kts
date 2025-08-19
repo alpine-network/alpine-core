@@ -7,5 +7,6 @@ subprojects {
         plugin("core.base-conventions")
         plugin("core.shadow-conventions")
         plugin("core.maven-conventions")
+        plugin("core.spotless-conventions")
     }
 }
