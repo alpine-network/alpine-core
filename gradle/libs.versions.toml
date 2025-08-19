@@ -1,58 +1,62 @@
 [versions]
-adventure = "4.23.0"
-adventure-platform = "4.4.0"
-annotations = "26.0.2"
-commons-dbcp2 = "2.13.0"
-commons-lang = "2.6" # bundled with 1.8.8-R0.1
-configlib = "4.5.2"
-gson = "2.2.4" # bundled with 1.8.8-R0.1
-hangar-publish = "0.1.3"
-litecommands = "3.10.0"
-localelib = "4.1.1"
-lombok = "1.18.38"
-placeholderapi = "2.11.6"
-shadow = "8.3.6"
-spigot = "1.8.8-R0.1-SNAPSHOT"
-testng = "7.5.1" # v7.6+ requires JDK 11
-vault = "1.7.1"
-xseries = "13.3.3"
-blossom = "2.1.0"                      # https://github.com/KyoriPowered/blossom/releases
-idea-ext = "1.2"                       # https://github.com/jetbrains/gradle-idea-ext-plugin
+# Shaded
+adventure = "4.23.0"                   # https://github.com/KyoriPowered/adventure/releases
+adventureBukkit = "4.4.0"              # https://github.com/KyoriPowered/adventure-platform/releases
+annotations = "26.0.2"                 # https://github.com/JetBrains/java-annotations/releases
+configlib = "4.5.2"                    # https://github.com/tomwmth/ConfigLib
+dbcp2 = "2.13.0"                       # https://commons.apache.org/proper/commons-dbcp/changes-report.html
+litecommands = "3.9.6"                 # https://github.com/Rollczi/LiteCommands/releases
+localelib = "4.1.1"                    # https://github.com/PikaMug/LocaleLib/releases
+lombok = "1.18.38"                     # https://projectlombok.org/changelog
+testng = "7.5.1"                       # https://github.com/testng-team/testng/releases # NOTE: v7.6+ requires JDK 11
+xseries = "13.3.3"                     # https://github.com/CryptoMorin/XSeries/releases
+
+# Bukkit/Spigot/Paper
+spigot = "1.8.8-R0.1-SNAPSHOT"         # https://www.spigotmc.org/
+paper = "1.20.4-R0.1-SNAPSHOT"         # https://papermc.io/downloads/all?project=paper
+placeholderapi = "2.11.6"              # https://github.com/PlaceholderAPI/PlaceholderAPI/releases
+vault = "1.7.1"                        # https://github.com/MilkBowl/VaultAPI
+
+# Bundled with Spigot 1.8.8-R0.1
+lang = "2.6"
+gson = "2.2.4"
+guava = "17.0"
+
+# Gradle
+blossom = "2.1.0"                     # https://github.com/KyoriPowered/blossom/releases
+ideaExt = "1.2"                       # https://github.com/jetbrains/gradle-idea-ext-plugin
+hangarPublish = "0.1.3"               # https://github.com/HangarMC/hangar-publish-plugin
+mavenPublish = "0.34.0"               # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
+shadow = "9.0.2"                      # https://github.com/GradleUp/shadow/releases
+spotless = "7.2.1"                    # https://github.com/diffplug/spotless/releases
 
 [libraries]
-adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
-adventure-text-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure" }
-adventure-text-serializer-plain = { group = "net.kyori", name = "adventure-text-serializer-plain", version.ref = "adventure" }
-adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform" }
+adventure-bom = { group = "net.kyori", name = "adventure-bom", version.ref = "adventure" }
+adventure-api.module = "net.kyori:adventure-api"
+adventure-text-minimessage.module = "net.kyori:adventure-text-minimessage"
+adventure-text-serializer-plain.module = "net.kyori:adventure-text-serializer-plain"
+adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventureBukkit" }
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
-commons-dbcp2 = { group = "org.apache.commons", name = "commons-dbcp2", version.ref = "commons-dbcp2" }
-commons-lang = { group = "commons-lang", name = "commons-lang", version.ref = "commons-lang" }
 configlib-spigot = { group = "dev.tomwmth", name = "configlib-spigot", version.ref = "configlib" }
+dbcp2 = { group = "org.apache.commons", name = "commons-dbcp2", version.ref = "dbcp2" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-litecommands-bukkit = { group = "dev.rollczi", name = "litecommands-bukkit", version.ref = "litecommands" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+lang = { group = "commons-lang", name = "commons-lang", version.ref = "lang" }
 litecommands-adventure-platform = { group = "dev.rollczi", name = "litecommands-adventure-platform", version.ref = "litecommands" }
+litecommands-bukkit = { group = "dev.rollczi", name = "litecommands-bukkit", version.ref = "litecommands" }
 localelib = { group = "com.github.PikaMug", name = "LocaleLib", version.ref = "localelib" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 spigot-api = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
 testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 vault-api = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
 xseries = { group = "com.github.cryptomorin", name = "XSeries", version.ref = "xseries" }
 
-[plugins]
-blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
-idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
-hangar-publish = { id = "io.papermc.hangar-publish-plugin", version.ref = "hangar-publish" }
-shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
-
-[bundles]
-adventure = [
-    "adventure-api",
-    "adventure-text-minimessage",
-    "adventure-text-serializer-plain",
-    "adventure-platform-bukkit",
-]
-litecommands = [
-    "litecommands-bukkit",
-    "litecommands-adventure-platform",
-]
+# Gradle
+blossom-plugin = { module = "net.kyori.blossom:net.kyori.blossom.gradle.plugin", version.ref = "blossom" }
+idea-ext-plugin = { module = "org.jetbrains.gradle.plugin.idea-ext:org.jetbrains.gradle.plugin.idea-ext.gradle.plugin", version.ref = "ideaExt" }
+hangar-publish-plugin = { module = "io.papermc.hangar-publish-plugin:io.papermc.hangar-publish-plugin.gradle.plugin", version.ref = "hangarPublish" }
+maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenPublish" }
+shadow-plugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
+spotless-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
