@@ -11,7 +11,6 @@ package co.crystaldev.alpinecore.framework.config;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
