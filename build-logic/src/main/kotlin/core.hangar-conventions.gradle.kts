@@ -25,7 +25,8 @@ extensions.configure<HangarPublishExtension> {
             } else {
                 channel.set("Snapshot")
                 changelogContent = latestCommitMessage()
-                version.set(versionString + "+" + System.getenv("GITHUB_RUN_NUMBER"))
+                val runNumber = (System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1) + 60
+                version.set("${versionString}+${runNumber}")
             }
             id.set("AlpineCore")
             changelog.set(changelogContent)
