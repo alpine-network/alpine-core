@@ -64,7 +64,7 @@ tasks {
         }
     }
     named("clean") {
-        delete(file("${rootProject.projectDir}/.version"))
+        delete(rootProject.file(".version"))
     }
 }
 
