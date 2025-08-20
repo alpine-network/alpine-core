@@ -72,7 +72,7 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}
           name: v${{ env.RELEASE_VERSION }}
           files: |
-            build/libs/AlpineCore-${{ env.RELEASE_VERSION }}.jar
+            bukkit/build/libs/AlpineCore-${{ env.RELEASE_VERSION }}.jar
           fail_on_unmatched_files: true
           make_latest: true
           prerelease: false

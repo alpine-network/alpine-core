@@ -32,8 +32,6 @@ tasks {
 
         configureRelocations()
         configureTransformers()
-
-        destinationDirectory.set(rootProject.projectDir.resolve("build/libs"))
     }
     named("build") {
         dependsOn(named("shadowJar"))
