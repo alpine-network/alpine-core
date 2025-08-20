@@ -63,7 +63,7 @@ jobs:
           echo "RELEASE_VERSION=$(cat .version)" >> $GITHUB_ENV
 
       - name: "Create GitHub Release"
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && !contains(env.RELEASE_VERSION, '-')
         # https://github.com/softprops/action-gh-release/releases
         uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
         env:
