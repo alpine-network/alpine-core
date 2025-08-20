@@ -4,9 +4,9 @@ on:
   workflow_dispatch: # manually triggered
   push:
     branches: [master]
-    paths-ignore:
-      - 'README.md'
-      - 'gradle.properties'
+    paths:
+      - '**/*.java'
+      - '**/*.toml'
 
 jobs:
   build_deploy:
