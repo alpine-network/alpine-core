@@ -9,7 +9,11 @@ A modern framework for developing Minecraft server plugins.
 [![Read the Docs](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/gitbook_vector.svg)](https://lib.alpn.cloud/javadoc/releases/co/crystaldev/alpinecore/0.4.9/raw/index.html)
 </div>
 
-Inspired by [MassiveCore](https://gitlab.massivecraft.team/massivecraft/MassiveCore), the project has a few key goals:
+> [!WARNING]
+> AlpineCore is currently in an early state of development and breaking changes **will** occur.
+
+## What is AlpineCore?
+Inspired by [MassiveCore](https://gitlab.massivecraft.team/massivecraft/MassiveCore), AlpineCore has a few key goals:
 - Reduce boilerplate
 - Integrate modern technologies
   - [Adventure](https://github.com/KyoriPowered/adventure) 
@@ -20,8 +24,8 @@ Inspired by [MassiveCore](https://gitlab.massivecraft.team/massivecraft/MassiveC
   - Minecraft 1.8.8 minimum
   - Spigot minimum
 
-### Systems
-The project consists of the following core systems:
+## Systems
+AlpineCore consists of the following core systems:
 - Engines
   - Extended from `AlpineEngine`
   - An event listener that is automatically registered
@@ -55,14 +59,31 @@ The project consists of the following core systems:
   - Extended from `AlpineEvent`
   - A generic Bukkit event, minus the boilerplate
 
-### For Developers
-The library can be added as a dependency to your Gradle buildscript like so:
+## For Developers
+To use AlpineCore, you must add it as a dependency to your project:
+
+<details>
+<summary>Gradle (Kotlin DSL)</summary>
+
+```kotlin
+repositories {
+    maven("https://lib.alpn.cloud/releases")
+}
+
+dependencies {
+    compileOnly("co.crystaldev:alpinecore:0.4.9")
+}
+```
+</details>
+
+
+<details>
+<summary>Gradle (Groovy DSL)</summary>
 
 ```groovy
 repositories {
     maven {
-        name 'Alpine Public'
-        url 'https://lib.alpn.cloud/alpine-public'
+        url 'https://lib.alpn.cloud/releases'
     }
 }
 
@@ -70,12 +91,16 @@ dependencies {
     compileOnly 'co.crystaldev:alpinecore:0.4.9'
 }
 ```
+</details>
+
+<details>
+<summary>Maven</summary>
 
 ```xml
 <repositories>
   <repository>
     <name>Alpine Public</name>
-    <url>https://lib.alpn.cloud/alpine-public</url>
+    <url>https://lib.alpn.cloud/releases</url>
   </repository>
 </repositories>
 
@@ -87,20 +112,24 @@ dependencies {
   </dependency>
 </dependencies>
 ```
+</details>
 
-All classes and methods that are part of the API should have Javadocs. If one does not, open an issue. There is also a very basic example plugin located in this repository.
+All classes and methods that are part of the API should have Javadocs. If one does not, open an issue.
 
-Keep in mind that using this library will require it to be added as a plugin on any server using your plugin. **DO NOT** shade it into your own plugin.
+> [!TIP]
+> Check out our [basic example plugin](https://github.com/alpine-network/example-plugin) to help you get started.
 
-### For Server Admins
-Any plugin built using this library will require you to add it as a plugin to your server. On its own it does nothing.
+> [!IMPORTANT]
+> AlpineCore must be added as a plugin on any server using your plugin. **DO NOT** shade it.
 
-The plugin has been explicitly verified to work on releases ranging from `1.8.8` to `1.21.3`.
+## Server Admins
+AlpineCore has been explicitly verified to work on all versions from `1.8.8` to `1.21.x`.
+You can download the latest version [here](https://github.com/alpine-network/alpine-core/releases/latest).
 
-### License
-This library is licensed under the Mozilla Public License v2.0. For information regarding your requirements in the use of this library, please see [Mozilla's FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/).
+## License
+AlpineCore is licensed under the Mozilla Public License v2.0. For information regarding your requirements in the use of this library, please see [Mozilla's FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/).
 
-### Special Thanks To
+## Special Thanks To
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
 YourKit supports open source projects with innovative and intelligent tools for monitoring and profiling Java and .NET applications.
