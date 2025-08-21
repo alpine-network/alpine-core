@@ -1,8 +1,13 @@
+<div align="center">
+
 # Alpine Core
+A modern framework for developing Minecraft server plugins.
 
-A lightweight library for creating modern yet widely compatible Minecraft server plugins.
+[![Available on Hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg)](https://hangar.papermc.io/Alpine/AlpineCore)
+[![Available on Modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/plugin/alpinecore)
 
-> This library is currently in an early state of development and breaking changes **will** occur.
+[![Read the Docs](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/gitbook_vector.svg)](https://lib.alpn.cloud/javadoc/releases/co/crystaldev/alpinecore/0.4.9/raw/index.html)
+</div>
 
 Inspired by [MassiveCore](https://gitlab.massivecraft.team/massivecraft/MassiveCore), the project has a few key goals:
 - Reduce boilerplate
