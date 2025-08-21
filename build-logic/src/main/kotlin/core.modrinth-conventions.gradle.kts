@@ -47,10 +47,15 @@ extensions.configure<ModrinthExtension> {
     }
 
     uploadFile.set(tasks.named<ShadowJar>("shadowJar").get())
+    syncBodyFrom.set(project.rootProject.file("README.md").readText())
 }
 
 tasks {
+    named("modrinthSyncBody") {
+        notCompatibleWithConfigurationCache("Minotaur limitation")
+    }
     named("modrinth") {
         notCompatibleWithConfigurationCache("Minotaur limitation")
+        dependsOn(named("modrinthSyncBody"))
     }
 }

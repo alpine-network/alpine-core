@@ -3,14 +3,17 @@
 # Alpine Core
 A modern framework for developing Minecraft server plugins.
 
+<!-- modrinth_exclude.start -->
 [![Available on Hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg)](https://hangar.papermc.io/Alpine/AlpineCore)
 [![Available on Modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/project/UGeZQ9hY)
-
+<!-- modrinth_exclude.end -->
 [![Read the Docs](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/documentation/gitbook_vector.svg)](https://lib.alpn.cloud/javadoc/releases/co/crystaldev/alpinecore/0.4.9/raw/index.html)
 </div>
 
+<!-- modrinth_exclude.start -->
 > [!WARNING]
 > AlpineCore is currently in an early state of development and breaking changes **will** occur.
+<!-- modrinth_exclude.end -->
 
 ## What is AlpineCore?
 Inspired by [MassiveCore](https://gitlab.massivecraft.team/massivecraft/MassiveCore), AlpineCore has a few key goals:
@@ -114,6 +117,7 @@ dependencies {
 ```
 </details>
 
+<!-- modrinth_exclude.start -->
 All classes and methods that are part of the API should have Javadocs. If one does not, open an issue.
 
 > [!TIP]
@@ -137,3 +141,4 @@ YourKit supports open source projects with innovative and intelligent tools for 
 YourKit is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>, <a href="https://www.yourkit.com/dotnet-profiler/">YourKit .NET Profiler</a>, and <a href="https://www.yourkit.com/youmonitor/">YourKit YouMonitor</a>.
 
 We thank YourKit for supporting open source projects with its full-featured Java Profiler.
+<!-- modrinth_exclude.end -->
