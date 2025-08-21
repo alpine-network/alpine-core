@@ -53,6 +53,11 @@ jobs:
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
 
+      - name: "Publish to Modrinth"
+        run: ./gradlew modrinth --full-stacktrace
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+
       - name: "Read Version"
         if: github.event_name == 'workflow_dispatch'
         run: |
