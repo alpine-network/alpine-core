@@ -8,6 +8,7 @@ dependencies {
     implementation(libs.idea.ext.plugin)
     implementation(libs.hangar.publish.plugin)
     implementation(libs.maven.publish.plugin)
+    implementation(libs.minotaur.publish.plugin)
     implementation(libs.shadow.plugin)
     implementation(libs.spotless.plugin)
 

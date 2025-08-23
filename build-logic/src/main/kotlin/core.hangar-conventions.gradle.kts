@@ -34,10 +34,7 @@ extensions.configure<HangarPublishExtension> {
             platforms {
                 paper {
                     jar.set(tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
-                    val versions: List<String> = (rootProject.property("paper_version") as String)
-                        .split(',')
-                        .map { it.trim() }
-                    platformVersions.set(versions)
+                    platformVersions.set(listOf(property("hangar_versions") as String))
                     dependencies {
                         hangar("PlaceholderAPI") {
                             required.set(false)

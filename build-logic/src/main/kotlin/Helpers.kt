@@ -29,8 +29,12 @@ fun Project.executeGitCommand(vararg command: String): String {
     return result.trim()
 }
 
+fun Project.latestCommitHash(): String {
+    return executeGitCommand("rev-parse", "--short", "HEAD")
+}
+
 fun Project.latestCommitMessage(): String {
-    return executeGitCommand("log", "-1", "--pretty=%B")
+    return executeGitCommand("log", "-1", "--pretty=%B").trim()
 }
 
 fun ProcessResources.expandProperties(vararg files: String) {

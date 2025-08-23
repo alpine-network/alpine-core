@@ -1,6 +1,7 @@
 plugins {
     id("core.blossom-conventions")
     id("core.hangar-conventions")
+    id("core.modrinth-conventions")
 }
 
 dependencies {
@@ -53,6 +54,12 @@ sourceSets {
             }
         }
     }
+}
+
+modrinth {
+    loaders.add("spigot")
+    loaders.add("paper")
+    loaders.add("purpur")
 }
 
 tasks {
