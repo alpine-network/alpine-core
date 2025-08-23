@@ -22,11 +22,7 @@ dependencies {
     api(libs.adventure.platform.bukkit)
     api(libs.configlib.spigot)
     api(libs.litecommands.bukkit)
-    compileOnlyApi(libs.gson)
-    compileOnlyApi(libs.guava)
     compileOnly(libs.spigot.api) {
-        exclude(libs.gson.get().group)
-        exclude(libs.guava.get().group)
         exclude("junit")
         exclude("org.yaml", "snakeyaml")
     }
