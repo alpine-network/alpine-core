@@ -56,6 +56,5 @@ tasks {
     }
     named("modrinth") {
         notCompatibleWithConfigurationCache("Minotaur limitation")
-        dependsOn(named("modrinthSyncBody"))
     }
 }

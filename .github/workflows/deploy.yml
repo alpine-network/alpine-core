@@ -58,6 +58,12 @@ jobs:
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
 
+      - name: "Sync Modrinth README"
+        run: ./gradlew modrinthSyncBody --full-stacktrace
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        continue-on-error: true
+
       - name: "Read Version"
         if: github.event_name == 'workflow_dispatch'
         run: |
