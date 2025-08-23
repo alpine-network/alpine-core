@@ -1,6 +1,3 @@
-import java.text.SimpleDateFormat
-import java.util.Date
-
 /*
  * This file is part of AlpineCore - https://github.com/alpine-network/alpine-core
  * Copyright (C) 2025 Crystal Development, LLC
@@ -9,6 +6,10 @@ import java.util.Date
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
     idea
     `java-library`
@@ -48,9 +49,7 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.WARN
         filteringCharset = Charsets.UTF_8.name()
     }
-    test {
-        useTestNG()
-    }
+
     javadoc {
         configureOptions()
     }

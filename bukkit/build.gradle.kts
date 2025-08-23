@@ -79,4 +79,7 @@ tasks {
             "https://repo.panda-lang.org/javadoc/releases/dev/rollczi/litecommands-bukkit/${v.litecommands.get()}/raw/",
         )
     }
+    test {
+        useTestNG()
+    }
 }
