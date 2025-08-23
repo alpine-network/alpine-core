@@ -12,7 +12,7 @@ A modern framework for developing Minecraft server plugins.
 
 <!-- modrinth_exclude.start -->
 > [!WARNING]
-> AlpineCore is currently in an early state of development and breaking changes **will** occur.
+> AlpineCore is currently in an early stage of development and breaking changes **will** occur.
 <!-- modrinth_exclude.end -->
 
 ## What is AlpineCore?
