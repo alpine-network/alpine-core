@@ -56,6 +56,12 @@ sourceSets {
     }
 }
 
+modrinth {
+    loaders.add("spigot")
+    loaders.add("paper")
+    loaders.add("purpur")
+}
+
 tasks {
     shadowJar {
         archiveFileName.set("${rootProject.name}-${project.version}.jar")
@@ -72,10 +78,5 @@ tasks {
             "https://lib.alpn.cloud/javadoc/alpine-public/dev/tomwmth/configlib-spigot/${v.configlib.get()}/raw/",
             "https://repo.panda-lang.org/javadoc/releases/dev/rollczi/litecommands-bukkit/${v.litecommands.get()}/raw/",
         )
-    }
-    modrinth {
-        loaders.add("spigot")
-        loaders.add("paper")
-        loaders.add("purpur")
     }
 }
