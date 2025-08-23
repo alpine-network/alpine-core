@@ -34,7 +34,7 @@ fun Project.latestCommitHash(): String {
 }
 
 fun Project.latestCommitMessage(): String {
-    return executeGitCommand("log", "-1", "--pretty=%B")
+    return executeGitCommand("log", "-1", "--pretty=%B").trim()
 }
 
 fun ProcessResources.expandProperties(vararg files: String) {
