@@ -16,6 +16,7 @@ plugins {
 extensions.configure<SpotlessExtension> {
     java {
         licenseHeaderFile(rootProject.file("gradle/licenses/mpl-2.0-header.txt"))
+        targetExclude("**/generated/**")
         removeUnusedImports()
     }
 }
