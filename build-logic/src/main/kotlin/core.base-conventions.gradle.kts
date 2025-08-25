@@ -35,35 +35,19 @@ tasks {
     // Target Java 8
     withType<JavaCompile>().configureEach {
         options.release.set(8)
-        configureOptions()
+        options.encoding = Charsets.UTF_8.name()
+        addCompilerArgs()
     }
     withType<Jar>().configureEach {
         configureManifest()
-        includeLicense()
+        includeLicenseFile()
     }
-    withType<AbstractArchiveTask>().configureEach {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
-    processResources {
+    withType<ProcessResources>().configureEach {
         duplicatesStrategy = DuplicatesStrategy.WARN
         filteringCharset = Charsets.UTF_8.name()
     }
-
-    javadoc {
+    withType<Javadoc>().configureEach {
         configureOptions()
-    }
-    register("writeVersionToFile") {
-        group = "publishing"
-        description = "Generates a file containing the project version."
-        val v = version.toString()
-        val f = rootProject.file(".version")
-        doLast {
-            f.writeText(v)
-        }
-    }
-    named("clean") {
-        delete(rootProject.file(".version"))
     }
 }
 
@@ -82,28 +66,10 @@ fun Jar.configureManifest() {
             "Specification-Title" to rootProject.name,
             "Specification-Version" to rootProject.version,
             "Specification-Vendor" to "Crystal Development, LLC.",
-        )
-    }
-}
-
-fun Jar.includeLicense() {
-    from(file("${rootProject.projectDir}/LICENSE")) {
-        into("META-INF")
-    }
-    manifest {
-        attributes(
             "License" to "MPL-2.0",
             "License-URL" to "https://mozilla.org/MPL/2.0/"
         )
     }
-}
-
-fun JavaCompile.configureOptions() {
-    options.encoding = Charsets.UTF_8.name()
-    options.compilerArgs.add("-parameters")
-    options.compilerArgs.add("-Xlint:-options")
-    options.compilerArgs.add("-Xlint:deprecation")
-    options.compilerArgs.add("-Xlint:unchecked")
 }
 
 fun Javadoc.configureOptions() {

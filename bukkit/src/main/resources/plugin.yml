@@ -1,9 +1,9 @@
-name: "${name}"
+main: co.crystaldev.alpinecore.AlpineCore
+name: AlpineCore
 version: "${version}"
-main: "${main}"
 description: "${description}"
-website: "${website}"
-api-version: "1.13"
+api-version: 1.13
+website: https://github.com/alpine-network/alpine-core
 authors:
   - tomwmth
   - BestBearr

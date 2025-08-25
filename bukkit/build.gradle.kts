@@ -59,6 +59,9 @@ modrinth {
 }
 
 tasks {
+    named("build") {
+        dependsOn("javadoc")
+    }
     shadowJar {
         archiveFileName.set("${rootProject.name}-${project.version}.jar")
     }

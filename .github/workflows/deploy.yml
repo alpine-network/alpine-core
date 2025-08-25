@@ -67,12 +67,13 @@ jobs:
       - name: "Read Version"
         if: github.event_name == 'workflow_dispatch'
         run: |
-          ./gradlew writeVersionToFile
-          if [[ ! -f .version || ! -s .version ]]; then
-            echo "Error: .version file is missing or empty."
+          set -e
+          RELEASE_VERSION=$(./gradlew properties --full-stacktrace | grep "version:" | awk '{print $2}')
+          if [[ -z "$RELEASE_VERSION" ]]; then
+            echo "Error: unable to parse version from gradle properties."
             exit 1
           fi
-          echo "RELEASE_VERSION=$(cat .version)" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
       - name: "Create GitHub Release"
         if: github.event_name == 'workflow_dispatch' && !contains(env.RELEASE_VERSION, '-')

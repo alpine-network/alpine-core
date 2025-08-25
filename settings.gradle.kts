@@ -1,8 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-rootProject.name = "AlpineCore"
-
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 dependencyResolutionManagement {
@@ -24,6 +21,8 @@ pluginManagement {
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version ("1.0.0")
 }
+
+rootProject.name = "AlpineCore"
 
 include("alpinecore")
 project(":alpinecore").projectDir = file("bukkit")
