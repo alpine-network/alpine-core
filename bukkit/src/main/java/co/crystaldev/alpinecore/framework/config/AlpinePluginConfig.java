@@ -172,5 +172,7 @@ public final class AlpinePluginConfig extends AlpineConfig {
         public ConfigMessage single = ConfigMessage.of("<red>Invalid command usage:</red> <gray>%syntax%");
         public ConfigMessage multiHeader = ConfigMessage.of("<red>Invalid command usage:");
         public ConfigMessage multiLine = ConfigMessage.of("<gray><b>  *</b> %syntax%");
+        public ConfigMessage argumentDescriptionFormat = ConfigMessage.of("%arguments% # %description%");
+        public ConfigMessage argumentFormat = ConfigMessage.of("%arguments%");
     }
 }

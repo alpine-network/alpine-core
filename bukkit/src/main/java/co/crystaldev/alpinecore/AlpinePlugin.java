@@ -22,6 +22,7 @@ import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.framework.teleport.TeleportManager;
 import co.crystaldev.alpinecore.framework.ui.UIManager;
+import co.crystaldev.alpinecore.handler.BaseSchematicGenerator;
 import co.crystaldev.alpinecore.handler.InvalidCommandUsageHandler;
 import co.crystaldev.alpinecore.integration.PlaceholderIntegration;
 import co.crystaldev.alpinecore.integration.VaultIntegration;
@@ -470,7 +471,14 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // Set up the LiteCommands builder
         LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> builder = LiteBukkitFactory.builder(this.getName())
                 // <Required Arguments> [Optional Arguments]
-                .schematicGenerator(SchematicFormat.angleBrackets())
+                .self((self, internal) -> {
+                    self.schematicGenerator(new BaseSchematicGenerator(
+                            this,
+                            SchematicFormat.angleBrackets(),
+                            internal.getPermissionService(),
+                            internal.getParserRegistry()
+                    ));
+                })
 
                 // Enable Adventure support
                 .extension(new LiteAdventurePlatformExtension<>(BukkitAudiences.create(this)), config -> config
