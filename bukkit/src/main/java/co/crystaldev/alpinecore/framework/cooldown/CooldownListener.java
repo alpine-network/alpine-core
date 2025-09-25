@@ -26,6 +26,7 @@ import java.util.Map;
 /**
  * @since 0.4.5
  */
+@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
 @ApiStatus.Internal
 final class CooldownListener<T> implements Listener {

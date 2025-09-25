@@ -239,6 +239,7 @@ public class ConfigMessage {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static final class Adapter implements Serializer<ConfigMessage, Object> {
         @Override
         public Object serialize(ConfigMessage element) {

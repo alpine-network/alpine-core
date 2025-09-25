@@ -29,6 +29,7 @@ import java.util.*;
  *
  * @since 0.4.0
  */
+@SuppressWarnings({"unchecked", "unused"})
 public abstract class Element implements UIEventSubscriber {
 
     protected final UIContext context;

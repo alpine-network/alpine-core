@@ -34,6 +34,7 @@ import java.util.function.Consumer;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
+@SuppressWarnings({"unchecked", "rawtypes", "unused"})
 public final class ConfigManager {
 
     @Getter

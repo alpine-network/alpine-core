@@ -43,6 +43,7 @@ import java.util.stream.Stream;
  * @see VaryingConfigItem
  * @since 0.4.0
  */
+@SuppressWarnings({"unchecked", "unused"})
 @Polymorphic
 @PolymorphicTypes({
         @PolymorphicTypes.Type(type = DefinedConfigItem.class),

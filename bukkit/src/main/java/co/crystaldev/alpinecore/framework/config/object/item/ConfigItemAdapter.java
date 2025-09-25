@@ -16,6 +16,7 @@ import java.util.*;
 /**
  * @since 0.4.0
  */
+@SuppressWarnings("unchecked")
 abstract class ConfigItemAdapter implements Serializer<ConfigItem, Map<String, Object>> {
 
     public abstract boolean requiresType();

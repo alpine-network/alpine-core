@@ -32,6 +32,7 @@ import java.util.function.Consumer;
  * @author Thomas Wearmouth
  * @since 0.1.0
  */
+@SuppressWarnings("unchecked")
 public final class FlatfileDriver<K, D> extends AlpineDriver<K, D> {
     /** The directory the JSON files are stored in */
     private final File directory;
