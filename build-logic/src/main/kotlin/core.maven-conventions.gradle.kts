@@ -36,7 +36,7 @@ extensions.configure(MavenPublishBaseExtension::class.java) {
     )
     coordinates(
         groupId = project.group.toString(),
-        artifactId = project.name,
+        artifactId = "alpinecore",
         version = project.version.toString(),
     )
     val orgId = "alpine-network"
@@ -44,7 +44,7 @@ extensions.configure(MavenPublishBaseExtension::class.java) {
     val repoUrl = "https://github.com/${orgId}/${repoId}"
 
     pom {
-        name.set(project.name)
+        name.set("alpinecore")
         description.set(project.description)
         url.set(repoUrl)
 

@@ -45,7 +45,7 @@ sourceSets {
         blossom {
             javaSources {
                 property("group", project.group.toString())
-                property("name", rootProject.name)
+                property("name", "AlpineCore")
                 property("version", project.version.toString())
             }
         }
@@ -63,7 +63,7 @@ tasks {
         dependsOn("javadoc")
     }
     shadowJar {
-        archiveFileName.set("${rootProject.name}-${project.version}.jar")
+        archiveFileName.set("AlpineCore-${project.version}.jar")
     }
     processResources {
         expandProperties("plugin.yml")

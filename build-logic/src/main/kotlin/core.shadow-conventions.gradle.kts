@@ -39,7 +39,7 @@ tasks {
 }
 
 fun ShadowJar.configureRelocations() {
-    val base = "${project.group}.${rootProject.name.lowercase()}.libs"
+    val base = "${project.group}.${rootProject.name}.libs"
     // dbcp2
     relocate("org.apache.commons.dbcp2", "${base}.org.apache.commons.dbcp2")
     relocate("org.apache.commons.logging", "${base}.org.apache.commons.logging")
@@ -79,7 +79,7 @@ fun ShadowJar.configureTransformers() {
         }
         transform(ApacheNoticeResourceTransformer::class.java) {
             addHeader.set(false)
-            projectName = rootProject.name
+            projectName = "AlpineCore"
             organizationName = "Crystal Development, LLC"
             organizationURL = "https://github.com/alpine-network"
         }

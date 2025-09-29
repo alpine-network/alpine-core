@@ -22,7 +22,11 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version ("1.0.0")
 }
 
-rootProject.name = "AlpineCore"
+rootProject.name = "alpinecore"
 
-include("alpinecore")
-project(":alpinecore").projectDir = file("bukkit")
+setOf(
+    "bukkit",
+).forEach {
+    include(it)
+    project(":$it").name = "${rootProject.name}-$it"
+}
