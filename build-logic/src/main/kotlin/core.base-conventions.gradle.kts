@@ -87,7 +87,7 @@ fun Javadoc.configureOptions() {
             "https://javadoc.io/doc/commons-lang/commons-lang/${v.lang.get()}/",
             "https://javadoc.io/doc/com.google.code.gson/gson/${v.gson.get()}/",
             "https://javadoc.io/doc/com.google.guava/guava/${v.guava.get()}/",
-            "https://javadoc.io/doc/com.github.cryptomorin/XSeries/${v.xseries.get()}/",
+            "https://lib.alpn.cloud/javadoc/releases/com/github/cryptomorin/XSeries/${v.xseries.get()}/raw/",
         )
 
         setOf(
