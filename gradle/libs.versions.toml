@@ -24,12 +24,12 @@ guava = "17.0"
 
 # Gradle
 blossom = "2.1.0"                     # https://github.com/KyoriPowered/blossom/releases
-ideaExt = "1.2"                       # https://github.com/jetbrains/gradle-idea-ext-plugin
+ideaExt = "1.3"                       # https://github.com/jetbrains/gradle-idea-ext-plugin
 hangarPublish = "0.1.3"               # https://github.com/HangarMC/hangar-publish-plugin
 mavenPublish = "0.34.0"               # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 minotaurPublish = '2.+'               # https://github.com/modrinth/minotaur/releases
-shadow = "9.0.2"                      # https://github.com/GradleUp/shadow/releases
-spotless = "7.2.1"                    # https://github.com/diffplug/spotless/releases
+shadow = "9.2.2"                      # https://github.com/GradleUp/shadow/releases
+spotless = "8.0.0"                    # https://github.com/diffplug/spotless/releases
 
 [libraries]
 adventure-bom = { group = "net.kyori", name = "adventure-bom", version.ref = "adventure" }

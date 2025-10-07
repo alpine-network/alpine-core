@@ -14,10 +14,8 @@ plugins {
     id("com.gradleup.shadow")
 }
 
-components.named<AdhocComponentWithVariants>("java") {
-    withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
-        skip() // do not publish shaded jar to maven
-    }
+shadow {
+    addShadowVariantIntoJavaComponent.set(false)
 }
 
 tasks {
@@ -27,7 +25,7 @@ tasks {
     named<ShadowJar>("shadowJar") {
         // https://gradleup.com/shadow/configuration/merging/#handling-duplicates-strategy
         duplicatesStrategy = DuplicatesStrategy.WARN
-        failOnDuplicateEntries = true
+        failOnDuplicateEntries.set(true)
         archiveClassifier.set("")
 
         configureRelocations()
