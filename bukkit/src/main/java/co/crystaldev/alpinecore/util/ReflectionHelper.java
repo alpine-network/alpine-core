@@ -26,13 +26,17 @@ public final class ReflectionHelper {
 
     public static @Nullable Field findField(@NotNull Class<?> clazz, @NotNull String... fieldNames) {
         for (String fieldName : fieldNames) {
-            try {
-                Field f = clazz.getDeclaredField(fieldName);
-                f.setAccessible(true);
-                return f;
-            }
-            catch (Exception ignored) {
-                // NO OP
+            Class<?> currentClass = clazz;
+            while (currentClass != null) {
+                try {
+                    Field f = currentClass.getDeclaredField(fieldName);
+                    f.setAccessible(true);
+                    return f;
+                }
+                catch (Exception ignored) {
+                    // NO OP
+                }
+                currentClass = currentClass.getSuperclass();
             }
         }
         return null;
