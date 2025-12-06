@@ -3,7 +3,7 @@
 adventure = "4.25.0"                   # https://github.com/KyoriPowered/adventure/releases
 adventureBukkit = "4.4.1"              # https://github.com/KyoriPowered/adventure-platform/releases
 annotations = "26.0.2"                 # https://github.com/JetBrains/java-annotations/releases
-configlib = "4.5.2"                    # https://github.com/tomwmth/ConfigLib
+configlib = "4.6.0"                    # https://github.com/tomwmth/ConfigLib
 dbcp2 = "2.13.0"                       # https://commons.apache.org/proper/commons-dbcp/changes-report.html
 litecommands = "3.10.6"                # https://github.com/Rollczi/LiteCommands/releases
 localelib = "4.1.3"                    # https://github.com/PikaMug/LocaleLib/releases
@@ -38,7 +38,8 @@ adventure-text-minimessage.module = "net.kyori:adventure-text-minimessage"
 adventure-text-serializer-plain.module = "net.kyori:adventure-text-serializer-plain"
 adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventureBukkit" }
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
-configlib-spigot = { group = "dev.tomwmth", name = "configlib-spigot", version.ref = "configlib" }
+configlib-yaml = { group = "dev.tomwmth.configlib", name = "configlib-yaml", version.ref = "configlib" }
+configlib-bukkit = { group = "dev.tomwmth.configlib", name = "configlib-bukkit", version.ref = "configlib" }
 dbcp2 = { group = "org.apache.commons", name = "commons-dbcp2", version.ref = "dbcp2" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }

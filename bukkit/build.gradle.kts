@@ -20,7 +20,8 @@ dependencies {
 
     // Bukkit platform dependencies
     api(libs.adventure.platform.bukkit)
-    api(libs.configlib.spigot)
+    api(libs.configlib.yaml)
+    api(libs.configlib.bukkit)
     api(libs.litecommands.bukkit)
     compileOnly(libs.spigot.api) {
         exclude("junit")
@@ -74,7 +75,9 @@ tasks {
             "https://docs.oracle.com/en/java/javase/11/docs/api/",
             "https://hub.spigotmc.org/javadocs/spigot/",
             "https://jd.advntr.dev/platform/bukkit/${v.adventureBukkit.get()}",
-            "https://lib.alpn.cloud/javadoc/alpine-public/dev/tomwmth/configlib-spigot/${v.configlib.get()}/raw/",
+            "https://lib.alpn.cloud/javadoc/alpine-public/dev/tomwmth/configlib/configlib-bukkit/${v.configlib.get()}/raw/",
+            "https://lib.alpn.cloud/javadoc/alpine-public/dev/tomwmth/configlib/configlib-core/${v.configlib.get()}/raw/",
+            "https://lib.alpn.cloud/javadoc/alpine-public/dev/tomwmth/configlib/configlib-yaml/${v.configlib.get()}/raw/",
             "https://repo.panda-lang.org/javadoc/releases/dev/rollczi/litecommands-bukkit/${v.litecommands.get()}/raw/",
         )
     }
