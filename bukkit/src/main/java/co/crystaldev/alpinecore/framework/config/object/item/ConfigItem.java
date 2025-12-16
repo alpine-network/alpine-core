@@ -28,7 +28,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -124,36 +123,50 @@ public interface ConfigItem {
             type = XMaterial.AIR;
         }
 
-        Material parsed = type.parseMaterial();
-        count = Math.max(Math.min(parsed.getMaxStackSize(), count), 1);
-
-        String replacedName = Formatting.placeholders(plugin, this.getName(), placeholders);
+        if (type == XMaterial.AIR) {
+            return new ItemStack(Material.AIR);
+        }
 
         PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        MiniMessage serializer = plugin.getMiniMessage();
+
+        Map<String, Object> placeholdersMap = placeholders.length == 1 && placeholders[0] instanceof Map
+                ? (Map<String, Object>) placeholders[0] : null;
+
+        // build the item name
+        String replacedName = placeholdersMap != null ? Formatting.placeholders(plugin, this.getName(), placeholdersMap)
+                : Formatting.placeholders(plugin, this.getName(), placeholders);
         if (integration != null) {
             replacedName = integration.replace(targetPlayer, otherPlayer, true, replacedName);
         }
 
-        MiniMessage mm = plugin.getMiniMessage();
-        Component name = Components.reset().append(mm.deserialize(replacedName));
+        Component name = Components.reset().append(serializer.deserialize(replacedName));
 
+        // build the item lore
         String joinedLore = this.getLore() == null || this.getLore().isEmpty() ? "" : String.join("\n", this.getLore());
-        joinedLore = Formatting.placeholders(plugin, joinedLore, placeholders);
+        joinedLore = placeholdersMap != null ? Formatting.placeholders(plugin, joinedLore, placeholdersMap)
+                : Formatting.placeholders(plugin, joinedLore, placeholders);
         if (integration != null) {
             joinedLore = integration.replace(targetPlayer, otherPlayer, true, joinedLore);
         }
 
         List<Component> lore = Stream.of(joinedLore.split("\n|<br>"))
                 .map(v -> v.isEmpty() ? " " : v)
-                .map(v -> Components.reset().append(mm.deserialize(v)))
+                .map(v -> Components.reset().append(serializer.deserialize(v)))
                 .collect(Collectors.toList());
 
+        // construct the item
         ItemStack stack = type.parseItem();
+
+        Material parsed = type.parseMaterial();
+        count = Math.max(Math.min(parsed.getMaxStackSize(), count), 1);
         stack.setAmount(count);
 
+        // apply attributes
         ItemHelper.setDisplayName(stack, name);
         ItemHelper.setLore(stack, lore);
 
+        // apply enchantments
         if (this.isEnchanted()) {
             stack.addUnsafeEnchantment(Enchantment.LURE, 1);
 
@@ -162,11 +175,13 @@ public interface ConfigItem {
             stack.setItemMeta(meta);
         }
 
+        // apply custom attributes
         Map<String, Object> attributes = this.getAttributes();
         if (attributes != null && !attributes.isEmpty()) {
             ConfigItemHelper.applyToItem(stack, attributes);
         }
 
+        // allow plugins to configure the item further
         if (function != null) {
             stack = function.apply(stack);
         }
@@ -343,27 +358,43 @@ public interface ConfigItem {
             @Nullable OfflinePlayer otherPlayer,
             @NotNull Object... placeholders
     ) {
-        String replacedName = Formatting.placeholders(plugin, this.getName(), placeholders);
-
         PlaceholderIntegration integration = plugin.getActivatable(PlaceholderIntegration.class);
+        MiniMessage serializer = plugin.getMiniMessage();
+
+        Map<String, Object> placeholdersMap = placeholders.length == 1 && placeholders[0] instanceof Map
+                ? (Map<String, Object>) placeholders[0] : null;
+
+        // build the item name
+        String replacedName = placeholdersMap != null ? Formatting.placeholders(plugin, this.getName(), placeholdersMap)
+                : Formatting.placeholders(plugin, this.getName(), placeholders);
         if (integration != null) {
             replacedName = integration.replace(targetPlayer, otherPlayer, true, replacedName);
         }
 
-        MiniMessage mm = plugin.getMiniMessage();
-        Component name = Components.reset().append(mm.deserialize(replacedName));
-        List<Component> lore = this.getLore() == null || this.getLore().isEmpty() ? Collections.emptyList() : this.getLore().stream()
-                .map(v -> Formatting.placeholders(plugin, v, placeholders))
-                .map(v -> integration == null ? v : integration.replace(targetPlayer, otherPlayer, true, v))
-                .map(v -> Components.reset().append(mm.deserialize(v)))
+        Component name = Components.reset().append(serializer.deserialize(replacedName));
+
+        // build the item lore
+        String joinedLore = this.getLore() == null || this.getLore().isEmpty() ? "" : String.join("\n", this.getLore());
+        joinedLore = placeholdersMap != null ? Formatting.placeholders(plugin, joinedLore, placeholdersMap)
+                : Formatting.placeholders(plugin, joinedLore, placeholders);
+        if (integration != null) {
+            joinedLore = integration.replace(targetPlayer, otherPlayer, true, joinedLore);
+        }
+
+        List<Component> lore = Stream.of(joinedLore.split("\n|<br>"))
+                .map(v -> v.isEmpty() ? " " : v)
+                .map(v -> Components.reset().append(serializer.deserialize(v)))
                 .collect(Collectors.toList());
 
+        // apply to the provided item stack
         stack = stack.clone();
         stack.setAmount(Math.max(Math.min(stack.getMaxStackSize(), count), 1));
 
+        // apply attributes
         ItemHelper.setDisplayName(stack, name);
         ItemHelper.setLore(stack, lore);
 
+        // apply enchantments
         if (this.isEnchanted()) {
             stack.addUnsafeEnchantment(Enchantment.LURE, 1);
 
@@ -372,11 +403,13 @@ public interface ConfigItem {
             stack.setItemMeta(meta);
         }
 
+        // apply custom attributes
         Map<String, Object> attributes = this.getAttributes();
         if (attributes != null && !attributes.isEmpty()) {
             ConfigItemHelper.applyToItem(stack, attributes);
         }
 
+        // allow plugins to configure the item further
         if (function != null) {
             stack = function.apply(stack);
         }
