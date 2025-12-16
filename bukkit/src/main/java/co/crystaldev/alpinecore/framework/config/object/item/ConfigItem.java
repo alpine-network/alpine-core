@@ -148,7 +148,8 @@ public interface ConfigItem {
                 .map(v -> Components.reset().append(mm.deserialize(v)))
                 .collect(Collectors.toList());
 
-        ItemStack stack = new ItemStack(parsed, count);
+        ItemStack stack = type.parseItem();
+        stack.setAmount(count);
 
         ItemHelper.setDisplayName(stack, name);
         ItemHelper.setLore(stack, lore);
