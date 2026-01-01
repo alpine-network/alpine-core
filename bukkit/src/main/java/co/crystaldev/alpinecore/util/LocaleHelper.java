@@ -21,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +35,11 @@ import java.util.stream.Stream;
 public final class LocaleHelper {
 
     private static final LocaleManager MANAGER = new LocaleManager();
+
+    private static final Method ENCHANTMENT_TRANSLATION_METHOD = ReflectionHelper.findMethod(
+            Enchantment.class,
+            new String[]{"translationKey", "getTranslationKey",}
+    );
 
     /**
      * Retrieves the translation key for a given material.
@@ -197,6 +203,13 @@ public final class LocaleHelper {
 
             String key;
             if (XMaterial.getVersion() >= 13) {
+                if (ENCHANTMENT_TRANSLATION_METHOD != null) {
+                    Object translationKey = ReflectionHelper.invokeMethod(ENCHANTMENT_TRANSLATION_METHOD, e);
+                    if (translationKey != null) {
+                        return translationKey.toString();
+                    }
+                }
+
                 String str = e.toString();
                 key = "enchantment.minecraft." + str.substring(str.indexOf(":") + 1, str.indexOf("]")).split(", ")[0];
             }
