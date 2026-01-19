@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,14 +100,6 @@ final class CooldownListener<T> implements Listener {
         Messaging.send(player, cooldown.messageType(), cooldown.message());
 
         if (cooldown.isCancelled() || !cooldown.canMove()) {
-            this.handler.cancel((T) player);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDisconnect(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        if (this.cooldowns.containsKey(player)) {
             this.handler.cancel((T) player);
         }
     }
