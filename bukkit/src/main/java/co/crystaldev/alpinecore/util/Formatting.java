@@ -30,7 +30,10 @@ import java.util.function.Supplier;
 @UtilityClass
 public final class Formatting {
 
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(
+            System.getProperty("alpine.decimal-format", "#,###.##"));
+    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat(
+            System.getProperty("alpine.number-format", "#,###"));
 
     /**
      * Formats text with placeholders.
@@ -215,27 +218,31 @@ public final class Formatting {
         return placeholders(text, placeholders);
     }
 
-    private static @NotNull String formatPlaceholder(@NotNull MiniMessage miniMessage, @NotNull String text, Object value, String placeholder) {
-        String formattedReplacer;
-
+    private static @NotNull String resolveValue(@NotNull MiniMessage miniMessage, @Nullable Object value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof Supplier) {
+            return resolveValue(miniMessage, ((Supplier<?>) value).get());
+        }
         if (value instanceof Float || value instanceof Double) {
-            formattedReplacer = DECIMAL_FORMAT.format(value);
+            return DECIMAL_FORMAT.format(value);
         }
-        else if (value instanceof Boolean) {
-            formattedReplacer = (Boolean) value ? "True" : "False";
+        if (value instanceof Number) {
+            return NUMBER_FORMAT.format(value);
         }
-        else if (value instanceof Component) {
-            formattedReplacer = miniMessage.serialize(((Component) value).append(Components.reset()));
+        if (value instanceof Boolean) {
+            return (Boolean) value ? "True" : "False";
         }
-        else if (value instanceof Supplier) {
-            formattedReplacer = ((Supplier<?>) value).get().toString();
+        if (value instanceof Component) {
+            return miniMessage.serialize(((Component) value).append(Components.reset()));
         }
-        else {
-            formattedReplacer = value.toString();
-        }
+        return value.toString();
+    }
 
-        text = text.replace("%" + placeholder + "%", formattedReplacer);
-        return text;
+    private static @NotNull String formatPlaceholder(@NotNull MiniMessage miniMessage, @NotNull String text,
+                                                     @Nullable Object value, @NotNull String placeholder) {
+        return text.replace("%" + placeholder + "%", resolveValue(miniMessage, value));
     }
 
     /**
