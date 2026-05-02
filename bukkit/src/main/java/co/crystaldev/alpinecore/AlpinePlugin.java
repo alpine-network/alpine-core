@@ -18,6 +18,9 @@ import co.crystaldev.alpinecore.framework.config.ConfigManager;
 import co.crystaldev.alpinecore.framework.config.object.ConfigMessage;
 import co.crystaldev.alpinecore.framework.engine.AlpineEngine;
 import co.crystaldev.alpinecore.framework.integration.AlpineIntegration;
+import co.crystaldev.alpinecore.framework.scheduler.TaskScheduler;
+import co.crystaldev.alpinecore.framework.scheduler.impl.BukkitTaskScheduler;
+import co.crystaldev.alpinecore.framework.scheduler.impl.FoliaTaskScheduler;
 import co.crystaldev.alpinecore.framework.storage.KeySerializer;
 import co.crystaldev.alpinecore.framework.storage.SerializerRegistry;
 import co.crystaldev.alpinecore.framework.teleport.TeleportManager;
@@ -33,6 +36,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
 import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
@@ -74,6 +78,8 @@ import java.util.logging.Level;
 @SuppressWarnings({"UnstableApiUsage", "unchecked", "unused"})
 @Getter
 public abstract class AlpinePlugin extends JavaPlugin implements Listener {
+
+    private static volatile TaskScheduler SCHEDULER;
 
     /** Manages any {@link co.crystaldev.alpinecore.framework.config.AlpineConfig}s for the plugin */
     protected ConfigManager configManager;
@@ -234,6 +240,17 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         SimpleTimer timer = new SimpleTimer();
         timer.start();
 
+        // Initialize the scheduler once for the entire server process
+        if (SCHEDULER == null) {
+            synchronized (AlpinePlugin.class) {
+                if (SCHEDULER == null) {
+                    SCHEDULER = isFolia()
+                            ? new FoliaTaskScheduler(this.getServer())
+                            : new BukkitTaskScheduler();
+                }
+            }
+        }
+
         // Setup and register custom data serializers
         this.serializerRegistry.putKeySerializer(Number.class, new KeySerializer.NumberKey());
         this.serializerRegistry.putKeySerializer(String.class, new KeySerializer.StringKey());
@@ -316,6 +333,19 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         }
 
         return this.configManager.getConfig(clazz);
+    }
+
+    /**
+     * Returns the server-wide {@link TaskScheduler}.
+     * <p>
+     * Works on both standard Bukkit/Paper and Folia. On Folia, plain sync
+     * tasks target the global region; use the {@code AtLocation} and
+     * {@code ForEntity} variants where region-awareness is required.
+     *
+     * @return the scheduler
+     */
+    public static @NotNull TaskScheduler scheduler() {
+        return SCHEDULER;
     }
 
     /**
@@ -505,6 +535,20 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                 .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> messages.playerNotFound.buildString(this, "player", input))
                 .message(LiteBukkitMessages.PLAYER_ONLY, input -> messages.playerOnly.buildString(this));
 
+        if (isFolia()) {
+            try {
+                @SuppressWarnings("unchecked")
+                LiteExtension<CommandSender, ?> extension = (LiteExtension<CommandSender, ?>) Class
+                        .forName("dev.rollczi.litecommands.folia.FoliaExtension")
+                        .getDeclaredConstructor(Plugin.class)
+                        .newInstance(this);
+                builder.extension(extension);
+            }
+            catch (ReflectiveOperationException ex) {
+                this.getLogger().warning("Failed to load Folia extension: " + ex.getMessage());
+            }
+        }
+
         // Let the plugin mutate the command manager
         this.setupCommandManager(builder);
 
@@ -604,6 +648,16 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         if (other.getName().equalsIgnoreCase(this.pluginConfig.overrideWith)) {
             this.log(String.format("&aReplacing AlpinePlugin config with &d%s", other.getName()));
             this.pluginConfig = other.pluginConfig;
+        }
+    }
+
+    private static boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return true;
+        }
+        catch (ClassNotFoundException ignored) {
+            return false;
         }
     }
 

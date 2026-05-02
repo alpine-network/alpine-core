@@ -3,6 +3,7 @@ name: AlpineCore
 version: "${version}"
 description: "${description}"
 api-version: 1.13
+folia-supported: true
 website: https://github.com/alpine-network/alpine-core
 authors:
   - tomwmth

@@ -4,6 +4,15 @@ plugins {
     id("core.modrinth-conventions")
 }
 
+// Separate configuration to bypass Gradle's JVM version compatibility check.
+// litecommands-folia targets Java 21 but is only loaded at runtime on Folia servers.
+configurations {
+    create("foliaClasspath") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+    }
+}
+
 dependencies {
     // Internal dependencies
     implementation(libs.localelib)
@@ -23,6 +32,8 @@ dependencies {
     api(libs.configlib.yaml)
     api(libs.configlib.bukkit)
     api(libs.litecommands.bukkit)
+    "foliaClasspath"(libs.litecommands.folia) { isTransitive = false }
+    implementation(files(configurations["foliaClasspath"]))
     compileOnly(libs.spigot.api) {
         exclude("junit")
         exclude("org.yaml", "snakeyaml")
@@ -57,6 +68,7 @@ modrinth {
     loaders.add("spigot")
     loaders.add("paper")
     loaders.add("purpur")
+    loaders.add("folia")
 }
 
 tasks {
