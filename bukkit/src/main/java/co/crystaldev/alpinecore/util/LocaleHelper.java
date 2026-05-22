@@ -208,7 +208,7 @@ public final class LocaleHelper {
             }
 
             String key;
-            if (XReflection.supports(1, 13)) {
+            if (XReflection.supports(1, 13, 0)) {
                 if (ENCHANTMENT_TRANSLATION_METHOD != null) {
                     Object translationKey = ReflectionHelper.invokeMethod(ENCHANTMENT_TRANSLATION_METHOD, e);
                     if (translationKey != null) {

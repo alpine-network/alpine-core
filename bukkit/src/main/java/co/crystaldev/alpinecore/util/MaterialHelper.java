@@ -186,7 +186,7 @@ public final class MaterialHelper {
             }
         }
 
-        if (!XReflection.supports(1, 13)) {
+        if (!XReflection.supports(1, 13, 0)) {
             // Some types such as repeaters and comparators were flattened into one type
             // resulting in them not getting registered
             for (Material value : Material.values()) {
