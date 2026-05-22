@@ -9,6 +9,7 @@
 package co.crystaldev.alpinecore.util;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -185,8 +186,7 @@ public final class MaterialHelper {
             }
         }
 
-        //noinspection UnstableApiUsage
-        if (!XMaterial.supports(13)) {
+        if (!XReflection.supports(1, 13)) {
             // Some types such as repeaters and comparators were flattened into one type
             // resulting in them not getting registered
             for (Material value : Material.values()) {

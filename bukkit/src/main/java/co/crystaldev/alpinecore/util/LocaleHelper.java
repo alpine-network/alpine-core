@@ -11,6 +11,7 @@ package co.crystaldev.alpinecore.util;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.base.XModule;
+import com.cryptomorin.xseries.reflection.XReflection;
 import lombok.experimental.UtilityClass;
 import me.pikamug.localelib.LocaleManager;
 import net.kyori.adventure.text.Component;
@@ -49,10 +50,11 @@ public final class LocaleHelper {
      */
     public static @NotNull String getTranslationKey(@NotNull XMaterial material) {
         try {
-            return MANAGER.queryMaterial(material.parseMaterial());
+            return MANAGER.queryMaterial(material.get());
         }
         catch (Exception ex) {
-            return formatEnum(material.parseMaterial());
+            Material type = material.get();
+            return type == null ? "<unknown>" : formatEnum(type);
         }
     }
 
@@ -64,10 +66,11 @@ public final class LocaleHelper {
      */
     public static @NotNull Component getTranslation(@NotNull XMaterial material) {
         try {
-            return Component.translatable(MANAGER.queryMaterial(material.parseMaterial()));
+            return Component.translatable(MANAGER.queryMaterial(material.get()));
         }
         catch (Exception ex) {
-            return Component.text(formatEnum(material.parseMaterial()));
+            Material type = material.get();
+            return Component.text(type == null ? "<unknown>" : formatEnum(type));
         }
     }
 
@@ -199,10 +202,13 @@ public final class LocaleHelper {
      */
     public static @NotNull String getTranslationKey(@NotNull XEnchantment enchantment) {
         try {
-            Enchantment e = enchantment.getEnchant();
+            Enchantment e = enchantment.get();
+            if (e == null) {
+                return "<unknown>";
+            }
 
             String key;
-            if (XMaterial.getVersion() >= 13) {
+            if (XReflection.supports(1, 13)) {
                 if (ENCHANTMENT_TRANSLATION_METHOD != null) {
                     Object translationKey = ReflectionHelper.invokeMethod(ENCHANTMENT_TRANSLATION_METHOD, e);
                     if (translationKey != null) {

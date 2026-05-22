@@ -323,7 +323,7 @@ public final class ItemHelper {
 
         return item.getEnchantments().entrySet().stream()
                 .map(entry -> {
-                    XEnchantment enchant = XEnchantment.matchXEnchantment(entry.getKey());
+                    XEnchantment enchant = XEnchantment.of(entry.getKey());
                     Component romanLevel = Component.text(RomanNumerals.convertTo(entry.getValue()));
 
                     return LocaleHelper.getTranslation(enchant)
