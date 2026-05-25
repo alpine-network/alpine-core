@@ -9,6 +9,7 @@
 package co.crystaldev.alpinecore.util;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.reflection.XReflection;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -84,7 +85,7 @@ public final class MaterialHelper {
             return XMaterial.AIR;
         }
 
-        if (XMaterial.getVersion() >= 13) {
+        if (XReflection.supports(1, 13, 0)) {
             return XMaterial.matchXMaterial(block.getType());
         }
         else {
@@ -129,7 +130,7 @@ public final class MaterialHelper {
      * @param applyPhysics Whether to apply physics or not.
      */
     public static void setType(@NotNull Block block, @NotNull XMaterial type, boolean applyPhysics) {
-        if (XMaterial.getVersion() >= 13) {
+        if (XReflection.supports(1, 13, 0)) {
             block.setType(type.parseMaterial(), applyPhysics);
         }
         else {
@@ -185,8 +186,7 @@ public final class MaterialHelper {
             }
         }
 
-        //noinspection UnstableApiUsage
-        if (!XMaterial.supports(13)) {
+        if (!XReflection.supports(1, 13, 0)) {
             // Some types such as repeaters and comparators were flattened into one type
             // resulting in them not getting registered
             for (Material value : Material.values()) {
