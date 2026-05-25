@@ -85,7 +85,7 @@ public final class MaterialHelper {
             return XMaterial.AIR;
         }
 
-        if (XMaterial.getVersion() >= 13) {
+        if (XReflection.supports(1, 13, 0)) {
             return XMaterial.matchXMaterial(block.getType());
         }
         else {
@@ -130,7 +130,7 @@ public final class MaterialHelper {
      * @param applyPhysics Whether to apply physics or not.
      */
     public static void setType(@NotNull Block block, @NotNull XMaterial type, boolean applyPhysics) {
-        if (XMaterial.getVersion() >= 13) {
+        if (XReflection.supports(1, 13, 0)) {
             block.setType(type.parseMaterial(), applyPhysics);
         }
         else {
