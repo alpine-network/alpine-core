@@ -158,7 +158,8 @@ public interface ConfigItem {
         // construct the item
         ItemStack stack = type.parseItem();
 
-        Material parsed = type.parseMaterial();
+        Material parsed = type.get();
+        if (parsed == null) parsed = Material.AIR;
         count = Math.max(Math.min(parsed.getMaxStackSize(), count), 1);
         stack.setAmount(count);
 
