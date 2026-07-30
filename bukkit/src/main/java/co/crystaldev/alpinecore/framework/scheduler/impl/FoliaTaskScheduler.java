@@ -312,6 +312,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
     }
 
     private @NotNull FoliaScheduledTask invokeAsyncWithUnit(@NotNull Method method, @NotNull Plugin plugin, @NotNull Runnable task, long delay, @NotNull TimeUnit unit) {
+        delay = Math.max(1L, delay);
         try {
             Consumer<?> consumer = t -> task.run();
             Object result = method.invoke(this.asyncScheduler, plugin, consumer, delay, unit);
@@ -323,6 +324,8 @@ public final class FoliaTaskScheduler implements TaskScheduler {
     }
 
     private @NotNull FoliaScheduledTask invokeAsyncTimerWithUnit(@NotNull Method method, @NotNull Plugin plugin, @NotNull Runnable task, long delay, long period, @NotNull TimeUnit unit) {
+        delay = Math.max(1L, delay);
+        period = Math.max(1L, period);
         try {
             Consumer<?> consumer = t -> task.run();
             Object result = method.invoke(this.asyncScheduler, plugin, consumer, delay, period, unit);
