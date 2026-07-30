@@ -301,6 +301,9 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         // Close all open guis
         this.uiManager.closeAll();
 
+        // Close legacy Adventure platform support
+        Reference.AUDIENCES.close();
+
         // Unregister all commands from the server
         if (this.commandManager != null) {
             this.commandManager.unregister();
@@ -532,7 +535,7 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
 
         // Enable Adventure support
         LiteAdventureExtension<CommandSender> adventureExtension = this instanceof Audience ? new LiteAdventureExtension<>()
-                : new LiteAdventurePlatformExtension<>(BukkitAudiences.create(this));
+                : new LiteAdventurePlatformExtension<>(Reference.AUDIENCES);
         builder.extension(adventureExtension, config -> config
                 .miniMessage(true)
                 .legacyColor(true)
