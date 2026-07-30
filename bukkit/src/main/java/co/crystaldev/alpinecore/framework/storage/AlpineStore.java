@@ -14,7 +14,6 @@ import co.crystaldev.alpinecore.framework.storage.driver.AlpineDriver;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -274,7 +273,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
 
     @Override
     public final void activate(@NotNull AlpinePlugin context) {
-        this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, this::flush, 1L, PERSIST_TASK_PERIOD);
+        this.taskId = AlpinePlugin.scheduler().scheduleSyncRepeatingTask(this.plugin, this::flush, 1L, PERSIST_TASK_PERIOD);
 
         if (this.taskId != -1)
             this.plugin.log(String.format("&aStore activated &d%s", this.getClass().getSimpleName()));
@@ -284,7 +283,7 @@ public abstract class AlpineStore<K, D> implements Activatable {
 
     @Override
     public final void deactivate(@NotNull AlpinePlugin context) {
-        Bukkit.getScheduler().cancelTask(this.taskId);
+        AlpinePlugin.scheduler().cancelTask(this.taskId);
         this.flush();
         this.driver.shutdown();
         this.readCache.invalidateAll();

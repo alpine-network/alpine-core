@@ -65,9 +65,8 @@ public final class UIManager {
             // do not accept further input until the context is fully closed
             state.setAcceptInput(false);
 
-            Bukkit.getScheduler().runTask(this.plugin, () -> {
-                this.open(player, ui, force);
-            });
+            AlpinePlugin.scheduler().runTaskForEntity(this.plugin, player,
+                    () -> this.open(player, ui, force), null);
             return;
         }
 
@@ -156,9 +155,8 @@ public final class UIManager {
             // do not accept further input until the context is fully closed
             state.setAcceptInput(false);
 
-            Bukkit.getScheduler().runTask(this.plugin, () -> {
-                this.close(player, openParent);
-            });
+            AlpinePlugin.scheduler().runTaskForEntity(this.plugin, player,
+                    () -> this.close(player, openParent), null);
             return;
         }
 
@@ -210,14 +208,16 @@ public final class UIManager {
         // empty the inventory
         if (clearInventory && this.plugin.isEnabled()) {
             Inventory inventory = context.inventory();
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                inventory.clear();
+            Player player = context.player();
+            if (player != null) { // sanity check
+                AlpinePlugin.scheduler().runTaskLaterForEntity(this.plugin, player, () -> {
+                    inventory.clear();
 
-                Player player = context.player();
-                if (player != null && player.isOnline()) {
-                    player.updateInventory();
-                }
-            }, 1L);
+                    if (player.isOnline()) {
+                        player.updateInventory();
+                    }
+                }, null, 1L);
+            }
         }
     }
 
@@ -375,7 +375,8 @@ public final class UIManager {
         this.refresh(context);
 
         // display to the player
-        Bukkit.getScheduler().runTask(context.plugin(), () -> player.openInventory(context.inventory()));
+        AlpinePlugin.scheduler().runTaskForEntity(context.plugin(), player,
+                () -> player.openInventory(context.inventory()), null);
     }
 
     @ApiStatus.Internal

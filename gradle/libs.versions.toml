@@ -46,6 +46,7 @@ guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 lang = { group = "commons-lang", name = "commons-lang", version.ref = "lang" }
 litecommands-adventure-platform = { group = "dev.rollczi", name = "litecommands-adventure-platform", version.ref = "litecommands" }
 litecommands-bukkit = { group = "dev.rollczi", name = "litecommands-bukkit", version.ref = "litecommands" }
+litecommands-folia = { group = "dev.rollczi", name = "litecommands-folia", version.ref = "litecommands" }
 localelib = { group = "com.github.PikaMug", name = "LocaleLib", version.ref = "localelib" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }

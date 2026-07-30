@@ -11,7 +11,6 @@ package co.crystaldev.alpinecore.framework.integration;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.framework.Activatable;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -100,13 +99,13 @@ public abstract class AlpineIntegration implements Listener, Activatable {
     @EventHandler
     private void onPluginEnabled(PluginEnableEvent event) {
         // We schedule this 1 tick later as the plugin has not been removed from the internal registry yet
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this::checkActivation, 1L);
+        AlpinePlugin.scheduler().scheduleSyncDelayedTask(this.plugin, this::checkActivation, 1L);
     }
 
     @EventHandler
     private void onPluginDisabled(PluginDisableEvent event) {
         // We schedule this 1 tick later as the plugin has not been removed from the internal registry yet
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this::checkActivation, 1L);
+        AlpinePlugin.scheduler().scheduleSyncDelayedTask(this.plugin, this::checkActivation, 1L);
     }
 
     /**
