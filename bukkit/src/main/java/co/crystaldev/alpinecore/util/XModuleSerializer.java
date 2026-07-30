@@ -18,7 +18,7 @@ import java.util.Optional;
 
 /**
  * @author Thomas Wearmouth
- * @since 0.4.10
+ * @since 0.5.0
  */
 public final class XModuleSerializer<XForm extends XModule<XForm, ?>> implements Serializer<XModule<XForm, ?>, String> {
     private final Class<? extends XModule<XForm, ?>> cls;

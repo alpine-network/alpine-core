@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @since 0.4.10
+ * @since 0.5.0
  */
 public final class MessageDispatcher {
 

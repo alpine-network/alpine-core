@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 /**
  * A container that allows observing changes to its value.
  *
- * @since 0.4.10
+ * @since 0.5.0
  */
 public class Observable<T> {
 

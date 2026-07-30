@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author BestBearr
- * @since 0.4.10
+ * @since 0.5.0
  */
 public final class BaseSchematicGenerator extends SimpleSchematicGenerator<CommandSender> {
 

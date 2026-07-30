@@ -15,7 +15,7 @@ import lombok.NonNull;
 /**
  * Represents the state of a paginated UI element.
  *
- * @since 0.4.10
+ * @since 0.5.0
  */
 @Getter
 public final class PaginatorState {
