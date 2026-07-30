@@ -10,6 +10,7 @@ package co.crystaldev.alpinecore.framework.scheduler.impl;
 
 import co.crystaldev.alpinecore.framework.scheduler.ScheduledTask;
 import co.crystaldev.alpinecore.framework.scheduler.TaskScheduler;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
@@ -219,7 +220,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
             Consumer<?> consumer = t -> wrapper[0].run();
             Object nativeTask = this.globalRunDelayed.invoke(this.globalScheduler, plugin, consumer, Math.max(1L, delay));
             if (nativeTask != null) {
-                this.taskRegistry.put(id, new FoliaScheduledTask(nativeTask));
+                this.taskRegistry.put(id, new FoliaScheduledTask(plugin, nativeTask));
                 return id;
             }
         }
@@ -236,7 +237,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
             Consumer<?> consumer = t -> task.run();
             Object nativeTask = this.globalRunAtFixedRate.invoke(this.globalScheduler, plugin, consumer, Math.max(1L, delay), period);
             if (nativeTask != null) {
-                this.taskRegistry.put(id, new FoliaScheduledTask(nativeTask));
+                this.taskRegistry.put(id, new FoliaScheduledTask(plugin, nativeTask));
                 return id;
             }
         }
@@ -256,9 +257,11 @@ public final class FoliaTaskScheduler implements TaskScheduler {
 
     @Override
     public void cancelTasks(@NotNull Plugin plugin) {
-        // Cancel registry tasks for this plugin (best-effort; individual tasks don't track owner)
-        this.taskRegistry.values().forEach(ScheduledTask::cancel);
-        this.taskRegistry.clear();
+        // Cancel registry tasks for this plugin
+        this.taskRegistry.values().forEach(task -> {
+            if (plugin.equals(task.getPlugin())) task.cancel();
+        });
+        this.taskRegistry.values().removeIf(FoliaScheduledTask::isCancelled);
 
         // Also cancel via native Folia schedulers
         try {
@@ -293,7 +296,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
             Consumer<?> consumer = t -> task.run();
             Object[] args = buildArgs(plugin, consumer, extra);
             Object result = method.invoke(this.globalScheduler, args);
-            return new FoliaScheduledTask(result);
+            return new FoliaScheduledTask(plugin, result);
         }
         catch (Exception ex) {
             throw new RuntimeException("Failed to invoke GlobalRegionScheduler." + method.getName(), ex);
@@ -304,7 +307,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
         try {
             Consumer<?> consumer = t -> task.run();
             Object result = method.invoke(this.asyncScheduler, plugin, consumer);
-            return new FoliaScheduledTask(result);
+            return new FoliaScheduledTask(plugin, result);
         }
         catch (Exception ex) {
             throw new RuntimeException("Failed to invoke AsyncScheduler." + method.getName(), ex);
@@ -316,7 +319,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
         try {
             Consumer<?> consumer = t -> task.run();
             Object result = method.invoke(this.asyncScheduler, plugin, consumer, delay, unit);
-            return new FoliaScheduledTask(result);
+            return new FoliaScheduledTask(plugin, result);
         }
         catch (Exception ex) {
             throw new RuntimeException("Failed to invoke AsyncScheduler." + method.getName(), ex);
@@ -329,7 +332,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
         try {
             Consumer<?> consumer = t -> task.run();
             Object result = method.invoke(this.asyncScheduler, plugin, consumer, delay, period, unit);
-            return new FoliaScheduledTask(result);
+            return new FoliaScheduledTask(plugin, result);
         }
         catch (Exception ex) {
             throw new RuntimeException("Failed to invoke AsyncScheduler." + method.getName(), ex);
@@ -341,7 +344,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
             Consumer<?> consumer = t -> task.run();
             Object[] args = buildArgs(plugin, location, consumer, extra);
             Object result = method.invoke(this.regionScheduler, args);
-            return new FoliaScheduledTask(result);
+            return new FoliaScheduledTask(plugin, result);
         }
         catch (Exception ex) {
             throw new RuntimeException("Failed to invoke RegionScheduler." + method.getName(), ex);
@@ -354,7 +357,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
             Consumer<?> consumer = t -> task.run();
             Object[] args = buildArgs(plugin, consumer, retired, extra);
             Object result = method.invoke(entityScheduler, args);
-            return result != null ? new FoliaScheduledTask(result) : null;
+            return result != null ? new FoliaScheduledTask(plugin, result) : null;
         }
         catch (Exception ex) {
             throw new RuntimeException("Failed to invoke EntityScheduler." + method.getName(), ex);
@@ -389,9 +392,12 @@ public final class FoliaTaskScheduler implements TaskScheduler {
     // endregion
 
     private final class FoliaScheduledTask implements ScheduledTask {
+        @Getter
+        private final Plugin plugin;
         private final Object nativeTask;
 
-        FoliaScheduledTask(@NotNull Object nativeTask) {
+        FoliaScheduledTask(@NotNull Plugin plugin, @NotNull Object nativeTask) {
+            this.plugin = plugin;
             this.nativeTask = nativeTask;
         }
 

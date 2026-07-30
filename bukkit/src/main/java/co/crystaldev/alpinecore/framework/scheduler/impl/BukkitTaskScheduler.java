@@ -166,6 +166,11 @@ public final class BukkitTaskScheduler implements TaskScheduler {
         }
 
         @Override
+        public @NotNull Plugin getPlugin() {
+            return this.task.getOwner();
+        }
+
+        @Override
         public void cancel() {
             this.cancelled = true;
             this.task.cancel();

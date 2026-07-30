@@ -8,12 +8,22 @@
  */
 package co.crystaldev.alpinecore.framework.scheduler;
 
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a task scheduled to run on the server.
  *
  * @since 0.5.0
  */
 public interface ScheduledTask {
+
+    /**
+     * Retrieves the owning plugin associated with this task.
+     *
+     * @return the plugin that scheduled this task
+     */
+    @NotNull Plugin getPlugin();
 
     /**
      * Cancels this task. Has no effect if the task is already canceled or finished.
