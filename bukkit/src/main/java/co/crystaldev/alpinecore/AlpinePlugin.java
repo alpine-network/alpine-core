@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
+import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
 import dev.rollczi.litecommands.extension.LiteExtension;
 import dev.rollczi.litecommands.adventure.bukkit.platform.LiteAdventurePlatformExtension;
 import dev.rollczi.litecommands.argument.ArgumentKey;
@@ -46,6 +47,7 @@ import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.schematic.SchematicFormat;
 import lombok.Getter;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -510,13 +512,6 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                     ));
                 })
 
-                // Enable Adventure support
-                .extension(new LiteAdventurePlatformExtension<>(BukkitAudiences.create(this)), config -> config
-                        .miniMessage(true)
-                        .legacyColor(true)
-                        .colorizeArgument(true)
-                        .serializer(this.miniMessage))
-
                 // Use Bukkit permissions
                 .settings(settings -> settings
                         .nativePermissions(true)
@@ -535,6 +530,16 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
                 .message(LiteBukkitMessages.PLAYER_NOT_FOUND, input -> messages.playerNotFound.buildString(this, "player", input))
                 .message(LiteBukkitMessages.PLAYER_ONLY, input -> messages.playerOnly.buildString(this));
 
+        // Enable Adventure support
+        LiteAdventureExtension<CommandSender> adventureExtension = this instanceof Audience ? new LiteAdventureExtension<>()
+                : new LiteAdventurePlatformExtension<>(BukkitAudiences.create(this));
+        builder.extension(adventureExtension, config -> config
+                .miniMessage(true)
+                .legacyColor(true)
+                .colorizeArgument(true)
+                .serializer(this.miniMessage));
+
+        // Enable Folia support
         if (isFolia()) {
             try {
                 @SuppressWarnings("unchecked")
