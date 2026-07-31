@@ -29,10 +29,10 @@ import co.crystaldev.alpinecore.integration.PlaceholderIntegration;
 import co.crystaldev.alpinecore.integration.VaultIntegration;
 import co.crystaldev.alpinecore.platform.Platform;
 import co.crystaldev.alpinecore.util.ChatColor;
+import co.crystaldev.alpinecore.util.ClassScanner;
 import co.crystaldev.alpinecore.util.SimpleTimer;
 import co.crystaldev.alpinecore.util.StyleTagResolver;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.ClassPath;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.argument.ArgumentKey;
@@ -436,21 +436,27 @@ public abstract class AlpinePlugin extends JavaPlugin implements Listener {
         Set<Class<?>> classes = new HashSet<>();
         try {
             for (Class<?> scannablePackage : this.getScannablePackages()) {
-                String packageName = scannablePackage.getPackage().getName();
-                ClassPath.from(scannablePackage.getClassLoader()).getAllClasses().stream()
-                        .filter(clazz -> clazz.getPackageName().contains(packageName))
-                        .filter(clazz -> this.onActivatablePreload(clazz.getName()))
-                        .map(v -> {
-                            try {
-                                return v.load();
-                            }
-                            catch (Throwable e) {
-                                this.log(Level.FINE, String.format("&cUnable to scan class &d%s&c", v.getName()));
-                                return null;
-                            }
-                        })
-                        .filter(Objects::nonNull)
-                        .forEach(classes::add);
+                ClassLoader loader = scannablePackage.getClassLoader();
+                Set<String> scanned = ClassScanner.scan(scannablePackage);
+
+                if (scanned.isEmpty()) {
+                    this.log(Level.WARNING, String.format(
+                            "&cFound no classes to scan under &d%s&c - no framework components will activate",
+                            scannablePackage.getPackage().getName()));
+                }
+
+                for (String className : scanned) {
+                    if (!this.onActivatablePreload(className)) {
+                        continue;
+                    }
+
+                    try {
+                        classes.add(Class.forName(className, false, loader));
+                    }
+                    catch (Throwable ex) {
+                        this.log(Level.FINE, String.format("&cUnable to scan class &d%s&c", className));
+                    }
+                }
             }
 
             classes.add(PlaceholderIntegration.class);
