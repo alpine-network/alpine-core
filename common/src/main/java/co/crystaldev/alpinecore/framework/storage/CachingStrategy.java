@@ -9,7 +9,7 @@
 package co.crystaldev.alpinecore.framework.storage;
 
 import lombok.Getter;
-import org.apache.commons.lang.Validate;
+import co.crystaldev.alpinecore.util.Validate;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import de.exlll.configlib.Configuration;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang.Validate;
+import co.crystaldev.alpinecore.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

@@ -10,7 +10,7 @@ package co.crystaldev.alpinecore.framework.ui.interaction;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang.Validate;
+import co.crystaldev.alpinecore.util.Validate;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.jetbrains.annotations.NotNull;

@@ -9,7 +9,6 @@
 package co.crystaldev.alpinecore.framework.storage.driver;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
-import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,31 +29,31 @@ public class MongoDriver<K, D> extends AlpineDriver<K, D> {
 
     @Override
     public boolean persistEntry(@NotNull K key, @NotNull D data) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean deleteEntry(@NotNull K key) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean hasEntry(@NotNull K key) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NotNull D retrieveEntry(@NotNull K key) throws Exception {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NotNull Collection<D> getAllEntries() throws Exception {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public @NotNull Collection<D> getAllEntries(@Nullable Consumer<Exception> exceptionConsumer) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

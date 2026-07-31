@@ -11,7 +11,7 @@ package co.crystaldev.alpinecore.framework.cooldown;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.util.Messaging;
 import lombok.Getter;
-import org.apache.commons.lang.Validate;
+import co.crystaldev.alpinecore.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

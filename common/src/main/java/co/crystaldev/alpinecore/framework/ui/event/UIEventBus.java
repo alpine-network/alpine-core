@@ -9,7 +9,7 @@
 package co.crystaldev.alpinecore.framework.ui.event;
 
 import co.crystaldev.alpinecore.framework.ui.UIContext;
-import org.apache.commons.lang.Validate;
+import co.crystaldev.alpinecore.util.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

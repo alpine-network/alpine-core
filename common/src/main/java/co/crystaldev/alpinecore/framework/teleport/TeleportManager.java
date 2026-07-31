@@ -11,7 +11,7 @@ package co.crystaldev.alpinecore.framework.teleport;
 import co.crystaldev.alpinecore.AlpineCore;
 import co.crystaldev.alpinecore.AlpinePlugin;
 import co.crystaldev.alpinecore.util.Messaging;
-import org.apache.commons.lang.Validate;
+import co.crystaldev.alpinecore.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;

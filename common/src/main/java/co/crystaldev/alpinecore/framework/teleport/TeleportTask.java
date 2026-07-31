@@ -10,7 +10,7 @@ package co.crystaldev.alpinecore.framework.teleport;
 
 import co.crystaldev.alpinecore.AlpinePlugin;
 import lombok.*;
-import org.apache.commons.lang.Validate;
+import co.crystaldev.alpinecore.util.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
