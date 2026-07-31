@@ -51,6 +51,12 @@ extensions.configure<ModrinthExtension> {
     // Reads the distribution extension rather than naming a task: which task produces the
     // shippable jar differs per platform.
     uploadFile.set(dist.jar)
+
+    val extraJars: Provider<List<Any>> = dist.additionalJars.elements.map { locations ->
+        locations.map { it.asFile as Any }
+    }
+    additionalFiles.addAll(extraJars)
+
     loaders.set(dist.loaders)
     syncBodyFrom.set(project.rootProject.file("README.md").readText())
 }

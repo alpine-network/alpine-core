@@ -79,9 +79,19 @@ listOf("apiElements", "runtimeElements").forEach { name ->
     }
 }
 
+val paperDistribution = configurations.create("paperDistribution") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+dependencies {
+    paperDistribution(project(mapOf("path" to ":alpinecore-paper", "configuration" to "distributionElements")))
+}
+
 distribution {
     platform.set("Bukkit")
     jar.set(tasks.named<ShadeJar>("shadeDowngradedApi").flatMap { it.archiveFile })
+    additionalJars.from(paperDistribution)
     loaders.set(listOf("bukkit", "spigot", "paper", "purpur", "folia"))
 }
 

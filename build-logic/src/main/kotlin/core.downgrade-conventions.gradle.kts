@@ -42,6 +42,21 @@ tasks.withType<DowngradeJar>().configureEach {
 }
 tasks.withType<ShadeJar>().configureEach {
     manifest.attributes.clear()
+
+    from(rootProject.file("gradle/licenses/lgpl-2.1.txt")) {
+        into("META-INF/licenses")
+        rename { "LICENSE-jvmdowngrader.txt" }
+    }
+}
+
+pluginManager.withPlugin("maven-publish") {
+    extensions.configure<PublishingExtension> {
+        publications.withType<MavenPublication>().configureEach {
+            artifact(tasks.named<DowngradeJar>("downgradeJar")) {
+                classifier = "downgraded"
+            }
+        }
+    }
 }
 
 tasks {

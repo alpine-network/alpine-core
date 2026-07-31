@@ -7,10 +7,16 @@ on:
     paths:
       - '**/*.java'
       - '**/*.toml'
+      - '**/*.kts'
+      - '**/*.yml'
+      - 'gradle.properties'
+      - 'gradle/wrapper/**'
 
 jobs:
   build_deploy:
-    if: github.repository_owner == 'alpine-network' && github.ref_name == 'master'
+    if: >-
+      github.repository_owner == 'alpine-network'
+      && (github.ref_name == 'master' || github.event_name == 'workflow_dispatch')
 
     runs-on: ubuntu-24.04
     permissions:
@@ -28,7 +34,12 @@ jobs:
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: temurin
-          java-version: 21
+          # 8 is required by `downgradedTest`, which runs the downgraded archive on a real Java 8
+          # JVM; 25 is the Gradle toolchain. Order matters - setup-java points JAVA_HOME at the last
+          # entry, and Gradle itself must run on 25.
+          java-version: |
+            8
+            25
           check-latest: true
 
       - name: "Prepare Gradle"
@@ -69,7 +80,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           set -e
-          RELEASE_VERSION=$(./gradlew properties --full-stacktrace | grep "version:" | awk '{print $2}')
+          RELEASE_VERSION=$(./gradlew properties --full-stacktrace -q | grep -m1 '^version:' | awk '{print $2}')
           if [[ -z "$RELEASE_VERSION" ]]; then
             echo "Error: unable to parse version from gradle properties."
             exit 1
@@ -86,7 +97,8 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}
           name: v${{ env.RELEASE_VERSION }}
           files: |
-            bukkit/build/libs/AlpineCore-${{ env.RELEASE_VERSION }}.jar
+            bukkit/build/libs/AlpineCore-Bukkit-${{ env.RELEASE_VERSION }}.jar
+            paper/build/libs/AlpineCore-Paper-${{ env.RELEASE_VERSION }}.jar
           fail_on_unmatched_files: true
           make_latest: true
           prerelease: false
