@@ -8,9 +8,9 @@
  */
 package co.crystaldev.alpinecore.framework.scheduler.impl;
 
+import co.crystaldev.alpinecore.framework.scheduler.LegacyTaskIds;
 import co.crystaldev.alpinecore.framework.scheduler.ScheduledTask;
 import co.crystaldev.alpinecore.framework.scheduler.TaskScheduler;
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
@@ -19,9 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -60,8 +58,7 @@ public final class FoliaTaskScheduler implements TaskScheduler {
     private final Method scheduledTaskGetExecutionState;
 
     // Legacy compatibility
-    private final AtomicInteger nextTaskId = new AtomicInteger(1);
-    private final ConcurrentHashMap<Integer, FoliaScheduledTask> taskRegistry = new ConcurrentHashMap<>();
+    private final LegacyTaskIds legacyTasks = new LegacyTaskIds();
 
     public FoliaTaskScheduler(@NotNull Server server) {
         try {
@@ -206,62 +203,24 @@ public final class FoliaTaskScheduler implements TaskScheduler {
 
     @Override
     public int scheduleSyncDelayedTask(@NotNull Plugin plugin, @NotNull Runnable task, long delay) {
-        int id = nextTaskId.getAndIncrement();
-        try {
-            // Wrap task so we can complete registration before it runs
-            Runnable[] wrapper = new Runnable[1];
-            wrapper[0] = () -> {
-                try {
-                    task.run();
-                } finally {
-                    taskRegistry.remove(id);
-                }
-            };
-            Consumer<?> consumer = t -> wrapper[0].run();
-            Object nativeTask = this.globalRunDelayed.invoke(this.globalScheduler, plugin, consumer, Math.max(1L, delay));
-            if (nativeTask != null) {
-                this.taskRegistry.put(id, new FoliaScheduledTask(plugin, nativeTask));
-                return id;
-            }
-        }
-        catch (Exception ex) {
-            throw new RuntimeException("Failed to schedule delayed task", ex);
-        }
-        return -1;
+        return this.legacyTasks.schedule(plugin, task, true, wrapped ->
+                invokeGlobal(this.globalRunDelayed, plugin, wrapped, Math.max(1L, delay)));
     }
 
     @Override
     public int scheduleSyncRepeatingTask(@NotNull Plugin plugin, @NotNull Runnable task, long delay, long period) {
-        int id = nextTaskId.getAndIncrement();
-        try {
-            Consumer<?> consumer = t -> task.run();
-            Object nativeTask = this.globalRunAtFixedRate.invoke(this.globalScheduler, plugin, consumer, Math.max(1L, delay), period);
-            if (nativeTask != null) {
-                this.taskRegistry.put(id, new FoliaScheduledTask(plugin, nativeTask));
-                return id;
-            }
-        }
-        catch (Exception ex) {
-            throw new RuntimeException("Failed to schedule repeating task", ex);
-        }
-        return -1;
+        return this.legacyTasks.schedule(plugin, task, false, wrapped ->
+                invokeGlobal(this.globalRunAtFixedRate, plugin, wrapped, Math.max(1L, delay), period));
     }
 
     @Override
     public void cancelTask(int taskId) {
-        FoliaScheduledTask task = this.taskRegistry.remove(taskId);
-        if (task != null) {
-            task.cancel();
-        }
+        this.legacyTasks.cancel(taskId);
     }
 
     @Override
     public void cancelTasks(@NotNull Plugin plugin) {
-        // Cancel registry tasks for this plugin
-        this.taskRegistry.values().forEach(task -> {
-            if (plugin.equals(task.getPlugin())) task.cancel();
-        });
-        this.taskRegistry.values().removeIf(FoliaScheduledTask::isCancelled);
+        this.legacyTasks.cancelAll(plugin);
 
         // Also cancel via native Folia schedulers
         try {
@@ -275,16 +234,12 @@ public final class FoliaTaskScheduler implements TaskScheduler {
 
     @Override
     public boolean isCurrentlyRunning(int taskId) {
-        FoliaScheduledTask task = this.taskRegistry.get(taskId);
-        if (task == null) return false;
-        return "RUNNING".equals(task.getExecutionStateName());
+        return this.legacyTasks.isCurrentlyRunning(taskId);
     }
 
     @Override
     public boolean isQueued(int taskId) {
-        FoliaScheduledTask task = this.taskRegistry.get(taskId);
-        if (task == null) return false;
-        return "IDLE".equals(task.getExecutionStateName());
+        return this.legacyTasks.isQueued(taskId);
     }
 
     // endregion
@@ -392,13 +347,17 @@ public final class FoliaTaskScheduler implements TaskScheduler {
     // endregion
 
     private final class FoliaScheduledTask implements ScheduledTask {
-        @Getter
         private final Plugin plugin;
         private final Object nativeTask;
 
         FoliaScheduledTask(@NotNull Plugin plugin, @NotNull Object nativeTask) {
             this.plugin = plugin;
             this.nativeTask = nativeTask;
+        }
+
+        @Override
+        public @NotNull Plugin plugin() {
+            return this.plugin;
         }
 
         @Override
@@ -413,17 +372,17 @@ public final class FoliaTaskScheduler implements TaskScheduler {
 
         @Override
         public boolean isCancelled() {
-            String state = getExecutionStateName();
-            return "CANCELLED".equals(state) || "CANCELLED_RUNNING".equals(state);
+            return this.getState().isCancelled();
         }
 
-        String getExecutionStateName() {
+        @Override
+        public @NotNull ScheduledTask.State getState() {
             try {
                 Object state = scheduledTaskGetExecutionState.invoke(this.nativeTask);
-                return state != null ? state.toString() : "FINISHED";
+                return ScheduledTask.State.byName(state == null ? null : state.toString());
             }
             catch (Exception ex) {
-                return "FINISHED";
+                return ScheduledTask.State.FINISHED;
             }
         }
     }

@@ -47,6 +47,34 @@ publishing.publications.withType<MavenPublication>().configureEach {
 
 // endregion
 
+// region The variant the platform modules consume
+
+// `apiElements`/`runtimeElements` now carry the downgraded Java 8 jar, which is right for the
+// outside world and wrong for our own platform modules: each of them merges `common` into a fat
+// jar and handles bytecode level itself - bukkit downgrades the merged result, paper ships Java 25.
+// Consuming the downgraded jar would make bukkit downgrade twice and would leave paper shipping
+// Java 8 classes plus a JvmDowngrader shim it has no use for.
+val modernElements = configurations.consumable("modernElements") {
+    extendsFrom(
+        configurations.api.get(),
+        configurations.implementation.get(),
+        configurations.runtimeOnly.get(),
+    )
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
+    }
+}
+
+artifacts {
+    add(modernElements.name, tasks.named<Jar>("jar"))
+}
+
+// endregion
+
 dependencies {
     // Internal dependencies
     implementation(libs.localelib)
@@ -92,6 +120,61 @@ dependencies {
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 }
+
+// region Modern API check
+
+// Compiles the very same sources a second time, against paper-api instead of the 1.8.8 floor.
+// `common` is compiled against spigot-api, so a method that Bukkit has since *removed* still
+// resolves happily here and only fails on a modern server - at runtime, in front of users. This
+// turns that into a compile error.
+val modernCheck = sourceSets.create("modernCheck") {
+    java.setSrcDirs(emptyList<File>())
+    resources.setSrcDirs(emptyList<File>())
+}
+
+configurations.named(modernCheck.compileOnlyConfigurationName) {
+    extendsFrom(
+        configurations.api.get(),
+        configurations.implementation.get(),
+        configurations.compileOnly.get(),
+    )
+    // The whole point: swap the floor out for the modern API.
+    exclude(group = "org.spigotmc", module = "spigot-api")
+}
+
+dependencies {
+    add(modernCheck.compileOnlyConfigurationName, libs.paper.api)
+    add(modernCheck.annotationProcessorConfigurationName, libs.lombok)
+}
+
+tasks.named<JavaCompile>(modernCheck.compileJavaTaskName) {
+    description = "Compiles common's sources against paper-api to catch use of removed Bukkit API."
+    // Passing the SourceDirectorySet rather than its directories keeps the dependency on blossom's
+    // generated templates.
+    source(sourceSets.main.get().java)
+
+    // Legitimately un-compilable against a modern API: this file exists to translate numeric
+    // material IDs, so it names Material constants and Material#getId, all removed in the 1.13
+    // flattening. Every one of those references sits behind `!XReflection.supports(1, 13, 0)`, and
+    // the JVM resolves field and method references lazily, so unreached code never links.
+    //
+    // Its callers still have to resolve it, so `main`'s output - compiled against the 1.8.8 floor -
+    // goes on the classpath below. Only allowlisted files come from there; everything else is
+    // compiled from source against paper-api, which is the entire point of this task.
+    exclude("**/util/MaterialHelper.java")
+    classpath += sourceSets.main.get().output
+
+    // paper-api is org.gradle.jvm.version 25; javac cannot read class files newer than its release.
+    options.release.set(25)
+    // Nothing consumes the output - only whether it compiles.
+    destinationDirectory.set(layout.buildDirectory.dir("classes/java/modernCheck"))
+}
+
+tasks.named("check") {
+    dependsOn(tasks.named(modernCheck.compileJavaTaskName))
+}
+
+// endregion
 
 sourceSets {
     main {

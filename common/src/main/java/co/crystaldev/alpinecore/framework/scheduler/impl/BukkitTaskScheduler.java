@@ -166,7 +166,7 @@ public final class BukkitTaskScheduler implements TaskScheduler {
         }
 
         @Override
-        public @NotNull Plugin getPlugin() {
+        public @NotNull Plugin plugin() {
             return this.task.getOwner();
         }
 

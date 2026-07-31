@@ -12,7 +12,7 @@ xseries = "13.7.1"                     # https://github.com/CryptoMorin/XSeries/
 
 # Bukkit/Spigot/Paper
 spigot = "1.8.8-R0.1-SNAPSHOT"         # https://www.spigotmc.org/
-paper = "1.20.4-R0.1-SNAPSHOT"         # https://papermc.io/downloads/all?project=paper
+paper = "26.2.build.87-stable"         # https://papermc.io/downloads/all?project=paper # Java 25 bytecode; supplies Adventure 5.2.0 transitively
 placeholderapi = "2.11.6"              # https://github.com/PlaceholderAPI/PlaceholderAPI/releases
 vault = "1.7.1"                        # https://github.com/MilkBowl/VaultAPI
 

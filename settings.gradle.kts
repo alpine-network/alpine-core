@@ -28,6 +28,7 @@ rootProject.name = "alpinecore"
 setOf(
     "common",
     "bukkit",
+    "paper",
 ).forEach {
     include(it)
     project(":$it").name = "${rootProject.name}-$it"

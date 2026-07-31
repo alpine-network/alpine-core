@@ -1,4 +1,3 @@
-import java.util.zip.ZipFile
 import org.gradle.api.attributes.java.TargetJvmVersion
 import xyz.wagyourtail.jvmdg.gradle.task.DowngradeJar
 import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
@@ -6,6 +5,7 @@ import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
 plugins {
     id("core.downgrade-conventions")
     id("core.shadow-conventions")
+    id("core.platform-conventions")
     id("core.hangar-conventions")
     id("core.modrinth-conventions")
 }
@@ -21,12 +21,16 @@ val downgradeClasspath = configurations.create("downgradeClasspath") {
 }
 
 dependencies {
-    bundled(projects.alpinecoreCommon)
+    // The pre-downgrade Java 21 build; see `modernElements` in common/build.gradle.kts.
+    bundled(project(mapOf("path" to ":alpinecore-common", "configuration" to "modernElements")))
 
     bundled(libs.litecommands.folia) { isTransitive = false }
 
     downgradeClasspath(libs.folia.scheduler.api) { isTransitive = false }
     downgradeClasspath(libs.protocollib) { isTransitive = false }
+    // common compiles against Vault, and this module now downgrades common's classes rather than
+    // consuming an already-downgraded jar - so the downgrader needs the types too.
+    downgradeClasspath(libs.vault.api) { isTransitive = false }
 
     // The 1.8.8 floor
     compileOnly(libs.spigot.api) {
@@ -43,66 +47,9 @@ dependencies {
     annotationProcessor(libs.lombok)
 }
 
-// region Platform service declaration
-
-// Generated rather than checked in, so renaming or moving the implementation class can never
-// silently orphan the service file.
-val platformImpl = "co.crystaldev.alpinecore.platform.bukkit.BukkitPlatform"
-val serviceEntry = "META-INF/services/co.crystaldev.alpinecore.platform.AlpinePlatform"
-val servicesDir = layout.buildDirectory.dir("generated/services")
-val generatePlatformService = tasks.register("generatePlatformService") {
-    description = "Writes the META-INF/services entry for the bundled AlpinePlatform."
-    // NB: capture plain locals rather than referencing the script properties from inside the
-    // action - the configuration cache cannot serialize script object references.
-    val impl = platformImpl
-    val output = servicesDir.map { it.file(serviceEntry) }
-    inputs.property("impl", impl)
-    outputs.file(output)
-    doLast {
-        output.get().asFile.apply {
-            parentFile.mkdirs()
-            writeText(impl + "\n")
-        }
-    }
+platform {
+    provider.set("co.crystaldev.alpinecore.platform.bukkit.BukkitPlatform")
 }
-
-sourceSets {
-    main {
-        resources.srcDir(generatePlatformService.map { servicesDir })
-    }
-}
-
-/** Guards against the service file going missing or naming a class that isn't a provider. */
-val verifyPlatformService = tasks.register("verifyPlatformService") {
-    group = LifecycleBasePlugin.VERIFICATION_GROUP
-    description = "Asserts the built jar declares exactly one valid AlpinePlatform provider."
-    dependsOn(tasks.named("shadowJar"))
-    val jarFile = tasks.named<org.gradle.jvm.tasks.Jar>("shadowJar").flatMap { it.archiveFile }
-    val expected = platformImpl
-    val entry = serviceEntry
-    doLast {
-        val zip = ZipFile(jarFile.get().asFile)
-        try {
-            val found = zip.getEntry(entry)
-                ?: throw GradleException("$entry is missing from the built jar")
-            val declared = zip.getInputStream(found).reader().readText()
-                .lines().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }
-            require(declared == listOf(expected)) {
-                "expected exactly one provider <$expected>, jar declares $declared"
-            }
-            println("service file OK: $expected")
-        }
-        finally {
-            zip.close()
-        }
-    }
-}
-
-tasks.named("check") {
-    dependsOn(verifyPlatformService)
-}
-
-// endregion
 
 listOf("apiElements", "runtimeElements").forEach { name ->
     configurations.named(name) {

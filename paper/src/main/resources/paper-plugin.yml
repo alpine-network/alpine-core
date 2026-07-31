@@ -1,0 +1,23 @@
+main: co.crystaldev.alpinecore.AlpineCore
+name: AlpineCore
+version: "${version}"
+description: "${description}"
+# The real floor for this archive. Declaring it also opts out of every api-version-keyed
+# compatibility shim Paper applies to older plugins - notably the InventoryView invoke-opcode
+# rewrite, which this module must not receive since it compiles against the interface form.
+api-version: "26.2"
+website: https://github.com/alpine-network/alpine-core
+authors:
+  - tomwmth
+  - BestBearr
+  - Crystal Development, LLC.
+dependencies:
+  server:
+    Vault:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true
