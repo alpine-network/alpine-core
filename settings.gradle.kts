@@ -6,6 +6,7 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         maven("https://lib.alpn.cloud/releases/")
+        maven("https://lib.alpn.cloud/mirrors/")
     }
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 }
@@ -25,6 +26,7 @@ plugins {
 rootProject.name = "alpinecore"
 
 setOf(
+    "common",
     "bukkit",
 ).forEach {
     include(it)
