@@ -15,6 +15,7 @@ spigot = "1.8.8-R0.1-SNAPSHOT"         # https://www.spigotmc.org/
 paper = "26.2.build.87-stable"         # https://papermc.io/downloads/all?project=paper # Java 25 bytecode; supplies Adventure 5.2.0 transitively
 placeholderapi = "2.11.6"              # https://github.com/PlaceholderAPI/PlaceholderAPI/releases
 vault = "1.7.1"                        # https://github.com/MilkBowl/VaultAPI
+viaversion = "5.11.0"                  # https://github.com/ViaVersion/ViaVersion/releases # example plugin only
 
 # Bundled with Spigot 1.8.8-R0.1
 lang = "2.6"
@@ -56,6 +57,7 @@ placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "pl
 spigot-api = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
 testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 vault-api = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
+viaversion-api = { group = "com.viaversion", name = "viaversion-api", version.ref = "viaversion" }
 xseries = { group = "com.github.cryptomorin", name = "XSeries", version.ref = "xseries" }
 
 # Gradle

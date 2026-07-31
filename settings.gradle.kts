@@ -33,3 +33,5 @@ setOf(
     include(it)
     project(":$it").name = "${rootProject.name}-$it"
 }
+
+include("example")
