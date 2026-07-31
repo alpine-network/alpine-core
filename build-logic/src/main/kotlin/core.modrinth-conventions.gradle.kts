@@ -6,13 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.modrinth.minotaur.ModrinthExtension
 import masecla.modrinth4j.model.version.ProjectVersion
 
 plugins {
+    id("core.distribution-conventions")
     id("com.modrinth.minotaur")
 }
+
+private val dist = extensions.getByType<AlpineDistributionExtension>()
 
 extensions.configure<ModrinthExtension> {
     val versionString: String
@@ -46,7 +48,10 @@ extensions.configure<ModrinthExtension> {
         optional.project("placeholderapi")
     }
 
-    uploadFile.set(tasks.named<ShadowJar>("shadowJar").get())
+    // Reads the distribution extension rather than naming a task: which task produces the
+    // shippable jar differs per platform.
+    uploadFile.set(dist.jar)
+    loaders.set(dist.loaders)
     syncBodyFrom.set(project.rootProject.file("README.md").readText())
 }
 

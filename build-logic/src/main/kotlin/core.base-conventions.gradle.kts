@@ -18,9 +18,8 @@ plugins {
 plugins.withId("java") {
     configure<JavaPluginExtension> {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+            languageVersion.set(JavaLanguageVersion.of(25))
         }
-        sourceCompatibility = JavaVersion.VERSION_1_8
     }
 }
 
@@ -32,9 +31,7 @@ idea {
 }
 
 tasks {
-    // Target Java 8
     withType<JavaCompile>().configureEach {
-        options.release.set(8)
         options.encoding = Charsets.UTF_8.name()
         addCompilerArgs()
     }
@@ -90,17 +87,11 @@ fun Javadoc.configureOptions() {
             "https://lib.alpn.cloud/javadoc/releases/com/github/cryptomorin/XSeries/${v.xseries.get()}/raw/",
         )
 
-        setOf(
-            "api",
-            "text-minimessage",
-            "text-serializer-plain",
-        ).forEach {
-            links("https://jd.advntr.dev/${it}/${v.adventure.get()}")
-        }
+        // Adventure moved to PaperMC and now publishes a single javadoc site covering every module
+        links("https://jd.papermc.io/adventure/${v.adventure.get()}/")
 
         setOf(
             "litecommands-adventure",
-            "litecommands-adventure-platform",
             "litecommands-annotations",
             "litecommands-core",
             "litecommands-framework",

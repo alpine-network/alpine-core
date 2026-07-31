@@ -7,6 +7,7 @@ dependencies {
     implementation(libs.blossom.plugin)
     implementation(libs.idea.ext.plugin)
     implementation(libs.hangar.publish.plugin)
+    implementation(libs.jvmdowngrader.plugin)
     implementation(libs.maven.publish.plugin)
     implementation(libs.minotaur.publish.plugin)
     implementation(libs.shadow.plugin)

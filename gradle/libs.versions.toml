@@ -1,11 +1,10 @@
 [versions]
 # Shaded
-adventure = "4.26.1"                   # https://github.com/KyoriPowered/adventure/releases # NOTE: v5+ requires JDK 21
-adventureBukkit = "4.4.1"              # https://github.com/KyoriPowered/adventure-platform/releases
+adventure = "5.2.0"                    # https://github.com/PaperMC/adventure/releases # Java 21 bytecode; downgraded for the Bukkit distribution
 annotations = "26.1.0"                 # https://github.com/JetBrains/java-annotations/releases
 configlib = "4.6.0"                    # https://github.com/tomwmth/ConfigLib
 dbcp2 = "2.14.0"                       # https://commons.apache.org/proper/commons-dbcp/changes.html
-litecommands = "3.10.9"                # https://github.com/Rollczi/LiteCommands/releases # NOTE: v3.11+ requires JDK 17
+litecommands = "3.11.0"                # https://github.com/Rollczi/LiteCommands/releases # Java 17 bytecode; downgraded for the Bukkit distribution
 localelib = "4.1.5"                    # https://github.com/PikaMug/LocaleLib/releases
 lombok = "1.18.46"                     # https://projectlombok.org/changelog
 testng = "7.5.1"                       # https://github.com/testng-team/testng/releases # NOTE: v7.6+ requires JDK 11
@@ -28,6 +27,7 @@ ideaExt = "1.4.1"                     # https://github.com/jetbrains/gradle-idea
 hangarPublish = "0.1.4"               # https://github.com/HangarMC/hangar-publish-plugin
 mavenPublish = "0.37.0"               # https://github.com/vanniktech/gradle-maven-publish-plugin/releases
 minotaurPublish = '2.+'               # https://github.com/modrinth/minotaur/releases
+jvmdowngrader = "1.3.6"               # https://github.com/unimined/JvmDowngrader/releases
 shadow = "9.6.1"                      # https://github.com/GradleUp/shadow/releases
 spotless = "8.9.0"                    # https://github.com/diffplug/spotless/releases
 
@@ -36,7 +36,7 @@ adventure-bom = { group = "net.kyori", name = "adventure-bom", version.ref = "ad
 adventure-api.module = "net.kyori:adventure-api"
 adventure-text-minimessage.module = "net.kyori:adventure-text-minimessage"
 adventure-text-serializer-plain.module = "net.kyori:adventure-text-serializer-plain"
-adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventureBukkit" }
+adventure-text-serializer-legacy.module = "net.kyori:adventure-text-serializer-legacy"
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
 configlib-yaml = { group = "dev.tomwmth.configlib", name = "configlib-yaml", version.ref = "configlib" }
 configlib-bukkit = { group = "dev.tomwmth.configlib", name = "configlib-bukkit", version.ref = "configlib" }
@@ -44,12 +44,14 @@ dbcp2 = { group = "org.apache.commons", name = "commons-dbcp2", version.ref = "d
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 lang = { group = "commons-lang", name = "commons-lang", version.ref = "lang" }
-litecommands-adventure-platform = { group = "dev.rollczi", name = "litecommands-adventure-platform", version.ref = "litecommands" }
+litecommands-adventure = { group = "dev.rollczi", name = "litecommands-adventure", version.ref = "litecommands" }
 litecommands-bukkit = { group = "dev.rollczi", name = "litecommands-bukkit", version.ref = "litecommands" }
 litecommands-folia = { group = "dev.rollczi", name = "litecommands-folia", version.ref = "litecommands" }
 localelib = { group = "com.github.PikaMug", name = "LocaleLib", version.ref = "localelib" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
+folia-scheduler-api = { group = "io.papermc.paper", name = "paper-api", version = "1.20.6-R0.1-SNAPSHOT" }
+protocollib = { group = "com.comphenix.protocol", name = "ProtocolLib", version = "5.3.0" }
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 spigot-api = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
 testng = { group = "org.testng", name = "testng", version.ref = "testng" }
@@ -62,5 +64,6 @@ idea-ext-plugin = { module = "org.jetbrains.gradle.plugin.idea-ext:org.jetbrains
 hangar-publish-plugin = { module = "io.papermc.hangar-publish-plugin:io.papermc.hangar-publish-plugin.gradle.plugin", version.ref = "hangarPublish" }
 maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenPublish" }
 minotaur-publish-plugin = { module = "com.modrinth.minotaur:com.modrinth.minotaur.gradle.plugin", version.ref = "minotaurPublish" }
+jvmdowngrader-plugin = { module = "xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin", version.ref = "jvmdowngrader" }
 shadow-plugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spotless-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }

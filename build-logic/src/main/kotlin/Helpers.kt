@@ -8,6 +8,7 @@
  */
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.Project
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -73,5 +74,8 @@ fun JavaCompile.addCompilerArgs() {
 fun Jar.includeLicenseFile() {
     from(project.rootProject.file("LICENSE")) {
         into("META-INF")
+        // A distribution jar bundles `common`, which already carries a byte-identical copy at this
+        // path. Skip the second write rather than failing the build over it.
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
