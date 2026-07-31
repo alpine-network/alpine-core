@@ -146,7 +146,7 @@ dependencies {
 All classes and methods that are part of the API should have Javadocs. If one does not, open an issue.
 
 > [!TIP]
-> Check out the [example plugin](example) in this repository to help you get started.
+> Check out the [example plugin]([example](https://github.com/alpine-network/example-plugin/)) in this repository to help you get started.
 
 > [!IMPORTANT]
 > AlpineCore must be added as a plugin on any server using your plugin. **DO NOT** shade it.
