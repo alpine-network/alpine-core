@@ -176,6 +176,61 @@ tasks.named("check") {
 
 // endregion
 
+// region Adventure floor check (advisory)
+
+// The Paper distribution compiles against Adventure 5 but runs against whatever the server provides
+val adventureFloorCheck = sourceSets.create("adventureFloorCheck") {
+    java.setSrcDirs(emptyList<File>())
+    resources.setSrcDirs(emptyList<File>())
+}
+
+configurations.named(adventureFloorCheck.compileOnlyConfigurationName) {
+    extendsFrom(
+        configurations.api.get(),
+        configurations.implementation.get(),
+        configurations.compileOnly.get(),
+    )
+}
+
+configurations.named(adventureFloorCheck.compileClasspathConfigurationName) {
+    val floor = libs.versions.adventureFloor.get()
+    resolutionStrategy.force(
+        "net.kyori:adventure-api:$floor",
+        "net.kyori:adventure-key:$floor",
+        "net.kyori:adventure-text-minimessage:$floor",
+        "net.kyori:adventure-text-serializer-legacy:$floor",
+        "net.kyori:adventure-text-serializer-plain:$floor",
+    )
+}
+
+dependencies {
+    add(adventureFloorCheck.annotationProcessorConfigurationName, libs.lombok)
+}
+
+tasks.named<JavaCompile>(adventureFloorCheck.compileJavaTaskName) {
+    description = "Reports (does not fail on) use of Adventure API newer than the Paper floor provides."
+    source(sourceSets.main.get().java)
+    destinationDirectory.set(layout.buildDirectory.dir("classes/java/adventureFloorCheck"))
+
+    // Advisory: report, don't block.
+    options.isFailOnError = false
+
+    val floor = libs.versions.adventureFloor.get()
+    val paperFloor = libs.versions.paperFloor.get()
+    doFirst {
+        logger.lifecycle(
+            "adventure floor check: compiling against Adventure $floor (what Paper $paperFloor " +
+                "provides). Any 'error:' below means the Paper archive requires Paper 26.2+."
+        )
+    }
+}
+
+tasks.named("check") {
+    dependsOn(tasks.named(adventureFloorCheck.compileJavaTaskName))
+}
+
+// endregion
+
 sourceSets {
     main {
         blossom {

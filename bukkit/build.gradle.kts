@@ -10,7 +10,19 @@ plugins {
     id("core.modrinth-conventions")
 }
 
-val bundled = configurations.create("bundled")
+val bundled = configurations.create("bundled") {
+    val bundledAdventure = libs.versions.adventureBundled.get()
+    resolutionStrategy.eachDependency {
+        // adventure-platform-* and the bungeecord serializer follow the *platform* version (4.4.1),
+        // not Adventure core's, so they must be left alone.
+        val platformOwned = requested.name.startsWith("adventure-platform")
+            || requested.name == "adventure-text-serializer-bungeecord"
+        if (requested.group == "net.kyori" && requested.name.startsWith("adventure-") && !platformOwned) {
+            useVersion(bundledAdventure)
+            because("adventure-platform-bukkit is an Adventure 4 artifact")
+        }
+    }
+}
 configurations.compileOnly { extendsFrom(bundled) }
 
 // Type information for the downgrader only. Deliberately not on any compile classpath, so
@@ -25,6 +37,10 @@ dependencies {
     bundled(project(mapOf("path" to ":alpinecore-common", "configuration" to "modernElements")))
 
     bundled(libs.litecommands.folia) { isTransitive = false }
+
+    // Chat, titles, action bars, boss bars, sounds and books across 1.8 -> latest, with the
+    // per-version packet handling we would otherwise be reimplementing.
+    bundled(libs.adventure.platform.bukkit)
 
     downgradeClasspath(libs.folia.scheduler.api) { isTransitive = false }
     downgradeClasspath(libs.protocollib) { isTransitive = false }

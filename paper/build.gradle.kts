@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.zip.ZipFile
 
 plugins {
-    id("core.java25-conventions")
+    id("core.java21-conventions")
     id("core.shadow-conventions")
     id("core.platform-conventions")
     id("core.distribution-conventions")
@@ -17,8 +17,11 @@ dependencies {
 
     bundled(libs.litecommands.folia) { isTransitive = false }
 
-    // Modern Paper bundles Adventure so we have no need to provide it ourselves
-    compileOnly(libs.paper.api)
+    compileOnly(libs.paper.api.floor)
+
+    // paper-api at the floor pulls Adventure 4 transitively. Adventure 5 is our API floor
+    // regardless, so pin it rather than leaving it to version conflict resolution.
+    compileOnly(platform(libs.adventure.bom))
 
     // Server plugins
     compileOnly(libs.placeholderapi)

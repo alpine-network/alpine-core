@@ -10,8 +10,8 @@ package co.crystaldev.alpinecore.platform.bukkit;
 
 import co.crystaldev.alpinecore.platform.PlatformItems;
 import co.crystaldev.alpinecore.util.ReflectionHelper;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -80,7 +80,7 @@ final class BukkitPlatformItems implements PlatformItems {
         }
 
         String legacy = meta.getDisplayName();
-        return legacy.isEmpty() ? null : LegacyComponentSerializer.legacySection().deserialize(legacy);
+        return legacy.isEmpty() ? null : BukkitComponentSerializer.legacy().deserialize(legacy);
     }
 
     @Override
@@ -89,7 +89,7 @@ final class BukkitPlatformItems implements PlatformItems {
             ReflectionHelper.invokeMethod(META_SET_DISPLAY_NAME, meta, name);
         }
         else {
-            meta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(name));
+            meta.setDisplayName(BukkitComponentSerializer.legacy().serialize(name));
         }
     }
 
@@ -109,7 +109,7 @@ final class BukkitPlatformItems implements PlatformItems {
 
         List<Component> lore = new ArrayList<>(legacy.size());
         for (String line : legacy) {
-            lore.add(LegacyComponentSerializer.legacySection().deserialize(line));
+            lore.add(BukkitComponentSerializer.legacy().deserialize(line));
         }
         return lore;
     }
@@ -122,7 +122,7 @@ final class BukkitPlatformItems implements PlatformItems {
         else {
             List<String> legacy = new ArrayList<>(lore.size());
             for (Component line : lore) {
-                legacy.add(LegacyComponentSerializer.legacySection().serialize(line));
+                legacy.add(BukkitComponentSerializer.legacy().serialize(line));
             }
             meta.setLore(legacy);
         }

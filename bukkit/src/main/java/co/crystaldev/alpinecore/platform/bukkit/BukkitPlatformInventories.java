@@ -10,8 +10,8 @@ package co.crystaldev.alpinecore.platform.bukkit;
 
 import co.crystaldev.alpinecore.platform.PlatformInventories;
 import co.crystaldev.alpinecore.util.ReflectionHelper;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -71,6 +71,6 @@ final class BukkitPlatformInventories implements PlatformInventories {
     }
 
     private static @NotNull String legacy(@NotNull Component title) {
-        return LegacyComponentSerializer.legacySection().serialize(title);
+        return BukkitComponentSerializer.legacy().serialize(title);
     }
 }

@@ -1,5 +1,8 @@
 [versions]
 # Shaded
+adventureFloor = "4.20.0"              # what Paper at our floor (1.21.4) provides at runtime; see common's adventureFloorCheck
+adventurePlatform = "4.4.1"            # https://github.com/KyoriPowered/adventure-platform # archived; the last Adventure 4 line
+adventureBundled = "4.26.1"            # the Adventure the Bukkit distribution BUNDLES - see bukkit/build.gradle.kts
 adventure = "5.2.0"                    # https://github.com/PaperMC/adventure/releases # Java 21 bytecode; downgraded for the Bukkit distribution
 annotations = "26.1.0"                 # https://github.com/JetBrains/java-annotations/releases
 configlib = "4.6.0"                    # https://github.com/tomwmth/ConfigLib
@@ -12,7 +15,9 @@ xseries = "13.7.1"                     # https://github.com/CryptoMorin/XSeries/
 
 # Bukkit/Spigot/Paper
 spigot = "1.8.8-R0.1-SNAPSHOT"         # https://www.spigotmc.org/
-paper = "26.2.build.87-stable"         # https://papermc.io/downloads/all?project=paper # Java 25 bytecode; supplies Adventure 5.2.0 transitively
+paper = "26.2.build.87-stable"         # https://papermc.io/downloads/all?project=paper # newest; used only by common's modern-API check
+paperFloor = "1.21.4-R0.1-SNAPSHOT"    # the Paper distribution's floor. 1.21 flipped InventoryView to an interface
+                                       # and 1.21.4 added Enchantment#description(); both are required. jvm.version 21.
 placeholderapi = "2.11.6"              # https://github.com/PlaceholderAPI/PlaceholderAPI/releases
 vault = "1.7.1"                        # https://github.com/MilkBowl/VaultAPI
 viaversion = "5.11.0"                  # https://github.com/ViaVersion/ViaVersion/releases # example plugin only
@@ -34,6 +39,8 @@ spotless = "8.9.0"                    # https://github.com/diffplug/spotless/rel
 
 [libraries]
 adventure-bom = { group = "net.kyori", name = "adventure-bom", version.ref = "adventure" }
+adventure-bom-floor = { group = "net.kyori", name = "adventure-bom", version.ref = "adventureFloor" }
+adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventurePlatform" }
 adventure-api.module = "net.kyori:adventure-api"
 adventure-text-minimessage.module = "net.kyori:adventure-text-minimessage"
 adventure-text-serializer-plain.module = "net.kyori:adventure-text-serializer-plain"
@@ -51,6 +58,7 @@ litecommands-folia = { group = "dev.rollczi", name = "litecommands-folia", versi
 localelib = { group = "com.github.PikaMug", name = "LocaleLib", version.ref = "localelib" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
+paper-api-floor = { group = "io.papermc.paper", name = "paper-api", version.ref = "paperFloor" }
 folia-scheduler-api = { group = "io.papermc.paper", name = "paper-api", version = "1.20.6-R0.1-SNAPSHOT" }
 protocollib = { group = "com.comphenix.protocol", name = "ProtocolLib", version = "5.3.0" }
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }

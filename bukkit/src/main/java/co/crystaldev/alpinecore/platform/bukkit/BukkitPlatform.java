@@ -45,12 +45,12 @@ public final class BukkitPlatform implements AlpinePlatform {
 
     @Override
     public void initialize(@NotNull AlpinePlugin core) {
-        // NO OP
+        this.audiences.initialize(core);
     }
 
     @Override
     public void shutdown() {
-        // NO OP
+        this.audiences.close();
     }
 
     @Override
