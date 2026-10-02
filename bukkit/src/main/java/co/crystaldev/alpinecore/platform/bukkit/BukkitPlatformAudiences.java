@@ -31,7 +31,6 @@ final class BukkitPlatformAudiences implements PlatformAudiences {
 
     private volatile BukkitAudiences provider;
 
-    /** Called from {@link BukkitPlatform#initialize}, before any consumer plugin starts. */
     void initialize(@NotNull Plugin plugin) {
         synchronized (this.lock) {
             this.plugin = plugin;

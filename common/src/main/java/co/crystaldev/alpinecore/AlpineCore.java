@@ -53,6 +53,8 @@ public final class AlpineCore extends AlpinePlugin {
 
     @Override
     public void onStart() {
+        Platform.get().initialize(this);
+
         ServerTickEvent event = new ServerTickEvent();
         scheduler().runTaskTimer(this, () -> {
             Bukkit.getPluginManager().callEvent(event);
