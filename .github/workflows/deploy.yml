@@ -23,15 +23,13 @@ jobs:
       contents: write
 
     steps:
-      - name: "Checkout"
-        # https://github.com/actions/checkout/releases
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      # https://github.com/actions/checkout/releases
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: "Prepare JDK"
-        # https://github.com/actions/setup-java/releases
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      # https://github.com/actions/setup-java/releases
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           # 8 is required by `downgradedTest`, which runs the downgraded archive on a real Java 8
@@ -42,41 +40,35 @@ jobs:
             25
           check-latest: true
 
-      - name: "Prepare Gradle"
-        # https://github.com/gradle/actions/releases
-        uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e # v6.1.0
+      # https://github.com/gradle/actions/releases
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
         with:
           validate-wrappers: true
           gradle-version: wrapper
           cache-disabled: false
           cache-provider: basic # MIT-licensed implementation
 
-      - name: "Build Project"
-        run: ./gradlew build --full-stacktrace
+      - run: ./gradlew build --full-stacktrace
 
-      - name: "Publish to Maven"
-        run: ./gradlew publishAllPublicationsToAlpineCloudRepository --full-stacktrace
+      - run: ./gradlew publishAllPublicationsToAlpineCloudRepository --full-stacktrace
         env:
           ALPINE_MAVEN_NAME: ${{ secrets.ALPINE_MAVEN_NAME }}
           ALPINE_MAVEN_SECRET: ${{ secrets.ALPINE_MAVEN_SECRET }}
 
-      - name: "Publish to Hangar"
-        run: ./gradlew publishPluginPublicationToHangar --full-stacktrace
+      - run: ./gradlew publishPluginPublicationToHangar --full-stacktrace
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
 
-      - name: "Publish to Modrinth"
-        run: ./gradlew modrinth --full-stacktrace
+      - run: ./gradlew modrinth --full-stacktrace
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
 
-      - name: "Sync Modrinth README"
-        run: ./gradlew modrinthSyncBody --full-stacktrace
+      - run: ./gradlew modrinthSyncBody --full-stacktrace
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
         continue-on-error: true
 
-      - name: "Read Version"
+      - name: "set version"
         if: github.event_name == 'workflow_dispatch'
         run: |
           set -e
@@ -87,10 +79,9 @@ jobs:
           fi
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
-      - name: "Create GitHub Release"
+      # https://github.com/softprops/action-gh-release/releases
+      - uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         if: github.event_name == 'workflow_dispatch' && !contains(env.RELEASE_VERSION, '-')
-        # https://github.com/softprops/action-gh-release/releases
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
